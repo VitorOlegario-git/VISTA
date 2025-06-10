@@ -1,0 +1,557 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+body {
+    background-image: url("../../../FrontEnd/CSS/imagens/FundoDashBoard.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 100vh;
+    margin: 0;
+    background-attachment: fixed;
+    position: relative;
+    overflow-y: auto;
+    display: flex;
+}
+.top-container {
+    background-color: rgba(4, 78, 107, 0.7);
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-height: 90px;
+    position: fixed;
+    top: 0;
+    z-index: 10;
+    box-sizing: border-box;
+}
+
+.data-container {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espaço entre os elementos */
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 8px 12px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    height: auto;
+    flex-shrink: 0;
+}
+
+.data-container label {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.data-container input {
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 12px;
+    min-width: 140px;
+}
+
+#filtrar {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    height: 32px;
+}
+
+#filtrar:hover {
+    background-color: #0056b3;
+}
+
+
+.buttons-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.buttons-container button {
+    background-color: rgba(255, 255, 255, 0.8);
+    border: none;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 12px;
+    border-radius: 5px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.buttons-container button:hover {
+    background-color: rgba(255, 255, 255, 1);
+}
+
+
+.left-container{
+    background-color: rgba(4, 78, 107, 0.9);
+    padding: 15px;
+    text-align: center;
+    width: 250px;
+    height: 90vh;
+    position: fixed;
+    margin-left: 0px;
+    top: 85px;
+    transition: left 0.3s ease-in-out;
+    z-index: 9;
+    overflow-y: auto;
+}
+.left-container a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    margin: 10px 0;
+}
+.dados-container {
+    background-color: rgba(188, 244, 252, 0.8);
+    width: 1100px;
+    height: 83vh;
+    margin-top: 100px;
+    margin-left: 260px;
+    display: none;
+    padding: 20px;
+    border-radius: 10px;
+    overflow-y: auto;
+}
+.quantidade-recebida {
+    background-color: rgb(255, 255, 255);
+    width: 130px;
+    height: 120px;
+    display: none;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 30px;
+    margin-left: 900px;
+}
+
+.grafico-quantidade-recebida-semanal{
+    background-color: rgb(255, 255, 255);
+    width: 1000px;
+    height: 300px;
+    display: none;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 30px;
+    margin-top: -10px;
+    margin-left: -10px;
+}
+.grafico-quantidade-recebida-mensal{
+    background-color: rgb(255, 255, 255);
+    width: 1000px;
+    height: 300px;
+    display: none;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 30px;
+    margin-left: -10px;
+    margin-top: 10px;
+}
+
+.tempo-medio-analise,
+.recebimentos-setor,
+.recebimentos-operador,
+.operacoes-origem-destino,
+.taxa-rejeicao-container {
+    width: 1000px;
+    height: 70vh;
+    background-color: white;
+    border-radius: 7px;
+    display: none;
+    align-items: center;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 30px;
+    overflow-y: auto;
+}
+#graficoTempoMedio,
+#graficoSetor,
+#graficoOperador,
+#graficoRejeicao,
+#graficoTempoOperacoes,
+#graficoEmpresas,
+#graficoDiaSemana,
+#graficoOperacoes,
+#graficoRecebimentosSemanal,
+#graficoRecebimentosMensal {
+    width: 100%;
+    max-width: 1000px;  /* você pode ajustar esse valor */
+    height: 450px;
+    margin: 0 auto;
+    overflow-x: auto;
+}
+
+
+.tempo-operacoes-container,
+.top-empresas-container,
+.recebimentos-dia-container,
+.tendencia-mensal-container{
+    width: 1000px;
+    height: 70vh;
+    background-color: white;
+    border-radius: 7px;
+    display: none;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 30px;
+}
+
+a {
+    color: white;
+    font-size: 14px; 
+    cursor: pointer;
+}
+p {
+    font-weight: bold;
+    font-size: 16px;
+    text-transform: uppercase;
+    color: rgb(8, 188, 243);
+}
+
+.left-container-analise{
+    background-color: rgba(4, 78, 107, 0.9);
+    padding: 15px;
+    text-align: center;
+    width: 250px;
+    height: 90vh;
+    position: fixed;
+    margin-left: 0px;
+    top: 85px;
+    transition: left 0.3s ease-in-out;
+    z-index: 9;
+    overflow-y: auto;
+}
+.left-container-analise a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    margin: 10px 0;
+}
+.dados-container-analise {
+    background-color: rgba(188, 244, 252, 0.8);
+    width: 1100px;
+    height: 83vh;
+    margin-top: 100px;
+    margin-left: 260px;
+    display: none;
+    padding: 20px;
+    border-radius: 10px;
+    overflow-y: auto;
+}
+h3{
+    color: white;
+}
+#quantidadeAnalise{
+    background-color: rgba(223, 215, 215, 0.623);
+    width: 900px;
+    height: 500px;
+    display: none;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 30px;
+    margin-top: 20px;
+    margin-left: -10px;
+}
+.grafico-quantidade-finalisada-semanal{
+    background-color: rgb(255, 255, 255);
+    width: 1000px;
+    height: 300px;
+    display: none;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 30px;
+    margin-top: 20px;
+    margin-left: -10px;
+}
+.grafico-quantidade-finalisada-mensal{
+    background-color: rgb(255, 255, 255);
+    width: 1000px;
+    height: 300px;
+    display: none;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 30px;
+    margin-left: -10px;
+    margin-top: 10px;
+}
+#graficoProdutividadeSemanal,
+#graficoProdutividadeMensal,
+#graficoTicketMedio,
+#graficoTempoOrcamento,
+#graficoVolumeAnalisesOperador,
+#graficoTempoMedioAnalise{
+    width: 100%;
+    max-width: 1000px;  /* você pode ajustar esse valor */
+    height: 450px;
+    margin: 0 auto;
+}
+#graficoParcialCompleta {
+    max-width: 100%;
+    display: block;
+    margin: 0 auto;
+}
+#graficoVolumeAnalisesOperador {
+    max-width: 100%;
+}
+
+.grafico-faturamento,
+.grafico-volume-analises-operador,
+.grafico-tempo-orcamento,
+.grafico-tempo-medio-analise{
+    width: 1000px;
+    height: 70vh;
+    background-color: white;
+    border-radius: 7px;
+    display: none;
+    align-items: center;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 30px;
+}
+.grafico-analises-cliente-container{
+    width: 1000px;
+    height: 80vh;
+    background-color: white;
+    border-radius: 7px;
+    display: none;
+    align-items: center;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 30px;
+}
+#graficoAnalisesCliente{
+    width: 100%;
+    max-width: 1000px;  /* você pode ajustar esse valor */
+    height: 450px;
+    margin: 0 auto;
+}
+
+.left-container-reparo{
+    background-color: rgba(4, 78, 107, 0.9);
+    padding: 15px;
+    text-align: center;
+    width: 250px;
+    height: 90vh;
+    position: fixed;
+    margin-left: 0px;
+    top: 85px;
+    transition: left 0.3s ease-in-out;
+    z-index: 9;
+    overflow-y: auto;
+}
+.left-container-reparo a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    margin: 10px 0;
+}
+.dados-container-reparo {
+    background-color: rgba(188, 244, 252, 0.8);
+    width: 1100px;
+    height: 83vh;
+    margin-top: 100px;
+    margin-left: 260px;
+    display: none;
+    padding: 20px;
+    border-radius: 10px;
+    overflow-y: auto;
+}
+.grafico-quantidade-reparada-semanal{
+    background-color: rgb(255, 255, 255);
+    width: 1000px;
+    height: 300px;
+    display: none;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 30px;
+    margin-top: 20px;
+    margin-left: -10px;
+}
+.grafico-quantidade-reparada-mensal{
+    background-color: rgb(255, 255, 255);
+    width: 1000px;
+    height: 300px;
+    display: none;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 30px;
+    margin-left: -10px;
+    margin-top: 20px;
+}
+.grafico-quantidade-reparada-operador,
+.grafico-tempo-solicitacao-nf,
+.grafico-tempo-reparo-operador,
+.grafico-total-reparo-cliente,
+.grafico-servicos-executados,
+.grafico-produto,
+.graficoQuantidadeApontamentos{
+    width: 1000px;
+    height: 70vh;
+    background-color: white;
+    border-radius: 7px;
+    display: none;
+    align-items: center;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 30px;
+
+}
+
+.grafico-custo-total,
+.grafico-custo-medio,
+.grafico-custo-por-produto,
+.grafico-custo-por-tecnico,
+.grafico-maior-custo-produto{
+    width: 1000px;
+    height: 80vh;
+    background-color: white;
+    border-radius: 7px;
+    display: none;
+    align-items: center;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 30px;
+}
+
+#graficoReparoSemanal,
+#graficoReparoMensal,
+#graficoReparoOperador,
+#graficoTempoNf,
+#graficoReparoOperador,
+#graficoReparoCliente,
+#graficoServicos,
+#graficoProduto,
+#graficoCustoTotalCanvas,
+#graficoCustoMedioCanvas,
+#graficoCustoProdutoCanvas,
+#graficoCustoTecnicoCanvas{
+    width: 100%;
+    max-width: 1000px;  /* você pode ajustar esse valor */
+    height: 450px;
+    margin: 0 auto;
+}
+@media (max-width: 768px) {
+    .dados-container,
+    .dados-container-analise,
+    .dados-container-reparo,
+    .grafico-faturamento,
+    .grafico-volume-analises-operador,
+    .grafico-tempo-orcamento,
+    .grafico-tempo-medio-analise,
+    .grafico-analises-cliente-container,
+    .grafico-quantidade-recebida-semanal,
+    .grafico-quantidade-recebida-mensal,
+    .grafico-quantidade-finalisada-semanal,
+    .grafico-quantidade-finalisada-mensal,
+    .grafico-quantidade-reparada-semanal,
+    .grafico-quantidade-reparada-mensal,
+    .grafico-quantidade-reparada-operador,
+    .grafico-tempo-solicitacao-nf,
+    .grafico-tempo-reparo-operador,
+    .grafico-total-reparo-cliente,
+    .grafico-servicos-executados,
+    .grafico-produto,
+    .grafico-custo-total,
+    .grafico-custo-medio,
+    .grafico-custo-por-produto,
+    .grafico-custo-por-tecnico,
+    .grafico-maior-custo-produto,
+    .tempo-medio-analise,
+    .recebimentos-setor,
+    .recebimentos-operador,
+    .operacoes-origem-destino,
+    .taxa-rejeicao-container,
+    .tempo-operacoes-container,
+    .top-empresas-container,
+    .recebimentos-dia-container,
+    .tendencia-mensal-container {
+        width: 95%;
+        height: auto;
+        padding: 15px;
+        margin-left: auto;
+        margin-right: auto;
+        font-size: 16px;
+    }
+
+    canvas,
+    #graficoTempoMedio,
+    #graficoSetor,
+    #graficoOperador,
+    #graficoRejeicao,
+    #graficoTempoOperacoes,
+    #graficoEmpresas,
+    #graficoDiaSemana,
+    #graficoOperacoes,
+    #graficoRecebimentosSemanal,
+    #graficoRecebimentosMensal,
+    #graficoProdutividadeSemanal,
+    #graficoProdutividadeMensal,
+    #graficoTicketMedio,
+    #graficoTempoOrcamento,
+    #graficoVolumeAnalisesOperador,
+    #graficoTempoMedioAnalise,
+    #graficoAnalisesCliente,
+    #graficoParcialCompleta,
+    #graficoReparoSemanal,
+    #graficoReparoMensal,
+    #graficoReparoOperador,
+    #graficoTempoNf,
+    #graficoReparoCliente,
+    #graficoServicos,
+    #graficoProduto,
+    #graficoCustoTotalCanvas,
+    #graficoCustoMedioCanvas,
+    #graficoCustoProdutoCanvas,
+    #graficoCustoTecnicoCanvas {
+        max-width: 100%;
+        height: 300px;
+    }
+
+    .top-container {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px 15px 10px;
+        max-height: none; /* remove limite fixo para suportar múltiplas linhas */
+    }
+
+    .data-container,
+    .buttons-container {
+        width: 100%;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+
+    .left-container,
+    .left-container-analise,
+    .left-container-reparo {
+        position: static;
+        width: 100%;
+        height: auto;
+        padding: 10px;
+        margin: 0;
+    }
+}

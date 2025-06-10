@@ -1,0 +1,151 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    background: url("../CSS/imagens/PlanoDeFundo.png") no-repeat center center;
+    background-size: contain; /* Mantém a proporção da imagem */
+    background-attachment: fixed;
+    background-color: #040915; /* Cor de fundo para combinar com a imagem */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container-principal {
+    position: absolute;
+    width: 70vmin; /* Usa 'vmin' para manter proporção relativa à menor dimensão da tela */
+    height: 70vmin; /* Garante que o círculo escale proporcionalmente */
+    max-width: 800px; /* Ajuste o limite máximo para telas grandes */
+    max-height: 800px;
+    border-radius: 50%;
+    background-image: transparent;
+    background-size: contain; /* Mantém a proporção do círculo de luz */
+    background-position: center;
+    background-repeat: no-repeat;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.7);
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centraliza perfeitamente */
+}
+
+
+.botao-wrapper {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.botao-circular {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    transition: transform 0.3s;
+}
+
+.botao-circular:hover {
+    transform: scale(1.15);
+    box-shadow: 0 0 20px #00ffff, 0 0 30px #00ffff, 0 0 40px #00ffff;
+}
+
+
+.nome-botao {
+    margin-top: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #00ffff;
+    text-shadow: 0px 0px 5px black;
+}
+
+/* Posições dos botões dentro do círculo */
+.botao-1 { top: 10%; left: 50%; transform: translate(-50%, -50%); }
+.botao-2 { top: 25%; left: 80%; transform: translate(-50%, -50%); }
+.botao-3 { top: 50%; left: 90%; transform: translate(-50%, -50%); }
+.botao-4 { top: 75%; left: 80%; transform: translate(-50%, -50%); }
+.botao-5 { top: 90%; left: 50%; transform: translate(-50%, -50%); }
+.botao-6 { top: 75%; left: 20%; transform: translate(-50%, -50%); }
+.botao-7 { top: 50%; left: 10%; transform: translate(-50%, -50%); }
+.botao-8 { top: 25%; left: 20%; transform: translate(-50%, -50%); }
+
+/* Estilo para as linhas de conexão */
+.line {
+    position: absolute;
+    background-color: #00c4ff; /* Cor da linha, pode ser ajustada */
+    height: 2px;
+    transform-origin: 0 0;
+    opacity: 0;
+    transition: opacity 0.5s, width 0.5s;
+}
+
+.line.visible {
+    opacity: 1;
+}
+
+/* Animação de carregamento (rotação) */
+.loading {
+    animation: spin 1s infinite linear;
+}
+
+@keyframes spin {
+    100% {
+        transform: scale(1.1) rotate(360deg); /* Mantém o scale do hover */
+    }
+}
+
+/*Estilização Mobile*/
+@media (max-width: 768px) {
+    body {
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .container-principal {
+        width: 90vmin;
+        height: 90vmin;
+        max-width: 90vw;
+        max-height: 90vw;
+    }
+
+    .botao-wrapper {
+        position: absolute;
+        transform: translate(-50%, -50%);
+    }
+
+    .botao-circular {
+        width: 60px;
+        height: 60px;
+    }
+
+    .nome-botao {
+        font-size: 12px;
+    }
+
+    /* Reorganizando os botões em posições radiais simplificadas */
+    .botao-1 { top: 10%; left: 50%; }
+    .botao-2 { top: 25%; left: 85%; }
+    .botao-3 { top: 50%; left: 95%; }
+    .botao-4 { top: 80%; left: 90%; }
+    .botao-5 { top: 100%; left: 50%; }
+    .botao-6 { top: 80%; left: 10%; }
+    .botao-7 { top: 50%; left: 5%;  }
+    .botao-8 { top: 25%; left: 15%; }
+}
