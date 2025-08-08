@@ -13,13 +13,13 @@ $tempo_limite = 1200; // 20 minutos
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $tempo_limite) {
     session_unset();
     session_destroy();
-    header("Location: /localhost/FrontEnd/tela_login.php");
+    header("Location: /sistema/KPI_2.0/FrontEnd/tela_login.php");
     exit();
 }
 
 // Verifica se a sessão está ativa
 if (!isset($_SESSION['username'])) {
-    header("Location: /localhost/FrontEnd/tela_login.php");
+    header("Location: /sistema/KPI_2.0/FrontEnd/tela_login.php");
     exit();
 }
 
@@ -34,48 +34,81 @@ $_SESSION['last_activity'] = time();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DashBoard Interativo</title>
     <link rel="stylesheet" href="cssDash/dashrecebimento.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Chart.js principal -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Plugin de data labels (exibe números nas barras) -->
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
-    <script src="/localhost/DashBoard/frontendDash/jsDash/recebimentoJS/graficoQuantidade.js"></script>
-    <script src="/localhost/DashBoard/frontendDash/jsDash/recebimentoJS/graficoTempoMedio.js"></script>
-    <script src="/localhost/DashBoard/frontendDash/jsDash/recebimentoJS/graficoRecebimentosSetor.js"></script>
-    <script src="/localhost/DashBoard/frontendDash/jsDash/recebimentoJS/graficoRecebimentosOperador.js"></script>
-    <script src="/localhost/DashBoard/frontendDash/jsDash/recebimentoJS/graficoOperacoes.js"></script>
-    <script src="/localhost/DashBoard/frontendDash/jsDash/recebimentoJS/graficoTaxaRejeicao.js"></script>
-    <script src="/localhost/DashBoard/frontendDash/jsDash/recebimentoJS/graficoTempoOperacoes.js"></script>
-    <script src="/localhost/DashBoard/frontendDash/jsDash/recebimentoJS/graficoTopEmpresas.js"></script>
-    <script src="/localhost/DashBoard/frontendDash/jsDash/recebimentoJS/graficoRecebimentosDia.js"></script>
-    <script src="/localhost/DashBoard/frontendDash/jsDash/recebimentoJS/graficoTendenciaMensal.js"></script>
-    <script src="/localhost/DashBoard/frontendDash/jsDash/analiseJS/produtividadeAnalise.js"></script>
-    <script src="/localhost/DashBoard/frontendDash/jsDash/analiseJS/graficoTicketMedio.js"></script>
-    <script src="/localhost/DashBoard/frontendDash/jsDash/analiseJS/tempoOrcamento.js"></script>
-    <script src="/localhost/DashBoard/frontendDash/jsDash/analiseJS/volumeAnalises.js"></script>
-    <script src="/localhost/DashBoard/frontendDash/jsDash/analiseJS/tempoMedioAnalise.js"></script>
-    <script src="/localhost/DashBoard/frontendDash/jsDash/analiseJS/parcialCompleta.js"></script>
-    <script src="/localhost/DashBoard/frontendDash/jsDash/analiseJS/analisesCliente.js"></script>
-    <script src="/localhost/DashBoard/frontendDash/jsDash/reparoJS/produtividadeReparo.js"></script>
-    <script src="/localhost/DashBoard/frontendDash/jsDash/reparoJS/graficoEquipamentosPorOperador.js"></script>
-    <script src="/localhost/DashBoard/frontendDash/jsDash/reparoJS/tempoSolicitacaoNF.js"></script>
-    <script src="/localhost/DashBoard/frontendDash/jsDash/reparoJS/tempoReparoOperador.js"></script>
-    <script src="/localhost/DashBoard/frontendDash/jsDash/reparoJS/reparosPorCliente.js"></script>
-    <script src="/localhost/DashBoard/frontendDash/jsDash/reparoJS/produtosMaisReparados.js"></script>
-    <script src="/localhost/DashBoard/frontendDash/jsDash/reparoJS/servicosExecutados.js"></script>
-    <script src="/localhost/DashBoard/frontendDash/jsDash/reparoJS/graficoCustoTotalRemessa.js"></script>
-    <script src="/localhost/DashBoard/frontendDash/jsDash/reparoJS/graficoCustoMedioProduto.js"></script>
-    <script src="/localhost/DashBoard/frontendDash/jsDash/reparoJS/graficoProdutosMaiorCUsto.js"></script>
+
+<!-- Plugin de annotation (linhas verticais com rótulos) -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0/dist/chartjs-plugin-annotation.min.js"></script>
+
+<!-- RECEBIMENTO -->
+    <script src="/sistema/KPI_2.0/DashBoard/frontendDash/jsDash/recebimentoJS/graficoQuantidade.js"></script>
+    <script src="/sistema/KPI_2.0/DashBoard/frontendDash/jsDash/recebimentoJS/graficoTempoMedio.js"></script>
+    <script src="/sistema/KPI_2.0/DashBoard/frontendDash/jsDash/recebimentoJS/graficoRecebimentosSetor.js"></script>
+    <script src="/sistema/KPI_2.0/DashBoard/frontendDash/jsDash/recebimentoJS/graficoRecebimentosOperador.js"></script>
+    <script src="/sistema/KPI_2.0/DashBoard/frontendDash/jsDash/recebimentoJS/graficoOperacoes.js"></script>
+    <script src="/sistema/KPI_2.0/DashBoard/frontendDash/jsDash/recebimentoJS/graficoTaxaRejeicao.js"></script>
+    <script src="/sistema/KPI_2.0/DashBoard/frontendDash/jsDash/recebimentoJS/graficoTempoOperacoes.js"></script>
+    <script src="/sistema/KPI_2.0/DashBoard/frontendDash/jsDash/recebimentoJS/graficoTopEmpresas.js"></script>
+    <script src="/sistema/KPI_2.0/DashBoard/frontendDash/jsDash/recebimentoJS/graficoRecebimentosDia.js"></script>
+    <script src="/sistema/KPI_2.0/DashBoard/frontendDash/jsDash/recebimentoJS/graficoTendenciaMensal.js"></script>
+
+<!-- ANÁLISE -->
+    <script src="/sistema/KPI_2.0/DashBoard/frontendDash/jsDash/analiseJS/produtividadeAnalise.js"></script>
+    <script src="/sistema/KPI_2.0/DashBoard/frontendDash/jsDash/analiseJS/graficoTicketMedio.js"></script>
+    <script src="/sistema/KPI_2.0/DashBoard/frontendDash/jsDash/analiseJS/tempoMedioAnalise.js"></script>
+    <script src="/sistema/KPI_2.0/DashBoard/frontendDash/jsDash/analiseJS/parcialCompleta.js"></script>
+    <script src="/sistema/KPI_2.0/DashBoard/frontendDash/jsDash/analiseJS/analisesCliente.js"></script>
+
+<!-- Reparo -->  
+    <script src="/sistema/KPI_2.0/DashBoard/frontendDash/jsDash/reparoJS/produtividadeReparo.js"></script>
+    <script src="/sistema/KPI_2.0/DashBoard/frontendDash/jsDash/reparoJS/graficoEquipamentosPorOperador.js"></script>
+    <script src="/sistema/KPI_2.0/DashBoard/frontendDash/jsDash/reparoJS/tempoSolicitacaoNF.js"></script>
+    <script src="/sistema/KPI_2.0/DashBoard/frontendDash/jsDash/reparoJS/tempoReparoOperador.js"></script>
+    <script src="/sistema/KPI_2.0/DashBoard/frontendDash/jsDash/reparoJS/reparosPorCliente.js"></script>
+    <script src="/sistema/KPI_2.0/DashBoard/frontendDash/jsDash/reparoJS/produtosMaisReparados.js"></script>
+    <script src="/sistema/KPI_2.0/DashBoard/frontendDash/jsDash/reparoJS/servicosExecutados.js"></script>
+    <script src="/sistema/KPI_2.0/DashBoard/frontendDash/jsDash/reparoJS/graficoCustoTotalRemessa.js"></script>
+    <script src="/sistema/KPI_2.0/DashBoard/frontendDash/jsDash/reparoJS/graficoCustoMedioProduto.js"></script>
+    <script src="/sistema/KPI_2.0/DashBoard/frontendDash/jsDash/reparoJS/graficoProdutosMaiorCUsto.js"></script>
+
+<!-- Qualidade -->
+    <script src="/sistema/KPI_2.0/DashBoard/frontendDash/jsDash/qualidadeJS/quantidadesEquip.js"></script>
+    <script src="/sistema/KPI_2.0/DashBoard/frontendDash/jsDash/qualidadeJS/principaisServicos.js"></script>
+    <script src="/sistema/KPI_2.0/DashBoard/frontendDash/jsDash/qualidadeJS/principaisLaudos.js"></script>
+
 </head>
 <body>
 
     <div class="top-container">
         <!-- Formulário de seleção de datas -->
         <div class="data-container">
-            <form action="http://localhost/DashBoard/equip_recebidos_analise.php" method="post">
+            <form action="http://172.16.0.50/sistema/KPI_2.0/DashBoard/equip_recebidos_analise.php" method="post">
                 
                     <label for="data_inicial">De:</label>
                     <input type="date" id="data_inicial" name="data_inicial">
                 
                     <label for="data_final">Até:</label>
                     <input type="date" id="data_final" name="data_final"> 
+
+                    <label for="operador">Operador:</label>
+                    <select id="operador" name="operador">
+                        <option value="">Todos</option>
+                        <option value="Vitor Olegario">Vitor Olegário</option>
+                        <option value="Luan Oliveira">Luan Oliveira</option>
+                        <option value="ronyrodrigues">Rony Rodrigues</option>
+                        <option value="Ederson Santos">Ederson Santos</option>
+                        <option value="Matheus Ferreira">Matheus Ferreira</option>
+                        <!-- Você pode gerar essas opções dinamicamente com PHP, se preferir -->
+                    </select>
+                    <button id="btnFiltrar" type="button">Filtrar</button>
+                    
+
+                   <button type="button" id="admin">Admin</button>
             </form>
         </div>
     
@@ -85,26 +118,105 @@ $_SESSION['last_activity'] = time();
             <button type="button" id="analise">Análise</button>
             <button type="button" id="reparo">Reparo</button>
             <button type="button" id="qualidade">Qualidade</button>
-            <button type="button" id="expedicao">Expedição</button>
+            <button type="button" id="financeiro">Financeiro</button>
             <button type="button" onclick="window.history.back()">Voltar</button>
         </div>
     </div>
+    <!--Área administrativa exclusiva para Vitor Olegario-->
+<?php if (isset($_SESSION['username']) && $_SESSION['username'] === 'Vitor Olegario'): ?>
+    <div id="area-administrativa" style="display: none;">
+        <h3>Monitoramento em Tempo Real - Operadores</h3>
+        <div class="operadores-container">
+            <!-- Operador 1 -->
+            <div class="operador-box" id="operador1">
+                <h4>Vitor Olegario</h4>
+                <p>Status: <span class="status">Carregando...</span></p>
+                <p class="tempo">⏱️ Em atividade há: <span>--</span></p>
+                <p class="setor">🧩 Setor: <span>--</span></p>
+                <p class="cliente">🏢 Cliente:<br><span>--</span></p>
+                <p class="quantidade">📦 QTD: <span>--</span></p>
+                <button class="btn-relatorio" data-operador="Vitor_Olegario" title="Ver relatório">
+                   <i class="fas fa-file-alt"></i>
+                </button>
+
+            </div>
+            <!-- Operador 2 -->
+            <div class="operador-box" id="operador2">
+                <h4>Luan Oliveira</h4>
+                <p>Status: <span class="status">Carregando...</span></p>
+                <p class="tempo">⏱️ Em atividade há: <span>--</span></p>
+                <p class="setor">🧩 Setor: <span>--</span></p>
+                <p class="cliente">🏢 Cliente:<br><span>--</span></p>
+                <p class="quantidade">📦 QTD: <span>--</span></p>
+                <button class="btn-relatorio" data-operador="Luan_Oliveira" title="Ver relatório">
+                   <i class="fas fa-file-alt"></i>
+                </button>
+
+            </div>
+            <!-- Operador 3 -->
+            <div class="operador-box" id="operador3">
+                <h4>Rony Rodrigues</h4>
+                <p>Status: <span class="status">Carregando...</span></p>
+                <p class="tempo">⏱️ Em atividade há: <span>--</span></p>
+                <p class="setor">🧩 Setor: <span>--</span></p>
+                <p class="cliente">🏢 Cliente:<br><span>--</span></p>
+                <p class="quantidade">📦 QTD: <span>--</span></p>
+                <button class="btn-relatorio" data-operador="Rony_Rodrigues" title="Ver relatório">
+                   <i class="fas fa-file-alt"></i>
+                </button>
+
+            </div>
+            <!-- Operador 4 -->
+            <div class="operador-box" id="operador4">
+                <h4>Ederson Santos</h4>
+                <p>Status: <span class="status">Carregando...</span></p>
+                <p class="tempo">⏱️ Em atividade há: <span>--</span></p>
+                <p class="setor">🧩 Setor: <span>--</span></p>
+                <p class="cliente">🏢 Cliente:<br><span>--</span></p>
+                <p class="quantidade">📦 QTD: <span>--</span></p>
+                <button class="btn-relatorio" data-operador="Ederson_Santos" title="Ver relatório">
+                   <i class="fas fa-file-alt"></i>
+                </button>
+            </div>
+            <!-- Operador 5 -->
+            <div class="operador-box" id="operador5">
+                <h4>Matheus Ferreira</h4>
+                <p>Status: <span class="status">Carregando...</span></p>
+                <p class="tempo">⏱️ Em atividade há: <span>--</span></p>
+                <p class="setor">🧩 Setor: <span>--</span></p>
+                <p class="cliente">🏢 Cliente:<br><span>--</span></p>
+                <p class="quantidade">📦 QTD: <span>--</span></p>
+                <button class="btn-relatorio" data-operador="Matheus_Ferreira" title="Ver relatório">
+                   <i class="fas fa-file-alt"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
+
+
+
     <!--Area do recebimento-->
     <div class="left-container" id="leftContainer_recebimento" style="display: none;">
         <p>📊 KPI's Operacionais para Gestão de Recebimentos</p>
-        <a id="quantidade-recebida" class="link-dashboard" data-target="quantidadeRecebimento">📦 Quantidade Total de Equipamentos Recebidos</a>
+        <a id="quantidade-recebida" class="link-dashboard" data-target="quantidadeRecebimento">📦 QTD. Equip. Recebidos</a>
+        <br>
         <a id="tempo-medio" class="link-dashboard" data-target="tempoMedioAnalise">⏳ Tempo Médio para Envio à Análise</a>
+        <br>
         <a id="recebimento-setor" class="link-dashboard" data-target="recebimentosSetor">📊 Recebimentos por Setor</a>
-        <a id="recebimento-operador" class="link-dashboard" data-target="recebimentosOperador">📈 Equipamentos Recebidos por Operador</a>
-        <a id="operacoes-origem-destino" class="link-dashboard" data-target="operacoesOrigemDestino">📍 Operações de Origem e Destino</a>
-        <a id="taxa-rejeicao" class="link-dashboard" data-target="taxaRejeicao">⚠️ Taxa de Rejeição ou Reenvio</a>
+        <br>
+        <a id="operacoes-origem-destino" class="link-dashboard" data-target="operacoesOrigemDestino">📍 QTD. remessas nas operações</a>
+        <!--<a id="recebimento-operador" class="link-dashboard" data-target="recebimentosOperador">📈 Equipamentos Recebidos por Operador</a>
+        <a id="taxa-rejeicao" class="link-dashboard" data-target="taxaRejeicao">⚠️ Taxa de Rejeição ou Reenvio</a>-->
         
         <br>
-        <p>KPI's de Desempenho e Qualidade</p>
         <a id="tempo-operacoes" class="link-dashboard" data-target="tempoOperacoes">🕒 Tempo Médio Entre Operações</a>
-        <a id="top-empresas" class="link-dashboard" data-target="topEmpresas">📌 Top 5 Empresas com Maior Volume de Recebimentos</a>
-        <a id="recebimento-dia" class="link-dashboard" data-target="recebimentosDia">📅 Distribuição por Dia da Semana</a>
-        <a id="tendencia-mensal" class="link-dashboard" data-target="tendenciaMensal">📈 Tendência Mensal de Recebimentos</a>
+        <br>
+        <a id="top-empresas" class="link-dashboard" data-target="topEmpresas">📌 Top 10 Empresas</a>
+        <br>
+        <!--<a id="recebimento-dia" class="link-dashboard" data-target="recebimentosDia">📅 Distribuição por Dia da Semana</a>-->
+       
+        <a id="tendencia-mensal" class="link-dashboard" data-target="tendenciaMensal">📈 Tendência Mensal de remessas recebidas</a>
     </div>    
 
     <div class="dados-container" id="dadosContainerRecebimento" style="display: none;">
@@ -112,56 +224,56 @@ $_SESSION['last_activity'] = time();
         
         <div id="quantidadeRecebimento" >
             <div class="quantidade-recebida" id="dadosQuantidade"></div>
-            <div class="grafico-quantidade-recebida-semanal" id="graficoQuantidadeSemanal" style="display: none;" >
+            <div class="grafico-container grafico-grande" id="graficoQuantidadeSemanal" style="display: none;" >
                 <canvas id="graficoRecebimentosSemanal"></canvas> 
             </div>
-            <div class="grafico-quantidade-recebida-mensal" id="graficoQuantidadeMensal" style="display: none;" >
+            <div class="grafico-container grafico-grande" id="graficoQuantidadeMensal" style="display: none;" >
                 <canvas id="graficoRecebimentosMensal"></canvas>
             </div>
         </div>
 
         <!--Tempo Médio para Envio à Análise-->
-        <div class="tempo-medio-analise" id="tempoMedioAnalise" style="display: none;">
+        <div class="grafico-container grafico-grande" id="tempoMedioAnalise" style="display: none;">
             <canvas id="graficoTempoMedio"></canvas>
         </div>  
         
         <!--Recebimentos por Setor-->
-        <div class="recebimentos-setor" id="recebimentosSetor" style="display: none;">
+        <div class="grafico-container grafico-grande" id="recebimentosSetor" style="display: none;">
             <canvas id="graficoSetor"></canvas>
         </div>
 
         <!--Quantidade de Equipamentos Recebidos por Operador-->
-        <div class="recebimentos-operador" id="recebimentosOperador" style="display: none;">
+        <div class="grafico-container grafico-grande" id="recebimentosOperador" style="display: none;">
             <canvas id="graficoOperador"></canvas>
         </div>
 
         <!--Principais Operações de Origem e Destino-->
-        <div class="operacoes-origem-destino" id="operacoesOrigemDestino" style="display: none;">
+        <div class="grafico-container grafico-grande" id="operacoesOrigemDestino" style="display: none;">
             <canvas id="graficoOperacoes"></canvas>
         </div>
 
         <!--Taxa de Rejeição ou Reenvio-->
-        <div class="taxa-rejeicao-container" id="taxaRejeicao" style="display: none;">
+        <div class="grafico-container grafico-grande" id="taxaRejeicao" style="display: none;">
             <canvas id="graficoRejeicao"></canvas>
         </div>
 
         <!--Tempo Médio Entre Operações-->
-        <div class="tempo-operacoes-container" id="tempoOperacoes" style="display: none;">
+        <div class="grafico-container grafico-grande" id="tempoOperacoes" style="display: none;">
             <canvas id="graficoTempoOperacoes"></canvas>
         </div>
 
         <!--Top 5 Empresas com Maior Volume de Recebimentos-->
-        <div class="top-empresas-container" id="topEmpresas" style="display: none;">
+        <div class="grafico-container grafico-grande" id="topEmpresas" style="display: none;">
             <canvas id="graficoEmpresas"></canvas>
         </div>
  
         <!--Distribuição de Recebimentos por Dia da Semana-->
-        <div class="recebimentos-dia-container" id="recebimentosDia" style="display: none;">
+        <div class="grafico-container grafico-grande" id="recebimentosDia" style="display: none;">
             <canvas id="graficoDiaSemana"></canvas>
         </div>
   
         <!--Tendência Mensal de Recebimentos-->
-        <div class="tendencia-mensal-container" id="tendenciaMensal" style="display: none;">
+        <div class="grafico-container grafico-grande" id="tendenciaMensal" style="display: none;">
             <canvas id="graficoTendenciaMensal"></canvas>
         </div>
              
@@ -171,1121 +283,738 @@ $_SESSION['last_activity'] = time();
     <div class="left-container-analise" id="leftContainerAnalise" style="display: none;">
         <h3>📊 KPIs para Assistência Técnica</h3>
         <br>
-        <p>🔹 PRODUTIVIDADE</p>
-        <a id="equipamentos_finalizados" data-target="quantidadeAnalise">Equipamentos Embalados / HC no Setor</a>
-        <a id="financeiro" data-target="graficoTicketContainer">💰 FINANCEIRO</a>
-        <a id="tempo_orcamento" data-target="graficoTempoOrcamentoContainer">⏱️ Tempo Médio para Orçamento</a>
+        
+        <a id="equipamentos_finalizados" data-target="quantidadeAnalise">🔹 QTD. analisadas</a>
         <br>
-        <p>📊 KPIs para Gestão da Análise</p>
-        <a id="volume_analises" data-target="graficoVolumeAnalisesContainer">📊 Volume de Análises Realizadas</a>
-        <a id="tempo_medio_analise" data-target="graficoTempoMedioAnaliseContainer">📈 Tempo Médio de Análise</a>
-        <a id="parcial_vs_completa" data-target="graficoParcialCompletaContainer">📊 Parciais vs. Completas</a>
+        <!--<a id="financeiro" data-target="graficoTicketContainer">💰 Orçamentos gerados</a>-->
+        
+        <a id="tempo_medio_analise" data-target="graficoTempoMedioAnaliseContainer">📈 Tempo Médio análise</a>
+        <br>
+        <a id="parcial_vs_completa" data-target="graficoParcialCompletaContainer">📊Remessas analisadas: parciais vs. completas</a>
+        <br>
         <a id="analises_por_cliente" data-target="graficoAnalisesClienteContainer">🏢 Análises por Cliente</a>
       </div>
       
     <div class="dados-container-analise" id="dadosAnalise" style="display: none;">
         
-          <div class="grafico-quantidade-finalisada-semanal" id="graficoQuantidadeFinalisadaSemanal" style="display: none;">
-            <canvas id="graficoProdutividadeSemanal"></canvas>
+          <div class="grafico-container grafico-grande" id="graficoQuantidadeFinalisadaSemanal" style="display: none;">
+            <div style="overflow-x: auto; width: 100%;">
+                <canvas id="graficoProdutividadeSemanal"></canvas>
+            </div>
           </div>
-          <div class="grafico-quantidade-finalisada-mensal" id="graficoQuantidadeFinalisadaMensal" style="display: none;">
+          <div class="grafico-container grafico-grande" id="graficoQuantidadeFinalisadaMensal" style="display: none;">
             <canvas id="graficoProdutividadeMensal"></canvas>
           </div>
           
           <!--Faturamento-->
-          <div class="grafico-faturamento" id="graficoTicketContainer" style="display: none;">
+          <div class="grafico-container grafico-grande" id="graficoTicketContainer" style="display: none;">
             <canvas id="graficoTicketMedio"></canvas>
           </div>
-
-          <!-- Tempo Médio -->
-          <div class="grafico-tempo-orcamento" id="graficoTempoOrcamentoContainer" style="display: none;">
-            <canvas id="graficoTempoOrcamento"></canvas>
-          </div>
-          
-          <!--KPIs para Gestão da Análise-->
-          <div class="volume-analises-container" id="graficoVolumeAnalisesContainer" style="display: none;">
-            <h2 id="volumeAnalisesTexto"></h2>
-            <div style="max-width: 500px; margin: auto;">
-                <canvas id="graficoVolumeAnalisesOperador"></canvas>
-            </div>
-          </div>
-        
-        
-          
-          <div class="grafico-tempo-medio-analise" id="graficoTempoMedioAnaliseContainer" style="display: none;">
+ 
+          <div class="grafico-container grafico-grande" id="graficoTempoMedioAnaliseContainer" style="display: none;">
             <canvas id="graficoTempoMedioAnalise"></canvas>
           </div>
 
-          <div class="grafico-parcial-completa-container" id="graficoParcialCompletaContainer" style="display: none;">
+          <div class="grafico-container grafico-grande" id="graficoParcialCompletaContainer" style="display: none;">
             <canvas id="graficoParcialCompleta"></canvas>
           </div>
 
-          <div class="grafico-analises-cliente-container" id="graficoAnalisesClienteContainer" style="display: none;">
+          <div class="grafico-container grafico-grande" id="graficoAnalisesClienteContainer" style="display: none;">
             <canvas id="graficoAnalisesCliente"></canvas>
           </div>     
     </div>
 
-    <!--Area do reparo-->
-    <div class="left-container-reparo" id="leftContainerReparo" style="display: none;">
-        <h3>🔧 KPIs para o Setor de Reparo (Suntech)</h3>
-        <br>
-        <p>🔹 PRODUTIVIDADE</p>
-        <a id="quantidade_reparados">🔹 Quantidade de Reparo por Semana/Mês</a>
-        <a id="equipamentos_reparados">🔹 Equipamentos Reparados por Técnico</a>
-        <br>
-        <p>⏱ TEMPO DE PROCESSOS</p>
-        <a id="tempoMedioSolicitacaoNf" >⏱ Tempo Médio para Solicitação de NF após Início do Reparo</a>
-        <a id="tempoMedioReparoOperador">⏱ Tempo Médio de Reparo por Operadors</a>
-        <br>
-        <p>🧾 GESTÃO DE DEMANDAS</p>
-        <a id="reparoPorCliente" >🧾 Distribuição de Reparos por Cliente</a>
-        <br>
-        <p>🔍 DETALHAMENTO DE SERVIÇOS</p>
-        <a id="quantidadeProdutoRemessa">🔍 Produtos mais Reparados por Remessa</a>
-        <a id="principaisServiços">🔍 Principais Serviços Executados</a>
-        <p>💰 ANÁLISE FINANCEIRA</p>
-        <a id="custoTotalReparos">💰 Custo Total dos Reparos</a>
-        <a id="custoMedioReparo">📊 Custo Médio por Reparo</a>
-        <a id="maiorCustoAcumulado">📊 Maior Custo Acumulado por Produto</a>
-      </div>
-      <div class="dados-container-reparo" id="dadosReparo" style="display: none;">
-        
-          <div class="grafico-quantidade-reparada-semanal" id="graficoQuantidadeReparadaSemanal" style="display: none;">
-            <canvas id="graficoReparoSemanal"></canvas>
-          </div>
-          <div class="grafico-quantidade-reparada-mensal" id="graficoQuantidadeReparadaMensal" style="display: none;">
-            <canvas id="graficoReparoMensal"></canvas>
-          </div>
-         
-          <div class="grafico-quantidade-reparada-operador" id="graficoQuantidadeReparadaOperador" style="display: none;">
-            <canvas id="graficoQuantidadeOperador"></canvas>
-          </div>
+    <!-- Área do Reparo -->
+<div class="left-container-reparo" id="leftContainerReparo" style="display: none;">
+  <h3>🔧 KPIs para o Setor de Reparo (Suntech)</h3><br>
+  <a id="quantidade_reparados">QTD. reparada por Semana/Mês</a><br>
 
-          <div class="grafico-tempo-solicitacao-nf" id="graficoTempoSolicitacaoNf" style="display: none;">
-            <canvas id="graficoTempoNf"></canvas>
-          </div>
-          
-          <div class="grafico-tempo-reparo-operador" id="graficoTempoReparoOperador" style="display: none;">
-            <canvas id="graficoReparoOperador"></canvas>
-          </div>
-        
-          <div class="grafico-total-reparo-cliente" id="graficoTotalReparoCliente" style="display: none;">
-            <canvas id="graficoReparoCliente"></canvas>
-          </div>
+  
+  <!--<a id="tempoMedioSolicitacaoNf">⏱ Tempo Médio para Solicitação de NF após Início do Reparo</a>-->
+  <a id="tempoMedioReparoOperador">⏱ Tempo Médio de Reparo por Operador</a><br>
 
-          <div class="grafico-servicos-executados" id="graficoServicosExecutados" style="display: none;">
-            <canvas id="graficoServicos"></canvas>
-          </div>  
-          <div class="grafico-produto" id="graficoPorProduto" style="display: none;">
-            <canvas id="graficoProduto"></canvas>
-          </div> 
-          <div class="grafico-custo-total" id="graficoCustoTotal" style="display: none;">
-            <canvas id="graficoCustoTotalCanvas" width="800" height="400"></canvas>
-          </div>
-          <div class="grafico-custo-medio" id="graficoCustoMedio" style="display: none;">
-            <canvas id="graficoCustoMedioCanvas" width="800" height="400"></canvas>
-          </div>
-          <div class="grafico-maior-custo-produto" id="containerMaiorCustoProduto" style="display: none;">
-            <canvas id="graficoMaiorCustoProduto"></canvas>
-          </div>   
+  
+  <a id="reparoPorCliente">🧾 Distribuição de Reparos por Cliente</a><br>
+
+  
+  <a id="custoTotalReparos">💰 Custo Total dos Reparos</a>
+  <a id="custoMedioReparo">📊 Custo Médio por Reparo</a>
+  <a id="maiorCustoAcumulado">📊 Maior Custo Acumulado por Produto</a>
+</div>
+
+<div class="dados-container-reparo" id="dadosReparo" style="display: none;">
+
+  <!-- Gráfico Semanal -->
+  <div class="grafico-container grafico-grande" id="graficoQuantidadeReparadaSemanal" style="display: none;">
+    <canvas id="graficoReparoSemanal"></canvas>
+  </div>
+
+  <!-- Gráfico Mensal -->
+  <div class="grafico-container grafico-grande" id="graficoQuantidadeReparadaMensal" style="display: none;">
+    <canvas id="graficoReparoMensal"></canvas>
+  </div>
+
+  <!-- Tempo Médio para Solicitação de NF 
+  <div class="grafico-container grafico-medio" id="graficoTempoSolicitacaoNf" style="display: none;">
+    <canvas id="graficoTempoNf"></canvas>
+  </div>-->
+
+  <!-- Tempo Médio de Reparo por Operador -->
+  <div class="grafico-container grafico-medio" id="graficoTempoReparoOperador" style="display: none;">
+    <canvas id="graficoReparoOperador"></canvas>
+  </div>
+
+  <!-- Distribuição de Reparos por Cliente -->
+  <div class="grafico-container grafico-medio" id="graficoTotalReparoCliente" style="display: none;">
+    <canvas id="graficoReparoCliente"></canvas>
+  </div>
+
+  <!-- Principais Serviços Executados -->
+  <div class="grafico-container grafico-medio" id="graficoServicosExecutados" style="display: none;">
+    <canvas id="graficoServicos"></canvas>
+  </div>
+
+  <!-- Produtos mais Reparados por Remessa -->
+  <div class="grafico-container grafico-medio" id="graficoPorProduto" style="display: none;">
+    <canvas id="graficoProduto"></canvas>
+  </div>
+
+  <!-- Custo Total dos Reparos -->
+  <div class="grafico-container grafico-alto" id="graficoCustoTotal" style="display: none;">
+    <canvas id="graficoCustoTotalCanvas"></canvas>
+  </div>
+
+  <!-- Custo Médio por Reparo -->
+  <div class="grafico-container grafico-alto" id="graficoCustoMedio" style="display: none;">
+    <canvas id="graficoCustoMedioCanvas"></canvas>
+  </div>
+
+  <!-- Maior Custo Acumulado por Produto -->
+  <div class="grafico-container grafico-alto" id="containerMaiorCustoProduto" style="display: none;">
+    <canvas id="graficoMaiorCustoProduto"></canvas>
+  </div>
+
+</div>
+
+
+<!-- Área da Qualidade -->
+<div class="left-container-qualidade" id="leftContainerQualidade" style="display: none;">
+    <h3>📊 KPIs para qualidade</h3>
+</br>
+    <a id="quantidade_equipamentos">QTD. por modelo de equipamentos</a></br>
+    <a id="principais_servicos">Principais serviços no reparo</a></br>
+    <a id="principais_laudos">Principais laudos enviados</a></br>
+    
+</div> 
+<div class="dados-container-qualidade" id="dadosQualidade" style="display: none;">
+
+<!-- Quantidade por equipamentos recebidos, analisados e reparados -->
+  <div class="grafico-container grafico-grande" id="graficoquantidadeequipamentos" style="display: none;">
+    <canvas id="graficoQuantidadeEquipamentos"></canvas>
+  </div>
+<!-- Principais serviços no reparo -->
+  <div class="grafico-container grafico-grande" id="graficoprincipaisservicos" style="display: none;">
+    <canvas id="graficoPrincipaisServicos"></canvas>
+  </div>
+  <!-- Principais laudos enviados por modelo -->
+  <div class="grafico-container" id="graficoprincipaislaudos" style="display: none;">
+    <h3>📋 Principais Laudos Técnicos</h3>
+    <label for="filtroModelo">Modelo:</label>
+    <select id="filtroModelo">
+        <option value="">Todos os modelos</option>
+        <!-- Opções serão preenchidas via JS -->
+    </select>
+    <div class="tabela-laudos">
+        <table id="tabelaLaudos">
+            <thead>
+                <tr>
+                    <th>Modelo</th>
+                    <th>Laudo</th>
+                    <th>Quantidade</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Dados serão preenchidos via JS -->
+            </tbody>
+        </table>
     </div>
+</div>
+
+</div>   
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const btnRecebimento = document.getElementById("recebimento");
-        const btnAnalise = document.getElementById("analise");
-        const btnReparo = document.getElementById("reparo");
-        const btnExpedicao = document.getElementById("expedicao");
 
-        const containerRecebimento = document.getElementById("leftContainer_recebimento");
-        const containerAnalise = document.getElementById("leftContainerAnalise");
-        const containerReparo = document.getElementById("leftContainerReparo");
-        const containerDadosRecebimento = document.getElementById("dadosContainerRecebimento");
-        const containerDadosAnalise = document.getElementById("dadosAnalise");
-        const containerDadosReparo = document.getElementById("dadosReparo");
-        
+    
+document.addEventListener("DOMContentLoaded", function () {
+    const btnFiltrar = document.getElementById("btnFiltrar");
 
-        btnRecebimento.addEventListener("click", function(){
-            if(containerRecebimento.style.display === "none" && containerDadosRecebimento.style.display === "none"){
-                containerRecebimento.style.display = "block";
-                containerDadosRecebimento.style.display = "block";
-                containerAnalise.style.display = "none";
-                containerDadosAnalise.style.display = "none";
-                containerDadosReparo.style.display = "none";
-                containerReparo.style.display = "none";
-            } else {
-                containerRecebimento.style.display = "none";
-                containerDadosRecebimento.style.display = "none";
-                containerAnalise.style.display = "none";
-                containerDadosAnalise.style.display = "none";
-                containerDadosReparo.style.display = "none";
-                containerReparo.style.display = "none";
-            }
+if (btnFiltrar) {
+    btnFiltrar.addEventListener("click", (event) => {
+        event.preventDefault();
+
+        const filtros = {
+            dataInicio: document.getElementById("data_inicial").value || "",
+            dataFim: document.getElementById("data_final").value || "",
+            operador: document.getElementById("operador").value || ""
+        };
+
+        // Validação obrigatória de período
+        if (!filtros.dataInicio || !filtros.dataFim) {
+            alert("Por favor, selecione a data inicial e final para aplicar o filtro.");
+            return;
+        }
+
+        console.log("Filtros aplicados:", filtros);
+        executarFiltros(filtros);
+    });
+}
+function executarFiltros({ dataInicio, dataFim, operador }) {
+    const graficos = [
+        // ANALISE
+        { id: "graficoQuantidadeFinalisadaSemanal", func: carregarProdutividadeAnalise },
+        { id: "graficoTempoMedioAnaliseContainer", func: carregarTempoMedioAnalise },
+        { id: "graficoParcialCompletaContainer", func: carregarParcialCompleta },
+        { id: "graficoAnalisesClienteContainer", func: carregarAnalisesPorCliente },
+
+        // RECEBIMENTO
+        { id: "graficoQuantidadeSemanal", func: carregarQuantidadeRecebidaEGraficos },
+        { id: "graficoQuantidadeMensal", func: carregarQuantidadeRecebidaEGraficos },
+        { id: "tempoMedioAnalise", func: carregarGraficoTempoMedio },
+        { id: "recebimentosSetor", func: carregarGraficoSetor },
+        { id: "operacoesOrigemDestino", func: carregarGraficoOperacoes },
+        { id: "tempoOperacoes", func: carregarGraficoTempoOperacoes },
+        { id: "topEmpresas", func: carregarGraficoEmpresas },
+        { id: "tendenciaMensal", func: carregarGraficoTendenciaMensal },
+
+        // REPARO
+        { id: "graficoQuantidadeReparadaSemanal", func: carregarProdutividadeReparo },
+        { id: "graficoQuantidadeReparadaMensal", func: carregarProdutividadeReparo },
+        { id: "graficoQuantidadeReparadaOperador", func: carregarEquipamentosPorOperador },
+        { id: "graficoTempoSolicitacaoNf", func: carregarTempoSolicitacaoNF },
+        { id: "graficoTempoReparoOperador", func: carregarTempoReparoOperador },
+        { id: "graficoTotalReparoCliente", func: carregarReparosPorCliente },
+        { id: "graficoCustoTotal", func: carregarCustoTotalPorProduto },
+        { id: "graficoCustoMedio", func: carregarCustoMedioPorProduto },
+        { id: "containerMaiorCustoProduto", func: carregarProdutosMaiorCusto },
+
+        // QUALIDADE
+        { id: "graficoquantidadeequipamentos", func: carregarquantidadeEquip},
+        { id: "graficoprincipaisservicos", func: carregarPrincipaisServicos },
+        { id: "graficoprincipaislaudos", func: carregarPrincipaisLaudos }
+    ];
+
+    const chamados = new Set(); // para evitar chamadas duplicadas da mesma função
+
+    graficos.forEach(({ id, func }) => {
+        const el = document.getElementById(id);
+        if (el && window.getComputedStyle(el).display === "block" && !chamados.has(func)) {
+            func(dataInicio, dataFim, operador);
+            chamados.add(func);
+        }
+    });
+}
+
+        // 🔁 Mapeamento entre botões e seus containers 
+const setores = [
+    {
+        botao: document.getElementById("recebimento"),
+        containers: [
+            document.getElementById("leftContainer_recebimento"),
+            document.getElementById("dadosContainerRecebimento")
+        ],
+        onAtivar: () => {} // Não precisa carregar dados ao ativar Recebimento
+    },
+    {
+        botao: document.getElementById("analise"),
+        containers: [
+            document.getElementById("leftContainerAnalise"),
+            document.getElementById("dadosAnalise")
+        ],
+        onAtivar: () => {
+            const dataInicio = document.getElementById("data_inicial").value || "";
+            const dataFim = document.getElementById("data_final").value || "";
+            const operador = document.getElementById("operador").value || "";
+            // ⚠️ Carregar dados se necessário
+        }
+    },
+    {
+        botao: document.getElementById("reparo"),
+        containers: [
+            document.getElementById("leftContainerReparo"),
+            document.getElementById("dadosReparo")
+        ],
+        onAtivar: () => {
+            const dataInicio = document.getElementById("data_inicial").value || "";
+            const dataFim = document.getElementById("data_final").value || "";
+            const operador = document.getElementById("operador").value || "";
+            carregarProdutividadeReparo(dataInicio, dataFim, operador);
+        }
+    },
+    {
+        botao: document.getElementById("qualidade"),
+        containers: [
+            document.getElementById("leftContainerQualidade"),
+            document.getElementById("dadosQualidade")
+        ],
+        onAtivar: () => {
+            const dataInicio = document.getElementById("data_inicial").value || "";
+            const dataFim = document.getElementById("data_final").value || "";
+            const operador = document.getElementById("operador").value || "";
+            carregarquantidadeEquip(dataInicio, dataFim, operador); // ✅ CORRETO
+        }
+    }
+
+];
+
+// 🔁 Oculta todos os containers
+function ocultarTodosOsSetores() {
+    setores.forEach(({ containers }) => {
+        containers.forEach(c => {
+            if (c) c.style.display = "none";
         });
+    });
+}
 
-        btnAnalise.addEventListener("click", function(){
-            if(containerAnalise.style.display === "none" && containerDadosAnalise.style.display === "none"){
-                containerRecebimento.style.display = "none";
-                containerDadosRecebimento.style.display = "none";
-                containerAnalise.style.display = "block";
-                containerDadosAnalise.style.display = "block";
-                containerDadosReparo.style.display = "none";
-                containerReparo.style.display = "none";
+// 🔁 Alterna exibição ao clicar no botão
+setores.forEach(({ botao, containers, onAtivar }) => {
+    if (!botao) return;
 
-                // ✅ Pega as datas, mesmo que vazias
-            let dataInicio = document.getElementById("data_inicial").value;
-            let dataFim = document.getElementById("data_final").value;
+    botao.addEventListener("click", function () {
+        const estaVisivel = containers.every(c => c && c.style.display === "block");
 
-            // ✅ Se estiverem vazias, envia strings vazias mesmo
-            carregarProdutividadeAnalise(dataInicio || "", dataFim || "");
-            } else {
-                containerRecebimento.style.display = "none";
-                containerDadosRecebimento.style.display = "none";
-                containerAnalise.style.display = "none";
-                containerDadosAnalise.style.display = "none";
-                containerDadosReparo.style.display = "none";
-                containerReparo.style.display = "none";
+        ocultarTodosOsSetores();
 
-            }
-        });
-        btnReparo.addEventListener("click", function(){
-            if(containerReparo.style.display === "none" && containerDadosReparo.style.display === "none"){
-                containerRecebimento.style.display = "none";
-                containerDadosRecebimento.style.display = "none";
-                containerAnalise.style.display = "none";
-                containerDadosAnalise.style.display = "none";
-                containerDadosReparo.style.display = "block";
-                containerReparo.style.display = "block";
+        if (!estaVisivel) {
+            destacarBotaoAtivo(botao);
+            containers.forEach(c => {
+                if (c) c.style.display = "block";
+            });
+            onAtivar();
+        }
+    });
+});
 
-                const dataInicio = document.getElementById("data_inicial").value || "";
-                const dataFim = document.getElementById("data_final").value || "";
-                carregarProdutividadeReparo(dataInicio, dataFim);
-            } else {
-                containerRecebimento.style.display = "none";
-                containerDadosRecebimento.style.display = "none";
-                containerAnalise.style.display = "none";
-                containerDadosAnalise.style.display = "none";
-                containerDadosReparo.style.display = "none";
-                containerReparo.style.display = "none";
+// 🔁 Estiliza botão ativo
+function destacarBotaoAtivo(botaoClicado) {
+    setores.forEach(({ botao }) => botao?.classList.remove("setor-ativo"));
+    botaoClicado.classList.add("setor-ativo");
+}
 
-            }
-        });
+// 🔁 Exibição da área administrativa
+document.getElementById("admin")?.addEventListener("click", function () {
+    const adminDiv = document.getElementById("area-administrativa");
+    if (adminDiv) {
+        const visivel = adminDiv.style.display === "block";
+        adminDiv.style.display = visivel ? "none" : "block";
+    }
+});
+
+
+      
 
         /*Estruturação para abrir e esconder os graficos*/
       
-    /*Area do recebimento*/
-    const containerQuantidadeRecebimentoSemanal = document.getElementById("graficoQuantidadeSemanal"); 
-    const containerQuantidadeRecebimentoMensal = document.getElementById("graficoQuantidadeMensal");     
-    const containerTempoMedioAnalise = document.getElementById("tempoMedioAnalise"); 
-    const containerRecebimentoSetor = document.getElementById("recebimentosSetor"); 
-    const containerRecebimentoOperador = document.getElementById("recebimentosOperador"); 
-    const containerOperacaoOrigemDestino = document.getElementById("operacoesOrigemDestino"); 
-    const containerTaxaRejeicao = document.getElementById("taxaRejeicao"); 
-    const containerTempoOperacoes = document.getElementById("tempoOperacoes"); 
-    const containerTopEmpresas = document.getElementById("topEmpresas"); 
-    const containerRecebimentosDia = document.getElementById("recebimentosDia"); 
-    const containerTendenciaMensal = document.getElementById("tendenciaMensal");  
-
-    const linkQuantidadeRecebimento = document.getElementById("quantidade-recebida");
-    const linkTempoMedioAnalise = document.getElementById("tempo-medio");
-    const linkRecebimentoSetor = document.getElementById("recebimento-setor");
-    const linkRecebimentoOperador = document.getElementById("recebimento-operador");
-    const linkOperacaoOrigemDestino = document.getElementById("operacoes-origem-destino");
-    const linkTaxaRejeicao = document.getElementById("taxa-rejeicao");
-    const linkTempoOperacoes = document.getElementById("tempo-operacoes");
-    const linkTopEmpresas = document.getElementById("top-empresas");
-    const linkRecebimentosDia= document.getElementById("recebimento-dia");
-    const linkTendenciaMensal = document.getElementById("tendencia-mensal");
-
-    /* Área de Recebimento - Controle de exibição dos gráficos */
-
-// Quantidade Total
-linkQuantidadeRecebimento.addEventListener("click", function() {
-    if (containerQuantidadeRecebimentoSemanal.style.display === "none" && containerQuantidadeRecebimentoMensal.style.display === "none" ){
-        containerQuantidadeRecebimentoSemanal.style.display = "block";
-        containerQuantidadeRecebimentoMensal.style.display = "block";
-        containerTempoMedioAnalise.style.display = "none";
-        containerRecebimentoSetor.style.display = "none";
-        containerRecebimentoOperador.style.display = "none";
-        containerOperacaoOrigemDestino.style.display = "none";
-        containerTaxaRejeicao.style.display = "none";
-        containerTempoOperacoes.style.display = "none";
-        containerTopEmpresas.style.display = "none";
-        containerRecebimentosDia.style.display = "none";
-        containerTendenciaMensal.style.display = "none";
-
-        const dataInicio = document.getElementById("data_inicial").value || "";
-        const dataFim = document.getElementById("data_final").value || "";
-        carregarQuantidadeRecebidaEGraficos(dataInicio, dataFim);
-    }else{
-        containerQuantidadeRecebimentoSemanal.style.display = "none";
-        containerQuantidadeRecebimentoMensal.style.display = "none";
-        containerTempoMedioAnalise.style.display = "none";
-        containerRecebimentoSetor.style.display = "none";
-        containerRecebimentoOperador.style.display = "none";
-        containerOperacaoOrigemDestino.style.display = "none";
-        containerTaxaRejeicao.style.display = "none";
-        containerTempoOperacoes.style.display = "none";
-        containerTopEmpresas.style.display = "none";
-        containerRecebimentosDia.style.display = "none";
-        containerTendenciaMensal.style.display = "none";
+  // 🔁 Mapeamento de links, containers e funções de carregamento
+  //Recebimento
+const graficosRecebimento = [
+    {
+        linkId: "quantidade-recebida",
+        containerIds: ["graficoQuantidadeSemanal", "graficoQuantidadeMensal"],
+        funcao: carregarQuantidadeRecebidaEGraficos
+    },
+    {
+        linkId: "tempo-medio",
+        containerIds: ["tempoMedioAnalise"],
+        funcao: carregarGraficoTempoMedio
+    },
+    {
+        linkId: "recebimento-setor",
+        containerIds: ["recebimentosSetor"],
+        funcao: carregarGraficoSetor
+    },
+    {
+        linkId: "operacoes-origem-destino",
+        containerIds: ["operacoesOrigemDestino"],
+        funcao: carregarGraficoOperacoes
+    },
+    {
+        linkId: "tempo-operacoes",
+        containerIds: ["tempoOperacoes"],
+        funcao: carregarGraficoTempoOperacoes
+    },
+    {
+        linkId: "top-empresas",
+        containerIds: ["topEmpresas"],
+        funcao: carregarGraficoEmpresas
+    },
+    {
+        linkId: "tendencia-mensal",
+        containerIds: ["tendenciaMensal"],
+        funcao: carregarGraficoTendenciaMensal
     }
-});
-linkTempoMedioAnalise.addEventListener("click", function() {
-    if (containerTempoMedioAnalise.style.display === "none") {
-        containerQuantidadeRecebimentoSemanal.style.display = "none";
-        containerQuantidadeRecebimentoMensal.style.display = "none";
-        containerTempoMedioAnalise.style.display = "block";
-        containerRecebimentoSetor.style.display = "none";
-        containerRecebimentoOperador.style.display = "none";
-        containerOperacaoOrigemDestino.style.display = "none";
-        containerTaxaRejeicao.style.display = "none";
-        containerTempoOperacoes.style.display = "none";
-        containerTopEmpresas.style.display = "none";
-        containerRecebimentosDia.style.display = "none";
-        containerTendenciaMensal.style.display = "none";
+];
 
-        const dataInicio = document.getElementById("data_inicial").value || "";
-        const dataFim = document.getElementById("data_final").value || "";
-        carregarGraficoTempoMedio(dataInicio, dataFim);
-    }else{
-        containerQuantidadeRecebimentoSemanal.style.display = "none";
-        containerQuantidadeRecebimentoMensal.style.display = "none";
-        containerTempoMedioAnalise.style.display = "none";
-        containerRecebimentoSetor.style.display = "none";
-        containerRecebimentoOperador.style.display = "none";
-        containerOperacaoOrigemDestino.style.display = "none";
-        containerTaxaRejeicao.style.display = "none";
-        containerTempoOperacoes.style.display = "none";
-        containerTopEmpresas.style.display = "none";
-        containerRecebimentosDia.style.display = "none";
-        containerTendenciaMensal.style.display = "none";
-    }
-});
-linkRecebimentoSetor.addEventListener("click", function() {
-    if (containerRecebimentoSetor.style.display === "none") {
-        containerQuantidadeRecebimentoSemanal.style.display = "none";
-        containerQuantidadeRecebimentoMensal.style.display = "none";
-        containerTempoMedioAnalise.style.display = "none";
-        containerRecebimentoSetor.style.display = "block";
-        containerRecebimentoOperador.style.display = "none";
-        containerOperacaoOrigemDestino.style.display = "none";
-        containerTaxaRejeicao.style.display = "none";
-        containerTempoOperacoes.style.display = "none";
-        containerTopEmpresas.style.display = "none";
-        containerRecebimentosDia.style.display = "none";
-        containerTendenciaMensal.style.display = "none";
+// 🔁 Coleta containers únicos
+const todosContainers = [...new Set(graficosRecebimento.flatMap(g => g.containerIds))]
+    .map(id => document.getElementById(id))
+    .filter(Boolean);
 
-        const dataInicio = document.getElementById("data_inicial").value || "";
-        const dataFim = document.getElementById("data_final").value || "";
-        carregarGraficoSetor(dataInicio, dataFim);
-    }else{
-        containerQuantidadeRecebimentoSemanal.style.display = "none";
-        containerQuantidadeRecebimentoMensal.style.display = "none";
-        containerTempoMedioAnalise.style.display = "none";
-        containerRecebimentoSetor.style.display = "none";
-        containerRecebimentoOperador.style.display = "none";
-        containerOperacaoOrigemDestino.style.display = "none";
-        containerTaxaRejeicao.style.display = "none";
-        containerTempoOperacoes.style.display = "none";
-        containerTopEmpresas.style.display = "none";
-        containerRecebimentosDia.style.display = "none";
-        containerTendenciaMensal.style.display = "none";
-    }
-});
-linkRecebimentoOperador.addEventListener("click", function() {
-    if (containerRecebimentoOperador.style.display === "none") {
-        containerQuantidadeRecebimentoSemanal.style.display = "none";
-        containerQuantidadeRecebimentoMensal.style.display = "none";
-        containerTempoMedioAnalise.style.display = "none";
-        containerRecebimentoSetor.style.display = "none";
-        containerRecebimentoOperador.style.display = "block";
-        containerOperacaoOrigemDestino.style.display = "none";
-        containerTaxaRejeicao.style.display = "none";
-        containerTempoOperacoes.style.display = "none";
-        containerTopEmpresas.style.display = "none";
-        containerRecebimentosDia.style.display = "none";
-        containerTendenciaMensal.style.display = "none";
+// 🔁 Destaque visual do botão ativo
+function destacarBotaoGraficoAtivoRecebimento(botaoClicado) {
+    graficosRecebimento.forEach(g => {
+        const link = document.getElementById(g.linkId);
+        link?.classList.remove('grafico-ativo');
+    });
+    botaoClicado.classList.add('grafico-ativo');
+}
 
-        const dataInicio = document.getElementById("data_inicial").value || "";
-        const dataFim = document.getElementById("data_final").value || "";
-        carregarGraficoOperador(dataInicio, dataFim);
-    }else{
-        containerQuantidadeRecebimentoSemanal.style.display = "none";
-        containerQuantidadeRecebimentoMensal.style.display = "none";
-        containerTempoMedioAnalise.style.display = "none";
-        containerRecebimentoSetor.style.display = "none";
-        containerRecebimentoOperador.style.display = "none";
-        containerOperacaoOrigemDestino.style.display = "none";
-        containerTaxaRejeicao.style.display = "none";
-        containerTempoOperacoes.style.display = "none";
-        containerTopEmpresas.style.display = "none";
-        containerRecebimentosDia.style.display = "none";
-        containerTendenciaMensal.style.display = "none";
-    }
-});
-linkOperacaoOrigemDestino.addEventListener("click", function() {
-    if (containerOperacaoOrigemDestino.style.display === "none") {
-        containerQuantidadeRecebimentoSemanal.style.display = "none";
-        containerQuantidadeRecebimentoMensal.style.display = "none";
-        containerTempoMedioAnalise.style.display = "none";
-        containerRecebimentoSetor.style.display = "none";
-        containerRecebimentoOperador.style.display = "none";
-        containerOperacaoOrigemDestino.style.display = "block";
-        containerTaxaRejeicao.style.display = "none";
-        containerTempoOperacoes.style.display = "none";
-        containerTopEmpresas.style.display = "none";
-        containerRecebimentosDia.style.display = "none";
-        containerTendenciaMensal.style.display = "none";
+// 🔁 Função para ocultar todos os containers
+function ocultarTodosOsContainers() {
+    todosContainers.forEach(container => {
+        container.style.display = "none";
+    });
+}
 
-        const dataInicio = document.getElementById("data_inicial").value || "";
-        const dataFim = document.getElementById("data_final").value || "";
-        carregarGraficoOperacoes(dataInicio, dataFim);
-    }else{
-        containerQuantidadeRecebimentoSemanal.style.display = "none";
-        containerQuantidadeRecebimentoMensal.style.display = "none";
-        containerTempoMedioAnalise.style.display = "none";
-        containerRecebimentoSetor.style.display = "none";
-        containerRecebimentoOperador.style.display = "none";
-        containerOperacaoOrigemDestino.style.display = "none";
-        containerTaxaRejeicao.style.display = "none";
-        containerTempoOperacoes.style.display = "none";
-        containerTopEmpresas.style.display = "none";
-        containerRecebimentosDia.style.display = "none";
-        containerTendenciaMensal.style.display = "none";
-    }
-});
-linkTaxaRejeicao.addEventListener("click", function() {
-    if (containerTaxaRejeicao.style.display === "none") {
-        containerQuantidadeRecebimentoSemanal.style.display = "none";
-        containerQuantidadeRecebimentoMensal.style.display = "none";
-        containerTempoMedioAnalise.style.display = "none";
-        containerRecebimentoSetor.style.display = "none";
-        containerRecebimentoOperador.style.display = "none";
-        containerOperacaoOrigemDestino.style.display = "none";
-        containerTaxaRejeicao.style.display = "block";
-        containerTempoOperacoes.style.display = "none";
-        containerTopEmpresas.style.display = "none";
-        containerRecebimentosDia.style.display = "none";
-        containerTendenciaMensal.style.display = "none";
+// 🔁 Obter filtros comuns
+function obterFiltros() {
+    return {
+        dataInicio: document.getElementById("data_inicial").value || "",
+        dataFim: document.getElementById("data_final").value || "",
+        operador: document.getElementById("operador").value || ""
+    };
+}
 
-        const dataInicio = document.getElementById("data_inicial").value || "";
-        const dataFim = document.getElementById("data_final").value || "";
-        carregarGraficoRejeicao(dataInicio, dataFim);
-    }else{
-        containerQuantidadeRecebimentoSemanal.style.display = "none";
-        containerQuantidadeRecebimentoMensal.style.display = "none";
-        containerTempoMedioAnalise.style.display = "none";
-        containerRecebimentoSetor.style.display = "none";
-        containerRecebimentoOperador.style.display = "none";
-        containerOperacaoOrigemDestino.style.display = "none";
-        containerTaxaRejeicao.style.display = "none";
-        containerTempoOperacoes.style.display = "none";
-        containerTopEmpresas.style.display = "none";
-        containerRecebimentosDia.style.display = "none";
-        containerTendenciaMensal.style.display = "none";
-    }
-});
-linkTempoOperacoes.addEventListener("click", function() {
-    if (containerTempoOperacoes.style.display === "none") {
-        containerQuantidadeRecebimentoSemanal.style.display = "none";
-        containerQuantidadeRecebimentoMensal.style.display = "none";
-        containerTempoMedioAnalise.style.display = "none";
-        containerRecebimentoSetor.style.display = "none";
-        containerRecebimentoOperador.style.display = "none";
-        containerOperacaoOrigemDestino.style.display = "none";
-        containerTaxaRejeicao.style.display = "none";
-        containerTempoOperacoes.style.display = "block";
-        containerTopEmpresas.style.display = "none";
-        containerRecebimentosDia.style.display = "none";
-        containerTendenciaMensal.style.display = "none";
+// 🔁 Inicializa os eventos
+graficosRecebimento.forEach(({ linkId, containerIds, funcao }) => {
+    const link = document.getElementById(linkId);
 
-        const dataInicio = document.getElementById("data_inicial").value || "";
-        const dataFim = document.getElementById("data_final").value || "";
-        carregarGraficoTempoOperacoes(dataInicio, dataFim);
-    }else{
-        containerQuantidadeRecebimentoSemanal.style.display = "none";
-        containerQuantidadeRecebimentoMensal.style.display = "none";
-        containerTempoMedioAnalise.style.display = "none";
-        containerRecebimentoSetor.style.display = "none";
-        containerRecebimentoOperador.style.display = "none";
-        containerOperacaoOrigemDestino.style.display = "none";
-        containerTaxaRejeicao.style.display = "none";
-        containerTempoOperacoes.style.display = "none";
-        containerTopEmpresas.style.display = "none";
-        containerRecebimentosDia.style.display = "none";
-        containerTendenciaMensal.style.display = "none";
-    }
-});
-linkTopEmpresas.addEventListener("click", function() {
-    if (containerTopEmpresas.style.display === "none") {
-        containerQuantidadeRecebimentoSemanal.style.display = "none";
-        containerQuantidadeRecebimentoMensal.style.display = "none";
-        containerTempoMedioAnalise.style.display = "none";
-        containerRecebimentoSetor.style.display = "none";
-        containerRecebimentoOperador.style.display = "none";
-        containerOperacaoOrigemDestino.style.display = "none";
-        containerTaxaRejeicao.style.display = "none";
-        containerTempoOperacoes.style.display = "none";
-        containerTopEmpresas.style.display = "block";
-        containerRecebimentosDia.style.display = "none";
-        containerTendenciaMensal.style.display = "none";
+    link?.addEventListener("click", function () {
+        const primeiroContainer = document.getElementById(containerIds[0]);
+        const visivel = primeiroContainer?.style.display === "block";
 
-        const dataInicio = document.getElementById("data_inicial").value || "";
-        const dataFim = document.getElementById("data_final").value || "";
-        carregarGraficoEmpresas(dataInicio, dataFim);
-    }else{
-        containerQuantidadeRecebimentoSemanal.style.display = "none";
-        containerQuantidadeRecebimentoMensal.style.display = "none";
-        containerTempoMedioAnalise.style.display = "none";
-        containerRecebimentoSetor.style.display = "none";
-        containerRecebimentoOperador.style.display = "none";
-        containerOperacaoOrigemDestino.style.display = "none";
-        containerTaxaRejeicao.style.display = "none";
-        containerTempoOperacoes.style.display = "none";
-        containerTopEmpresas.style.display = "none";
-        containerRecebimentosDia.style.display = "none";
-        containerTendenciaMensal.style.display = "none";
-    }
-});
-linkRecebimentosDia.addEventListener("click", function() {
-    if (containerRecebimentosDia.style.display === "none") {
-        containerQuantidadeRecebimentoSemanal.style.display = "none";
-        containerQuantidadeRecebimentoMensal.style.display = "none";
-        containerTempoMedioAnalise.style.display = "none";
-        containerRecebimentoSetor.style.display = "none";
-        containerRecebimentoOperador.style.display = "none";
-        containerOperacaoOrigemDestino.style.display = "none";
-        containerTaxaRejeicao.style.display = "none";
-        containerTempoOperacoes.style.display = "none";
-        containerTopEmpresas.style.display = "none";
-        containerRecebimentosDia.style.display = "block";
-        containerTendenciaMensal.style.display = "none";
+        // Oculta todos
+        ocultarTodosOsContainers();
 
-        const dataInicio = document.getElementById("data_inicial").value || "";
-        const dataFim = document.getElementById("data_final").value || "";
-        carregarGraficoDiaSemana(dataInicio, dataFim);
-    }else{
-        containerQuantidadeRecebimentoSemanal.style.display = "none";
-        containerQuantidadeRecebimentoMensal.style.display = "none";
-        containerTempoMedioAnalise.style.display = "none";
-        containerRecebimentoSetor.style.display = "none";
-        containerRecebimentoOperador.style.display = "none";
-        containerOperacaoOrigemDestino.style.display = "none";
-        containerTaxaRejeicao.style.display = "none";
-        containerTempoOperacoes.style.display = "none";
-        containerTopEmpresas.style.display = "none";
-        containerRecebimentosDia.style.display = "none";
-        containerTendenciaMensal.style.display = "none";
-    }
-});
-linkTendenciaMensal.addEventListener("click", function() {
-    if (containerTendenciaMensal.style.display === "none") {
-        containerQuantidadeRecebimentoSemanal.style.display = "none";
-        containerQuantidadeRecebimentoMensal.style.display = "none";
-        containerTempoMedioAnalise.style.display = "none";
-        containerRecebimentoSetor.style.display = "none";
-        containerRecebimentoOperador.style.display = "none";
-        containerOperacaoOrigemDestino.style.display = "none";
-        containerTaxaRejeicao.style.display = "none";
-        containerTempoOperacoes.style.display = "none";
-        containerTopEmpresas.style.display = "none";
-        containerRecebimentosDia.style.display = "none";
-        containerTendenciaMensal.style.display = "block";
+        if (!visivel) {
+            destacarBotaoGraficoAtivoRecebimento(this);
 
-        const dataInicio = document.getElementById("data_inicial").value || "";
-        const dataFim = document.getElementById("data_final").value || "";
-        carregarGraficoTendenciaMensal(dataInicio, dataFim);
-    }else{
-        containerQuantidadeRecebimentoSemanal.style.display = "none";
-        containerQuantidadeRecebimentoMensal.style.display = "none";
-        containerTempoMedioAnalise.style.display = "none";
-        containerRecebimentoSetor.style.display = "none";
-        containerRecebimentoOperador.style.display = "none";
-        containerOperacaoOrigemDestino.style.display = "none";
-        containerTaxaRejeicao.style.display = "none";
-        containerTempoOperacoes.style.display = "none";
-        containerTopEmpresas.style.display = "none";
-        containerRecebimentosDia.style.display = "none";
-        containerTendenciaMensal.style.display = "none";
-    }
+            // Exibe os containers definidos
+            containerIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = "block";
+            });
+
+            // Executa a função de carregamento
+            const { dataInicio, dataFim, operador } = obterFiltros();
+            funcao(dataInicio, dataFim, operador);
+        }
+    });
 });
 
-     /*Area da analise*/
-    const containerQuantidadeFinalisadaSemanal = document.getElementById("graficoQuantidadeFinalisadaSemanal");
-    const containerQuantidadeFinalisadaMensal = document.getElementById("graficoQuantidadeFinalisadaMensal");
-    const containerQuantidadeReparadaOperador = document.getElementById("graficoQuantidadeReparadaOperador");
-    const containerTicketMedio = document.getElementById("graficoTicketContainer");
-    const containerTempoOrcamento = document.getElementById("graficoTempoOrcamentoContainer");
-    const containerVolumeAnalise = document.getElementById("graficoVolumeAnalisesContainer");
-    const containerTempoMedio = document.getElementById("graficoTempoMedioAnaliseContainer");
-    const containerParcialCompleta = document.getElementById("graficoParcialCompletaContainer");
-    const containerAnalisesCliente = document.getElementById("graficoAnalisesClienteContainer");
 
-    const linkQuantidadeAnalise = document.getElementById("equipamentos_finalizados");
-    const linkFinanceiro = document.getElementById("financeiro");
-    const linkTempoOrcamento = document.getElementById("tempo_orcamento");
-    const linkVolumeAnalise = document.getElementById("volume_analises");
-    const linkTempoMedio = document.getElementById("tempo_medio_analise");
-    const linkParcialCompleta = document.getElementById("parcial_vs_completa");
-    const linkAnalisesCliente = document.getElementById("analises_por_cliente");
+// 🔁 Mapeamento de links, containers e funções de carregamento (ANÁLISE)
+const graficosAnalise = [
+    {
+        linkId: "equipamentos_finalizados",
+        containerIds: ["graficoQuantidadeFinalisadaSemanal", "graficoQuantidadeFinalisadaMensal"],
+        funcao: carregarProdutividadeAnalise
+    },
+    // {
+    //     linkId: "financeiro",
+    //     containerIds: ["graficoTicketContainer"],
+    //     funcao: carregarTicketMedio
+    // },
+    {
+        linkId: "tempo_medio_analise",
+        containerIds: ["graficoTempoMedioAnaliseContainer"],
+        funcao: carregarTempoMedioAnalise
+    },
+    {
+        linkId: "parcial_vs_completa",
+        containerIds: ["graficoParcialCompletaContainer"],
+        funcao: carregarParcialCompleta
+    },
+    {
+        linkId: "analises_por_cliente",
+        containerIds: ["graficoAnalisesClienteContainer"],
+        funcao: carregarAnalisesPorCliente
+    }
+];
 
-    linkQuantidadeAnalise.addEventListener("click", function() {
-    console.log("Clicou em Equipamentos Finalizados");
-       if (containerQuantidadeFinalisadaSemanal.style.display === "none" && containerQuantidadeFinalisadaMensal.style.display === "none") {
-           console.log("Mostrando gráficos");
-           containerQuantidadeFinalisadaSemanal.style.display = "block";
-           containerQuantidadeFinalisadaMensal.style.display = "block";
-           containerTicketMedio.style.display = "none";
-           containerTempoOrcamento.style.display = "none";
-           containerVolumeAnalise.style.display = "none";
-           containerTempoMedio.style.display = "none";
-           containerParcialCompleta.style.display = "none";
-           containerAnalisesCliente.style.display = "none";
-           const dataInicio = document.getElementById("data_inicial").value || "";
-           const dataFim = document.getElementById("data_final").value || "";
-           carregarProdutividadeAnalise(dataInicio, dataFim);
+// 🔁 Coleta todos os containers únicos usados nos gráficos de análise
+const todosContainersAnalise = [...new Set(graficosAnalise.flatMap(g => g.containerIds))]
+    .map(id => document.getElementById(id))
+    .filter(Boolean);
 
-        } else {
-           console.log("Escondendo gráficos");
-           containerQuantidadeFinalisadaSemanal.style.display = "none";
-           containerQuantidadeFinalisadaMensal.style.display = "none";
-           containerTicketMedio.style.display = "none";
-           containerTempoOrcamento.style.display = "none";
-           containerVolumeAnalise.style.display = "none";
-           containerTempoMedio.style.display = "none";
-           containerParcialCompleta.style.display = "none";
-           containerAnalisesCliente.style.display = "none";
+// 🔁 Destaque visual do botão ativo
+function destacarBotaoGraficoAtivoAnalise(botaoClicado) {
+    graficosAnalise.forEach(g => {
+        const link = document.getElementById(g.linkId);
+        link?.classList.remove("grafico-ativo");
+    });
+    botaoClicado.classList.add("grafico-ativo");
+}
 
+// 🔁 Oculta todos os containers da área de Análise
+function ocultarTodosOsContainersAnalise() {
+    todosContainersAnalise.forEach(container => {
+        container.style.display = "none";
+    });
+}
+
+// 🔁 Obtem filtros
+function obterFiltrosAnalise() {
+    return {
+        dataInicio: document.getElementById("data_inicial").value || "",
+        dataFim: document.getElementById("data_final").value || "",
+        operador: document.getElementById("operador").value || ""
+    };
+}
+
+// 🔁 Inicializa os eventos para a área de Análise
+graficosAnalise.forEach(({ linkId, containerIds, funcao }) => {
+    const link = document.getElementById(linkId);
+    if (!link) return;
+
+    link.addEventListener("click", function () {
+        const primeiroContainer = document.getElementById(containerIds[0]);
+        const estaVisivel = primeiroContainer?.style.display === "block";
+
+        // Oculta todos
+        ocultarTodosOsContainersAnalise();
+
+        if (!estaVisivel) {
+            destacarBotaoGraficoAtivoAnalise(this);
+
+            // Exibe os containers definidos
+            containerIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = "block";
+            });
+
+            // Executa função com os filtros
+            const { dataInicio, dataFim, operador } = obterFiltrosAnalise();
+            funcao(dataInicio, dataFim, operador);
         }
     });
-    linkFinanceiro.addEventListener("click", function() {
-    console.log("Clicou em Equipamentos Finalizados");
-       if (containerTicketMedio.style.display === "none") {
-           console.log("Mostrando gráficos");
-           containerQuantidadeFinalisadaSemanal.style.display = "none";
-           containerQuantidadeFinalisadaMensal.style.display = "none";
-           containerTicketMedio.style.display = "block";
-           containerTempoOrcamento.style.display = "none";
-           containerVolumeAnalise.style.display = "none";
-           containerTempoMedio.style.display = "none";
-           containerParcialCompleta.style.display = "none";
-           containerAnalisesCliente.style.display = "none";
+});
 
-           const dataInicio = document.getElementById("data_inicial").value || "";
-           const dataFim = document.getElementById("data_final").value || "";
-           carregarTicketMedio(dataInicio, dataFim);
-        } else {
-           console.log("Escondendo gráficos");
-           containerQuantidadeFinalisadaSemanal.style.display = "none";
-           containerQuantidadeFinalisadaMensal.style.display = "none";
-           containerTicketMedio.style.display = "none";
-           containerTempoOrcamento.style.display = "none";
-           containerVolumeAnalise.style.display = "none";
-           containerTempoMedio.style.display = "none";
-           containerParcialCompleta.style.display = "none";
-           containerAnalisesCliente.style.display = "none";
 
+// 🔁 Mapeamento de links, containers e funções de carregamento (REPARO)
+const graficosReparo = [
+    {
+        linkId: "quantidade_reparados",
+        containerIds: ["graficoQuantidadeReparadaSemanal", "graficoQuantidadeReparadaMensal"],
+        funcao: carregarProdutividadeReparo
+    },
+    {
+        linkId: "tempoMedioReparoOperador",
+        containerIds: ["graficoTempoReparoOperador"],
+        funcao: carregarTempoReparoOperador
+    },
+    {
+        linkId: "reparoPorCliente",
+        containerIds: ["graficoTotalReparoCliente"],
+        funcao: carregarReparosPorCliente
+    },
+    {
+        linkId: "custoTotalReparos",
+        containerIds: ["graficoCustoTotal"],
+        funcao: carregarCustoTotalPorProduto
+    },
+    {
+        linkId: "custoMedioReparo",
+        containerIds: ["graficoCustoMedio"],
+        funcao: carregarCustoMedioPorProduto
+    },
+    {
+        linkId: "maiorCustoAcumulado",
+        containerIds: ["containerMaiorCustoProduto"],
+        funcao: carregarProdutosMaiorCusto
+    }
+    // Para ativar futuramente:
+    // {
+    //     linkId: "tempoMedioSolicitacaoNf",
+    //     containerIds: ["graficoTempoSolicitacaoNf"],
+    //     funcao: carregarTempoSolicitacaoNF
+    // },
+    // {
+    //     linkId: "quantidadeProdutoRemessa",
+    //     containerIds: ["graficoPorProduto"],
+    //     funcao: carregarProdutosMaisReparados
+    // },
+    // {
+    //     linkId: "principaisServiços",
+    //     containerIds: ["graficoServicosExecutados"],
+    //     funcao: carregarServicosExecutados
+    // }
+];
+
+// 🔁 Coleta todos os containers únicos
+const todosContainersReparo = [...new Set(graficosReparo.flatMap(g => g.containerIds))]
+    .map(id => document.getElementById(id))
+    .filter(Boolean);
+
+// 🔁 Função para destacar o botão ativo
+function destacarBotaoGraficoAtivoReparo(botaoClicado) {
+    graficosReparo.forEach(g => {
+        const link = document.getElementById(g.linkId);
+        link?.classList.remove("grafico-ativo");
+    });
+    botaoClicado.classList.add("grafico-ativo");
+}
+
+// 🔁 Função para esconder todos os gráficos
+function ocultarTodosOsContainersReparo() {
+    todosContainersReparo.forEach(container => {
+        container.style.display = "none";
+    });
+}
+
+// 🔁 Função para obter filtros
+function obterFiltrosReparo() {
+    return {
+        dataInicio: document.getElementById("data_inicial").value || "",
+        dataFim: document.getElementById("data_final").value || "",
+        operador: document.getElementById("operador").value || ""
+    };
+}
+
+// 🔁 Inicializa os eventos para o setor de Reparo
+graficosReparo.forEach(({ linkId, containerIds, funcao }) => {
+    const link = document.getElementById(linkId);
+    if (!link) return;
+
+    link.addEventListener("click", function () {
+        const primeiroContainer = document.getElementById(containerIds[0]);
+        const estaVisivel = primeiroContainer?.style.display === "block";
+
+        ocultarTodosOsContainersReparo();
+
+        if (!estaVisivel) {
+            destacarBotaoGraficoAtivoReparo(this);
+            containerIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = "block";
+            });
+
+            const { dataInicio, dataFim, operador } = obterFiltrosReparo();
+            funcao(dataInicio, dataFim, operador);
         }
     });
-    linkTempoOrcamento.addEventListener("click", function() {
-    console.log("Clicou em Equipamentos Finalizados");
-       if (containerTempoOrcamento.style.display === "none") {
-           console.log("Mostrando gráficos");
-           containerQuantidadeFinalisadaSemanal.style.display = "none";
-           containerQuantidadeFinalisadaMensal.style.display = "none";
-           containerTicketMedio.style.display = "none";
-           containerTempoOrcamento.style.display = "block";
-           containerVolumeAnalise.style.display = "none";
-           containerTempoMedio.style.display = "none";
-           containerParcialCompleta.style.display = "none";
-           containerAnalisesCliente.style.display = "none";
+});
 
-           const dataInicio = document.getElementById("data_inicial").value || "";
-           const dataFim = document.getElementById("data_final").value || "";
-           carregarTempoOrcamento(dataInicio, dataFim);
-        } else {
-           console.log("Escondendo gráficos");
-           containerQuantidadeFinalisadaSemanal.style.display = "none";
-           containerQuantidadeFinalisadaMensal.style.display = "none";
-           containerTicketMedio.style.display = "none";
-           containerTempoOrcamento.style.display = "none";
-           containerVolumeAnalise.style.display = "none";
-           containerTempoMedio.style.display = "none";
-           containerParcialCompleta.style.display = "none";
-           containerAnalisesCliente.style.display = "none";
+// 🔁 Mapeamento de links, containers e funções de carregamento (Qualidade)
+const graficosQualidade = [
+    {
+        linkId: "quantidade_equipamentos",
+        containerIds: ["graficoquantidadeequipamentos"],
+        funcao: carregarquantidadeEquip
+    },
+    {
+        linkId: "principais_servicos",
+        containerIds: ["graficoprincipaisservicos"],
+        funcao: carregarPrincipaisServicos
+    },
+    {
+        linkId: "principais_laudos",
+        containerIds: ["graficoprincipaislaudos"],
+        funcao: carregarPrincipaisLaudos
+    }
+];
 
+// 🔁 Coleta todos os containers únicos do setor Qualidade
+const todosContainersQualidade = [...new Set(graficosQualidade.flatMap(g => g.containerIds))]
+    .map(id => document.getElementById(id))
+    .filter(Boolean);
+
+// 🔁 Função para destacar o botão ativo no setor Qualidade
+function destacarBotaoGraficoAtivoQualidade(botaoClicado) {
+    graficosQualidade.forEach(g => {
+        const link = document.getElementById(g.linkId);
+        link?.classList.remove("grafico-ativo");
+    });
+    botaoClicado.classList.add("grafico-ativo");
+}
+
+// 🔁 Função para esconder todos os containers do setor Qualidade
+function ocultarTodosOsContainersQualidade() {
+    todosContainersQualidade.forEach(container => {
+        container.style.display = "none";
+    });
+}
+
+// 🔁 Função para obter filtros globais
+function obterFiltrosQualidade() {
+    return {
+        dataInicio: document.getElementById("data_inicial").value || "",
+        dataFim: document.getElementById("data_final").value || "",
+        operador: document.getElementById("operador").value || ""
+    };
+}
+
+// 🔁 Inicializa os eventos do setor de Qualidade
+graficosQualidade.forEach(({ linkId, containerIds, funcao }) => {
+    const link = document.getElementById(linkId);
+    if (!link) return;
+
+    link.addEventListener("click", function () {
+        const primeiroContainer = document.getElementById(containerIds[0]);
+        const estaVisivel = primeiroContainer?.style.display === "block";
+
+        ocultarTodosOsContainersQualidade();
+
+        if (!estaVisivel) {
+            destacarBotaoGraficoAtivoQualidade(this);
+            containerIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = "block";
+            });
+
+            const { dataInicio, dataFim, operador } = obterFiltrosQualidade();
+            funcao(dataInicio, dataFim, operador);
         }
     });
-    linkVolumeAnalise.addEventListener("click", function() {
-    console.log("Clicou em Equipamentos Finalizados");
-       if (containerVolumeAnalise.style.display === "none") {
-           console.log("Mostrando gráficos");
-           containerQuantidadeFinalisadaSemanal.style.display = "none";
-           containerQuantidadeFinalisadaMensal.style.display = "none";
-           containerTicketMedio.style.display = "none";
-           containerTempoOrcamento.style.display = "none";
-           containerVolumeAnalise.style.display = "block";
-           containerTempoMedio.style.display = "none";
-           containerParcialCompleta.style.display = "none";
-           containerAnalisesCliente.style.display = "none";
+});
 
-           const dataInicio = document.getElementById("data_inicial").value || "";
-           const dataFim = document.getElementById("data_final").value || "";
-           carregarVolumeAnalises(dataInicio, dataFim);
-        } else {
-           console.log("Escondendo gráficos");
-           containerQuantidadeFinalisadaSemanal.style.display = "none";
-           containerQuantidadeFinalisadaMensal.style.display = "none";
-           containerTicketMedio.style.display = "none";
-           containerTempoOrcamento.style.display = "none";
-           containerVolumeAnalise.style.display = "none";
-           containerTempoMedio.style.display = "none";
-           containerParcialCompleta.style.display = "none";
-           containerAnalisesCliente.style.display = "none";
+function atualizarStatusOperadores() {
+    fetch('/sistema/KPI_2.0/DashBoard/backendDash/ADMIN/admin.php')
+        .then(res => res.json())
+        .then(data => {
+            data.forEach((item, index) => {
+                const box = document.getElementById(`operador${index + 1}`);
+                if (!box) return;
 
-        }
+                const statusSpan = box.querySelector('.status');
+                const tempoSpan = box.querySelector('.tempo span');
+                const setorSpan = box.querySelector('.setor span');
+                const clienteSpan = box.querySelector('.cliente span');
+                const qtdSpan = box.querySelector('.quantidade span');
+
+                statusSpan.textContent = item.status;
+                tempoSpan.textContent = item.tempo;
+                setorSpan.textContent = item.setor || '--';
+                clienteSpan.textContent = item.razao_social || '--';
+                qtdSpan.textContent = item.quantidade || '--';
+
+                // Adiciona cor com base no status
+                const statusClass = 'status-' + item.status.toLowerCase().replace(/\s+/g, '_');
+                statusSpan.className = `status ${statusClass}`;
+            });
+        });
+}
+
+// Atualiza a cada 10 segundos
+atualizarStatusOperadores();
+setInterval(atualizarStatusOperadores, 10000);
+
+document.querySelectorAll('.btn-relatorio').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const operador = btn.dataset.operador;
+        const url = `/sistema/KPI_2.0/DashBoard/backendDash/ADMIN/${operador}.php`;
+        window.open(url, '_blank');
     });
-    linkTempoMedio.addEventListener("click", function() {
-    console.log("Clicou em Equipamentos Finalizados");
-       if (containerTempoMedio.style.display === "none") {
-           console.log("Mostrando gráficos");
-           containerQuantidadeFinalisadaSemanal.style.display = "none";
-           containerQuantidadeFinalisadaMensal.style.display = "none";
-           containerTicketMedio.style.display = "none";
-           containerTempoOrcamento.style.display = "none";
-           containerVolumeAnalise.style.display = "none";
-           containerTempoMedio.style.display = "block";
-           containerParcialCompleta.style.display = "none";
-           containerAnalisesCliente.style.display = "none";
+});
 
-           const dataInicio = document.getElementById("data_inicial").value || "";
-           const dataFim = document.getElementById("data_final").value || "";
-           carregarTempoMedioAnalise(dataInicio, dataFim);
-        } else {
-           console.log("Escondendo gráficos");
-           containerQuantidadeFinalisadaSemanal.style.display = "none";
-           containerQuantidadeFinalisadaMensal.style.display = "none";
-           containerTicketMedio.style.display = "none";
-           containerTempoOrcamento.style.display = "none";
-           containerVolumeAnalise.style.display = "none";
-           containerTempoMedio.style.display = "none";
-           containerParcialCompleta.style.display = "none";
-           containerAnalisesCliente.style.display = "none";
-
-        }
-    });
-    linkParcialCompleta.addEventListener("click", function() {
-    console.log("Clicou em Equipamentos Finalizados");
-       if (containerParcialCompleta.style.display === "none") {
-           console.log("Mostrando gráficos");
-           containerQuantidadeFinalisadaSemanal.style.display = "none";
-           containerQuantidadeFinalisadaMensal.style.display = "none";
-           containerTicketMedio.style.display = "none";
-           containerTempoOrcamento.style.display = "none";
-           containerVolumeAnalise.style.display = "none";
-           containerTempoMedio.style.display = "none";
-           containerParcialCompleta.style.display = "block";
-           containerAnalisesCliente.style.display = "none";
-
-           const dataInicio = document.getElementById("data_inicial").value || "";
-           const dataFim = document.getElementById("data_final").value || "";
-           carregarParcialCompleta(dataInicio, dataFim);
-        } else {
-           console.log("Escondendo gráficos");
-           containerQuantidadeFinalisadaSemanal.style.display = "none";
-           containerQuantidadeFinalisadaMensal.style.display = "none";
-           containerTicketMedio.style.display = "none";
-           containerTempoOrcamento.style.display = "none";
-           containerVolumeAnalise.style.display = "none";
-           containerTempoMedio.style.display = "none";
-           containerParcialCompleta.style.display = "none";
-           containerAnalisesCliente.style.display = "none";
-
-        }
-    });
-    linkAnalisesCliente.addEventListener("click", function() {
-    console.log("Clicou em Equipamentos Finalizados");
-       if (containerAnalisesCliente.style.display === "none") {
-           console.log("Mostrando gráficos");
-           containerQuantidadeFinalisadaSemanal.style.display = "none";
-           containerQuantidadeFinalisadaMensal.style.display = "none";
-           containerTicketMedio.style.display = "none";
-           containerTempoOrcamento.style.display = "none";
-           containerVolumeAnalise.style.display = "none";
-           containerTempoMedio.style.display = "none";
-           containerParcialCompleta.style.display = "none";
-           containerAnalisesCliente.style.display = "block";
-
-           const dataInicio = document.getElementById("data_inicial").value || "";
-           const dataFim = document.getElementById("data_final").value || "";
-           carregarAnalisesPorCliente(dataInicio, dataFim);
-        } else {
-           console.log("Escondendo gráficos");
-           containerQuantidadeFinalisadaSemanal.style.display = "none";
-           containerQuantidadeFinalisadaMensal.style.display = "none";
-           containerTicketMedio.style.display = "none";
-           containerTempoOrcamento.style.display = "none";
-           containerVolumeAnalise.style.display = "none";
-           containerTempoMedio.style.display = "none";
-           containerParcialCompleta.style.display = "none";
-           containerAnalisesCliente.style.display = "none";
-
-        }
-    });
-
-    /*Area do reparo*/
-    const linkQuantidadeReparada = document.getElementById("quantidade_reparados");
-    const linkEquipamentoReparados = document.getElementById("equipamentos_reparados");
-    const linkTemposolicitacaoNF = document.getElementById("tempoMedioSolicitacaoNf");
-    const linkTempoReparoOperador = document.getElementById("tempoMedioReparoOperador");
-    const linkTotalEquipamentoCliente = document.getElementById("reparoPorCliente");
-    const linkQuantidadeProduto = document.getElementById("quantidadeProdutoRemessa");
-    const linkServicosExecutados = document.getElementById("principaisServiços");
-    const linkCustoTotal = document.getElementById("custoTotalReparos");
-    const linkCustoMedio = document.getElementById("custoMedioReparo");
-    const linkMaiorCustoAcumulado = document.getElementById("maiorCustoAcumulado");
-   
-
-    const containerQuantidadeReparadaSemanal = document.getElementById("graficoQuantidadeReparadaSemanal");
-    const containerQuantidadeReparadaMensal = document.getElementById("graficoQuantidadeReparadaMensal");
-    const containerEquipamentosReparados = document.getElementById("graficoQuantidadeReparadaOperador");
-    const containerTemposolicitacaoNF = document.getElementById("graficoTempoSolicitacaoNf");
-    const containerTempoReparoOperador = document.getElementById("graficoTempoReparoOperador");
-    const containerTotalEquipamentoCliente = document.getElementById("graficoTotalReparoCliente");
-    const containerServicosExecutados = document.getElementById("graficoServicosExecutados");
-    const containerQuantidadeProduto = document.getElementById("graficoPorProduto");
-    const containerCustoTotal = document.getElementById("graficoCustoTotal");
-    const containerCustoMedio = document.getElementById("graficoCustoMedio");
-    const containerMaiorCustoAcumulado = document.getElementById("containerMaiorCustoProduto");
-
-    linkQuantidadeReparada.addEventListener("click", function(){
-        if(containerQuantidadeReparadaSemanal.style.display === "none" && containerQuantidadeReparadaMensal.style.display === "none"){
-            containerQuantidadeReparadaSemanal.style.display = "block";
-            containerQuantidadeReparadaMensal.style.display = "block";
-            containerEquipamentosReparados.style.display = "none";
-            containerTemposolicitacaoNF.style.display = "none";
-            containerTempoReparoOperador.style.display = "none";
-            containerTotalEquipamentoCliente.style.display = "none";
-            containerServicosExecutados.style.display = "none";
-            containerQuantidadeProduto.style.display = "none";
-            containerCustoTotal.style.display = "none";
-            containerCustoMedio.style.display = "none";
-            containerMaiorCustoAcumulado.style.display = "none";
-
-            const dataInicio = document.getElementById("data_inicial").value || "";
-            const dataFim = document.getElementById("data_final").value || "";
-            carregarProdutividadeReparo(dataInicio, dataFim);
-            
-        }else{
-            containerQuantidadeReparadaSemanal.style.display = "none";
-            containerQuantidadeReparadaMensal.style.display = "none";
-            containerEquipamentosReparados.style.display = "none";
-            containerTemposolicitacaoNF.style.display = "none";
-            containerTempoReparoOperador.style.display = "none";
-            containerTotalEquipamentoCliente.style.display = "none";
-            containerServicosExecutados.style.display = "none";
-            containerQuantidadeProduto.style.display = "none";
-            containerCustoTotal.style.display = "none";
-            containerCustoMedio.style.display = "none";
-            containerMaiorCustoAcumulado.style.display = "none";
-            
-        }
-    });
-    linkEquipamentoReparados.addEventListener("click", function(){
-        if(containerEquipamentosReparados.style.display === "none"){
-            containerQuantidadeReparadaSemanal.style.display = "none";
-            containerQuantidadeReparadaMensal.style.display = "none";
-            containerEquipamentosReparados.style.display = "block";
-            containerTemposolicitacaoNF.style.display = "none";
-            containerTempoReparoOperador.style.display = "none";
-            containerTotalEquipamentoCliente.style.display = "none";
-            containerServicosExecutados.style.display = "none";
-            containerQuantidadeProduto.style.display = "none";
-            containerCustoTotal.style.display = "none";
-            containerCustoMedio.style.display = "none";
-            containerMaiorCustoAcumulado.style.display = "none";
-            
-
-            const dataInicio = document.getElementById("data_inicial").value || "";
-            const dataFim = document.getElementById("data_final").value || "";
-            carregarEquipamentosPorOperador(dataInicio, dataFim);
-        }else{
-            containerQuantidadeReparadaSemanal.style.display = "none";
-            containerQuantidadeReparadaMensal.style.display = "none";
-            containerEquipamentosReparados.style.display = "none";
-            containerTemposolicitacaoNF.style.display = "none";
-            containerTempoReparoOperador.style.display = "none";
-            containerTotalEquipamentoCliente.style.display = "none";
-            containerServicosExecutados.style.display = "none";
-            containerQuantidadeProduto.style.display = "none";
-            containerCustoTotal.style.display = "none";
-            containerCustoMedio.style.display = "none";
-            containerMaiorCustoAcumulado.style.display = "none";
-            
-        }
-    });
-    linkTemposolicitacaoNF.addEventListener("click", function(){
-        if(containerTemposolicitacaoNF.style.display === "none"){
-            containerQuantidadeReparadaSemanal.style.display = "none";
-            containerQuantidadeReparadaMensal.style.display = "none";
-            containerEquipamentosReparados.style.display = "none";
-            containerTemposolicitacaoNF.style.display = "block";
-            containerTempoReparoOperador.style.display = "none";
-            containerTotalEquipamentoCliente.style.display = "none";
-            containerServicosExecutados.style.display = "none";
-            containerQuantidadeProduto.style.display = "none";
-            containerCustoTotal.style.display = "none";
-            containerCustoMedio.style.display = "none";
-            containerMaiorCustoAcumulado.style.display = "none";
-            
-
-            const dataInicio = document.getElementById("data_inicial").value || "";
-            const dataFim = document.getElementById("data_final").value || "";
-            carregarTempoSolicitacaoNF(dataInicio, dataFim);
-        }else{
-            containerQuantidadeReparadaSemanal.style.display = "none";
-            containerQuantidadeReparadaMensal.style.display = "none";
-            containerEquipamentosReparados.style.display = "none";
-            containerTemposolicitacaoNF.style.display = "none";
-            containerTempoReparoOperador.style.display = "none";
-            containerTotalEquipamentoCliente.style.display = "none";
-            containerServicosExecutados.style.display = "none";
-            containerQuantidadeProduto.style.display = "none";
-            containerCustoTotal.style.display = "none";
-            containerCustoMedio.style.display = "none";
-            containerMaiorCustoAcumulado.style.display = "none";
-            
-        }
-    });
-    linkTempoReparoOperador.addEventListener("click", function(){
-        if(containerTempoReparoOperador.style.display === "none"){
-            containerQuantidadeReparadaSemanal.style.display = "none";
-            containerQuantidadeReparadaMensal.style.display = "none";
-            containerEquipamentosReparados.style.display = "none";
-            containerTemposolicitacaoNF.style.display = "none";
-            containerTempoReparoOperador.style.display = "block";
-            containerTotalEquipamentoCliente.style.display = "none";
-            containerServicosExecutados.style.display = "none";
-            containerQuantidadeProduto.style.display = "none";
-            containerCustoTotal.style.display = "none";
-            containerCustoMedio.style.display = "none";
-            containerMaiorCustoAcumulado.style.display = "none";
-            
-
-            const dataInicio = document.getElementById("data_inicial").value || "";
-            const dataFim = document.getElementById("data_final").value || "";
-            carregarTempoReparoOperador(dataInicio, dataFim);
-        }else{
-            containerQuantidadeReparadaSemanal.style.display = "none";
-            containerQuantidadeReparadaMensal.style.display = "none";
-            containerEquipamentosReparados.style.display = "none";
-            containerTemposolicitacaoNF.style.display = "none";
-            containerTempoReparoOperador.style.display = "none";
-            containerTotalEquipamentoCliente.style.display = "none";
-            containerServicosExecutados.style.display = "none";
-            containerQuantidadeProduto.style.display = "none";
-            containerCustoTotal.style.display = "none";
-            containerCustoMedio.style.display = "none";
-            containerMaiorCustoAcumulado.style.display = "none";
-            
-        }
-    });
-    linkTotalEquipamentoCliente.addEventListener("click", function(){
-        if(containerTotalEquipamentoCliente.style.display === "none"){
-            containerQuantidadeReparadaSemanal.style.display = "none";
-            containerQuantidadeReparadaMensal.style.display = "none";
-            containerEquipamentosReparados.style.display = "none";
-            containerTemposolicitacaoNF.style.display = "none";
-            containerTempoReparoOperador.style.display = "none";
-            containerTotalEquipamentoCliente.style.display = "block";
-            containerServicosExecutados.style.display = "none";
-            containerQuantidadeProduto.style.display = "none";
-            containerCustoTotal.style.display = "none";
-            containerCustoMedio.style.display = "none";
-            containerMaiorCustoAcumulado.style.display = "none";
-           
-            const dataInicio = document.getElementById("data_inicial").value || "";
-            const dataFim = document.getElementById("data_final").value || "";
-            carregarReparosPorCliente(dataInicio, dataFim);
-        }else{
-            containerQuantidadeReparadaSemanal.style.display = "none";
-            containerQuantidadeReparadaMensal.style.display = "none";
-            containerEquipamentosReparados.style.display = "none";
-            containerTemposolicitacaoNF.style.display = "none";
-            containerTempoReparoOperador.style.display = "none";
-            containerTotalEquipamentoCliente.style.display = "none";
-            containerServicosExecutados.style.display = "none";
-            containerQuantidadeProduto.style.display = "none";
-            containerCustoTotal.style.display = "none";
-            containerCustoMedio.style.display = "none";
-            containerMaiorCustoAcumulado.style.display = "none";
-            
-        }
-    });
-    linkServicosExecutados.addEventListener("click", function(){
-        if(containerServicosExecutados.style.display === "none"){
-            containerQuantidadeReparadaSemanal.style.display = "none";
-            containerQuantidadeReparadaMensal.style.display = "none";
-            containerEquipamentosReparados.style.display = "none";
-            containerTemposolicitacaoNF.style.display = "none";
-            containerTempoReparoOperador.style.display = "none";
-            containerTotalEquipamentoCliente.style.display = "none";
-            containerServicosExecutados.style.display = "block";
-            containerQuantidadeProduto.style.display = "none";
-            containerCustoTotal.style.display = "none";
-            containerCustoMedio.style.display = "none";
-            containerMaiorCustoAcumulado.style.display = "none";
-            
-            const dataInicio = document.getElementById("data_inicial").value || "";
-            const dataFim = document.getElementById("data_final").value || "";
-            carregarServicosExecutados(dataInicio, dataFim);
-        }else{
-            containerQuantidadeReparadaSemanal.style.display = "none";
-            containerQuantidadeReparadaMensal.style.display = "none";
-            containerEquipamentosReparados.style.display = "none";
-            containerTemposolicitacaoNF.style.display = "none";
-            containerTempoReparoOperador.style.display = "none";
-            containerTotalEquipamentoCliente.style.display = "none";
-            containerServicosExecutados.style.display = "none";
-            containerQuantidadeProduto.style.display = "none";
-            containerCustoTotal.style.display = "none";
-            containerCustoMedio.style.display = "none";
-            containerMaiorCustoAcumulado.style.display = "none";
-            
-        }
-    });
-    linkQuantidadeProduto.addEventListener("click", function(){
-        if(containerQuantidadeProduto.style.display === "none"){
-            containerQuantidadeReparadaSemanal.style.display = "none";
-            containerQuantidadeReparadaMensal.style.display = "none";
-            containerEquipamentosReparados.style.display = "none";
-            containerTemposolicitacaoNF.style.display = "none";
-            containerTempoReparoOperador.style.display = "none";
-            containerTotalEquipamentoCliente.style.display = "none";
-            containerServicosExecutados.style.display = "none";
-            containerQuantidadeProduto.style.display = "block";
-            containerCustoTotal.style.display = "none";
-            containerCustoMedio.style.display = "none";
-            containerMaiorCustoAcumulado.style.display = "none";
-            
-
-            const dataInicio = document.getElementById("data_inicial").value || "";
-            const dataFim = document.getElementById("data_final").value || "";
-            carregarProdutosMaisReparados(dataInicio, dataFim);
-        }else{
-            containerQuantidadeReparadaSemanal.style.display = "none";
-            containerQuantidadeReparadaMensal.style.display = "none";
-            containerEquipamentosReparados.style.display = "none";
-            containerTemposolicitacaoNF.style.display = "none";
-            containerTempoReparoOperador.style.display = "none";
-            containerTotalEquipamentoCliente.style.display = "none";
-            containerServicosExecutados.style.display = "none";
-            containerQuantidadeProduto.style.display = "none";
-            containerCustoTotal.style.display = "none";
-            containerCustoMedio.style.display = "none";
-            containerMaiorCustoAcumulado.style.display = "none";
-            
-        }
-    });
-    linkCustoTotal.addEventListener("click", function(){
-        if(containerCustoTotal.style.display === "none"){
-            containerQuantidadeReparadaSemanal.style.display = "none";
-            containerQuantidadeReparadaMensal.style.display = "none";
-            containerEquipamentosReparados.style.display = "none";
-            containerTemposolicitacaoNF.style.display = "none";
-            containerTempoReparoOperador.style.display = "none";
-            containerTotalEquipamentoCliente.style.display = "none";
-            containerServicosExecutados.style.display = "none";
-            containerQuantidadeProduto.style.display = "none";
-            containerCustoTotal.style.display = "block";
-            containerCustoMedio.style.display = "none";
-            containerMaiorCustoAcumulado.style.display = "none";
-            
-
-            const dataInicio = document.getElementById("data_inicial").value || "";
-            const dataFim = document.getElementById("data_final").value || "";
-            carregarCustoTotalPorProduto(dataInicio, dataFim);
-        }else{
-            containerQuantidadeReparadaSemanal.style.display = "none";
-            containerQuantidadeReparadaMensal.style.display = "none";
-            containerEquipamentosReparados.style.display = "none";
-            containerTemposolicitacaoNF.style.display = "none";
-            containerTempoReparoOperador.style.display = "none";
-            containerTotalEquipamentoCliente.style.display = "none";
-            containerServicosExecutados.style.display = "none";
-            containerQuantidadeProduto.style.display = "none";
-            containerCustoTotal.style.display = "none";
-            containerCustoMedio.style.display = "none";
-            containerMaiorCustoAcumulado.style.display = "none";
-            
-        }
-    });
-    linkCustoMedio.addEventListener("click", function(){
-        if(containerCustoMedio.style.display === "none"){
-            containerQuantidadeReparadaSemanal.style.display = "none";
-            containerQuantidadeReparadaMensal.style.display = "none";
-            containerEquipamentosReparados.style.display = "none";
-            containerTemposolicitacaoNF.style.display = "none";
-            containerTempoReparoOperador.style.display = "none";
-            containerTotalEquipamentoCliente.style.display = "none";
-            containerServicosExecutados.style.display = "none";
-            containerQuantidadeProduto.style.display = "none";
-            containerCustoTotal.style.display = "none";
-            containerCustoMedio.style.display = "block";
-            containerMaiorCustoAcumulado.style.display = "none";
-            
-
-            const dataInicio = document.getElementById("data_inicial").value || "";
-            const dataFim = document.getElementById("data_final").value || "";
-            carregarCustoMedioPorProduto(dataInicio, dataFim);
-        }else{
-            containerQuantidadeReparadaSemanal.style.display = "none";
-            containerQuantidadeReparadaMensal.style.display = "none";
-            containerEquipamentosReparados.style.display = "none";
-            containerTemposolicitacaoNF.style.display = "none";
-            containerTempoReparoOperador.style.display = "none";
-            containerTotalEquipamentoCliente.style.display = "none";
-            containerServicosExecutados.style.display = "none";
-            containerQuantidadeProduto.style.display = "none";
-            containerCustoTotal.style.display = "none";
-            containerCustoMedio.style.display = "none";
-            containerMaiorCustoAcumulado.style.display = "none";
-            
-        }
-    });
-    linkMaiorCustoAcumulado.addEventListener("click", function(){
-        if(containerMaiorCustoAcumulado.style.display === "none"){
-            containerQuantidadeReparadaSemanal.style.display = "none";
-            containerQuantidadeReparadaMensal.style.display = "none";
-            containerEquipamentosReparados.style.display = "none";
-            containerTemposolicitacaoNF.style.display = "none";
-            containerTempoReparoOperador.style.display = "none";
-            containerTotalEquipamentoCliente.style.display = "none";
-            containerServicosExecutados.style.display = "none";
-            containerQuantidadeProduto.style.display = "none";
-            containerCustoTotal.style.display = "none";
-            containerCustoMedio.style.display = "none";
-            containerMaiorCustoAcumulado.style.display = "block";
-            
-
-            const dataInicio = document.getElementById("data_inicial").value || "";
-            const dataFim = document.getElementById("data_final").value || "";
-            carregarProdutosMaiorCusto(dataInicio, dataFim);
-        }else{
-            containerQuantidadeReparadaSemanal.style.display = "none";
-            containerQuantidadeReparadaMensal.style.display = "none";
-            containerEquipamentosReparados.style.display = "none";
-            containerTemposolicitacaoNF.style.display = "none";
-            containerTempoReparoOperador.style.display = "none";
-            containerTotalEquipamentoCliente.style.display = "none";
-            containerServicosExecutados.style.display = "none";
-            containerQuantidadeProduto.style.display = "none";
-            containerCustoTotal.style.display = "none";
-            containerCustoMedio.style.display = "none";
-            containerMaiorCustoAcumulado.style.display = "none";
-            
-        }
-    });
 });
 </script>
 </body>

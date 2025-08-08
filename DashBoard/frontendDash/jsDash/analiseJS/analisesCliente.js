@@ -1,9 +1,10 @@
 let chartAnalisesCliente = null;
 
-function carregarAnalisesPorCliente(dataInicio, dataFim) {
+function carregarAnalisesPorCliente(dataInicio, dataFim, operador = "") {
     const params = new URLSearchParams();
     if (dataInicio) params.append("data_inicial", dataInicio);
     if (dataFim) params.append("data_final", dataFim);
+    if (operador) params.append("operador", operador); // Novo filtro
 
     fetch("../backendDash/analisePHP/analises_cliente.php", {
         method: "POST",
@@ -13,14 +14,13 @@ function carregarAnalisesPorCliente(dataInicio, dataFim) {
     .then(res => res.json())
     .then(data => {
         if (!data || data.length === 0) {
-            document.getElementById("graficoAnalisesCliente").parentElement.innerHTML = "<p>Nenhum dado disponível para o período selecionado.</p>";
+            document.getElementById("graficoAnalisesCliente").parentElement.innerHTML = "<p>Nenhum dado disponível para o período e operador selecionados.</p>";
             return;
         }
 
         const labels = data.map(item => item.razao_social);
         const valores = data.map(item => item.total);
 
-        // Destroi gráfico anterior, se houver
         if (chartAnalisesCliente instanceof Chart) {
             chartAnalisesCliente.destroy();
         }
@@ -31,7 +31,7 @@ function carregarAnalisesPorCliente(dataInicio, dataFim) {
             data: {
                 labels: labels,
                 datasets: [{
-                    label: "Análises por Cliente",
+                    label: "",
                     data: valores,
                     backgroundColor: "rgba(153, 102, 255, 0.5)",
                     borderColor: "rgba(153, 102, 255, 1)",
@@ -58,8 +58,8 @@ function carregarAnalisesPorCliente(dataInicio, dataFim) {
                         }
                     },
                     legend: {
-                        display: true,
-                        position: 'top'
+                        display: false,
+                        
                     }
                 },
                 scales: {
@@ -74,14 +74,14 @@ function carregarAnalisesPorCliente(dataInicio, dataFim) {
                         },
                         title: {
                             display: true,
-                            text: "Clientes"
+                            text: ""
                         }
                     },
                     y: {
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: "Quantidade de Análises"
+                            text: ""
                         }
                     }
                 }

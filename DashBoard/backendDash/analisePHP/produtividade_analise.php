@@ -3,16 +3,30 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 header("Content-Type: application/json");
-require_once $_SERVER['DOCUMENT_ROOT'] . "/localhost/BackEnd/conexao.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "/sistema/KPI_2.0/BackEnd/conexao.php";
 
-$data_inicio = !empty($_POST['data_inicial']) ? $_POST['data_inicial'] : "2000-01-01";
-$data_fim = !empty($_POST['data_final']) ? $_POST['data_final'] : date("Y-m-d");
+$data_inicio = $_POST['data_inicial'] ?? "2000-01-01";
+$data_fim    = $_POST['data_final']   ?? date("Y-m-d");
+$operador    = $_POST['operador']     ?? "";
 
-function getData($conn, $query, $inicio, $fim) {
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("ss", $inicio, $fim);
+// Função ajustada para aceitar operador opcional
+function getData($conn, $queryBase, $inicio, $fim, $operador = "") {
+    $params = [$inicio, $fim];
+    $types = "ss";
+
+    if (!empty($operador)) {
+        $queryBase .= " AND operador = ?";
+        $params[] = $operador;
+        $types .= "s";
+    }
+
+    $queryBase .= " GROUP BY operador, periodo ORDER BY periodo, operador";
+
+    $stmt = $conn->prepare($queryBase);
+    $stmt->bind_param($types, ...$params);
     $stmt->execute();
     $result = $stmt->get_result();
+
     $dados = [];
     while ($row = $result->fetch_assoc()) {
         $dados[] = [
@@ -25,29 +39,26 @@ function getData($conn, $query, $inicio, $fim) {
     return $dados;
 }
 
-$sqlSemanal = "
+// Query base SEM agrupamento ainda
+$sqlSemanalBase = "
     SELECT operador,
-           DATE_FORMAT(data_inicio_analise, '%Y-%u') AS periodo,
+           DATE_FORMAT(data_envio_orcamento, '%Y-%u') AS periodo,
            SUM(quantidade_parcial) AS quantidade
     FROM analise_parcial
-    WHERE data_inicio_analise BETWEEN ? AND ?
-    GROUP BY operador, periodo
-    ORDER BY periodo, operador
+    WHERE data_envio_orcamento BETWEEN ? AND ?
 ";
 
-$sqlMensal = "
+$sqlMensalBase = "
     SELECT operador,
-           DATE_FORMAT(data_inicio_analise, '%Y-%m') AS periodo,
+           DATE_FORMAT(data_envio_orcamento, '%Y-%m') AS periodo,
            SUM(quantidade_parcial) AS quantidade
     FROM analise_parcial
-    WHERE data_inicio_analise BETWEEN ? AND ?
-    GROUP BY operador, periodo
-    ORDER BY periodo, operador
+    WHERE data_envio_orcamento BETWEEN ? AND ?
 ";
 
 echo json_encode([
-    "semanal" => getData($conn, $sqlSemanal, $data_inicio, $data_fim),
-    "mensal" => getData($conn, $sqlMensal, $data_inicio, $data_fim)
+    "semanal" => getData($conn, $sqlSemanalBase, $data_inicio, $data_fim, $operador),
+    "mensal"  => getData($conn, $sqlMensalBase,  $data_inicio, $data_fim, $operador)
 ]);
 
 $conn->close();

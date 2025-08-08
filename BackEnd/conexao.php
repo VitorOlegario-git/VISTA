@@ -1,9 +1,9 @@
 <?php
 // Estabelece a conexão com o banco de dados
 $servername = "localhost";
-$username = "";
-$password = "";
-$dbname = "";
+$username = "kpi";
+$password = "kpi456";
+$dbname = "vista";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 

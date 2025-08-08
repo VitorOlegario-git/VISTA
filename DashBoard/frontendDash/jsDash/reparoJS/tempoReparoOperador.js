@@ -1,10 +1,15 @@
-function carregarTempoReparoOperador(dataInicio, dataFim) {
-    console.log("🔧 Carregando Tempo Médio de Reparo por Operador...", { dataInicio, dataFim });
+function carregarTempoReparoOperador(dataInicio, dataFim, operador = "") {
+    console.log("🔧 Carregando Tempo Médio de Reparo por Operador...", { dataInicio, dataFim, operador });
 
-    fetch("/localhost/DashBoard/backendDash/reparoPHP/tempoReparoOperador.php", {
+    const params = new URLSearchParams();
+    params.append("data_inicial", dataInicio);
+    params.append("data_final", dataFim);
+    if (operador) params.append("operador", operador);
+
+    fetch("/sistema/KPI_2.0/DashBoard/backendDash/reparoPHP/tempoReparoOperador.php", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `data_inicial=${dataInicio}&data_final=${dataFim}`
+        body: params.toString()
     })
     .then(res => {
         if (!res.ok) throw new Error("Erro na requisição: " + res.status);
@@ -45,7 +50,7 @@ function carregarTempoReparoOperador(dataInicio, dataFim) {
                 plugins: {
                     title: {
                         display: true,
-                        text: "Tempo Médio de Reparo por Operador"
+                        text: ""
                     },
                     datalabels: {
                         anchor: 'end',

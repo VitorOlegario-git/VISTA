@@ -1,6 +1,6 @@
 <?php
 
-require_once $_SERVER['DOCUMENT_ROOT'] . "/localhost/BackEnd/conexao.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "/sistema/KPI_2.0/BackEnd/conexao.php";
 
 
 // Consulta: traz onde NF de entrada está vazia ou NULL

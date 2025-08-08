@@ -1,0 +1,98 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: radial-gradient(circle at center, #043b6c 0%, #02101d 100%);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  flex-direction: column;
+  text-align: center;
+}
+
+.header {
+  height: 100px;
+  width: 100%;
+  position: fixed;
+  top: 10px;
+  background-image: url('../CSS/imagens/Suntech-Sunlab.png');
+  background-size: 38%;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 1000;
+}
+
+.link-clicavel {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;
+  height: 100px;
+  z-index: 1001;
+}
+
+.recuperar-container input[type="text"],
+.recuperar-container input[type="email"],
+.recuperar-container input[type="password"] {
+  width: 100%;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(4px);
+}
+
+.recuperar-container input[type="text"]:focus,
+.recuperar-container input[type="email"]:focus,
+.recuperar-container input[type="password"]:focus {
+  outline: none;
+  border-color: #00aeff;
+  background-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 8px #00aeff;
+}
+
+.recuperar-container input[type="submit"] {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #00aeff, #007bbf);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(0, 174, 255, 0.4);
+  transition: all 0.3s ease;
+}
+
+.recuperar-container input[type="submit"]:hover {
+  background: linear-gradient(135deg, #008fd6, #006fa5);
+  box-shadow: 0 0 20px rgba(0, 174, 255, 0.6);
+}
+
+
+@media screen and (max-width: 500px) {
+  .recuperar-container {
+    padding: 20px;
+  }
+
+  .recuperar-container h2 {
+    font-size: 20px;
+  }
+
+  .recuperar-container input[type="submit"] {
+    font-size: 15px;
+  }
+}

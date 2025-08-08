@@ -2,7 +2,7 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-require_once $_SERVER['DOCUMENT_ROOT'] . "/localhost/BackEnd/conexao.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "/sistema/KPI_2.0/BackEnd/conexao.php";
 header("Content-Type: application/json");
 
 function limpar($valor) {
@@ -13,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $imei = limpar($_POST['imei'] ?? '');
     $cnpj = limpar($_POST['cnpj'] ?? '');
     $nota_fiscal_input = limpar($_POST['nota_fiscal'] ?? ''); // NF vinda do formulário
-    $cod_rastreio = limpar($_POST['cod_rastreio'] ?? '');
+    $cod_rastreio = limpar($_POST['cod_rast'] ?? '');
     $status = limpar($_POST['status'] ?? '');
     $setor = limpar($_POST['setor'] ?? '');
 
@@ -64,7 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         if (!empty($cod_rastreio)) {
-            $sql .= " AND codigo_rastreio_envio LIKE ?";
+            $sql .= " AND codigo_rastreio_entrada LIKE ?";
             $params[] = "%$cod_rastreio%";
             $types .= "s";
         }

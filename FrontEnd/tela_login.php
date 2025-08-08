@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -16,37 +17,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username'], $_POST['s
     $stmt->execute();
     $resultado = $stmt->get_result();
 
-    if ($resultado->num_rows > 0) {
-    $usuario = $resultado->fetch_assoc();
-
-    if (password_verify($senha, $usuario['senha'])) {
-        session_regenerate_id(true); // Segurança contra fixação de sessão
-        $_SESSION['username'] = $usuario['nome'];
-        $_SESSION['user_id'] = $usuario['id'];
-        $_SESSION['last_activity'] = time();
-
-        header("Location: /localhost/FrontEnd/html/PaginaPrincipal.php");
-        exit;
-    } else {
+    if ($resultado->num_rows === 0) {
         $erro = "Usuário ou senha inválidos.";
-    }
-}
+    } else {
+        $usuario = $resultado->fetch_assoc();
 
+        // Verifica a senha (ajuste se estiver usando hash)
+        if (password_verify($senha, $usuario['senha'])) {
+            $_SESSION['usuario_id'] = $usuario['id'];
+            $_SESSION['username'] = $usuario['nome'];
+            header("Location: html/PaginaPrincipal.php"); // ou dashboard
+            exit();
+        } else {
+            $erro = "Usuário ou senha inválidos.";
+        }
+    }
 
     $stmt->close();
     $conn->close();
 }
 ?>
 
+
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">   
+    <meta name="description" content="Sistema VISTA - Login">
+    <meta name="keywords" content="VISTA, login, sistema, gestão, análise">
+    <meta name="author" content="Suntech do Brasil">      
     <title>VISTA</title>
-    <link rel="icon" href="/localhost/FrontEnd/CSS/imagens/VISTA.png">
-    <link rel="stylesheet" href="/localhost/FrontEnd/CSS/tela_login.css">
+    <link rel="icon" href="/sistema/KPI_2.0/FrontEnd/CSS/imagens/VISTA.png">
+    <link rel="stylesheet" href="/sistema/KPI_2.0/FrontEnd/CSS/tela_login.css">
 </head>
 <body>
-    <div class="header"></div>
+
+    <div class="header">
+        
+        <a href="https://www.suntechdobrasil.com.br" target="_blank" class="link-clicavel"></a>
+    </div>
+
 
     <div class="login-container">
         <h2>Login</h2>
@@ -63,6 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username'], $_POST['s
             <input type="submit" value="Login">
         </form>
         <a class="register-link" href="CadastroUsuario.php">Cadastrar Novo Usuário</a>
+        <a class="register-link" href="RecuperarSenha.php">Esqueci minha senha</a>
     </div>
 </body>
 </html>

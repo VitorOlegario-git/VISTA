@@ -1,21 +1,23 @@
 <?php
 
-require_once $_SERVER['DOCUMENT_ROOT'] . "/localhost/BackEnd/conexao.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "/sistema/KPI_2.0/BackEnd/conexao.php";
 
 // Consulta: traz onde NF de entrada está vazia ou NULL
 $sql = "SELECT 
-            cnpj, 
-            razao_social, 
-            nota_fiscal, 
-            DATE(data_registro) AS data_atualizacao, 
-            quantidade_total, 
-            quantidade_reparada,
-            status,
-            numero_orcamento,
-            valor_orcamento,
-            setor
-        FROM reparo_resumo 
-        WHERE status = 'em_reparo'";
+            rr.cnpj, 
+            rr.razao_social, 
+            rr.nota_fiscal, 
+            DATE(rp.data_inicio_reparo) AS data_inicio_reparo,
+            rr.quantidade_total, 
+            rp.quantidade_parcial,
+            rr.status,
+            rr.numero_orcamento,
+            rr.valor_orcamento,
+            rr.setor
+        FROM reparo_resumo rr
+        LEFT JOIN reparo_parcial rp 
+            ON rr.cnpj = rp.cnpj AND rr.nota_fiscal = rp.nota_fiscal
+        WHERE rr.status = 'em_reparo'";
 
 $result = $conn->query($sql);
 

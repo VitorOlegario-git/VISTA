@@ -3,7 +3,7 @@ let chartTendenciaMensal = null;
 function carregarGraficoTendenciaMensal(dataInicio, dataFim) {
     console.log("Enviando requisição de Tendência Mensal:", { dataInicio, dataFim });
 
-    fetch("/localhost/DashBoard/backendDash/recebimentoPHP/tendencia_mensal.php", {
+    fetch("/sistema/KPI_2.0/DashBoard/backendDash/recebimentoPHP/tendencia_mensal.php", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: `data_inicial=${dataInicio}&data_final=${dataFim}`
@@ -35,7 +35,7 @@ function carregarGraficoTendenciaMensal(dataInicio, dataFim) {
             data: {
                 labels: meses,
                 datasets: [{
-                    label: "Tendência Mensal de Recebimentos",
+                    label: "",
                     data: valores,
                     borderColor: "rgba(75, 192, 192, 1)",
                     backgroundColor: "rgba(75, 192, 192, 0.2)",
@@ -65,8 +65,8 @@ function carregarGraficoTendenciaMensal(dataInicio, dataFim) {
                         }
                     },
                     legend: {
-                        display: true,
-                        position: 'top'
+                        display: false,
+                        
                     }
                 },
                 scales: {
@@ -74,13 +74,13 @@ function carregarGraficoTendenciaMensal(dataInicio, dataFim) {
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: 'Quantidade Recebida'
+                            text: ''
                         }
                     },
                     x: {
                         title: {
                             display: true,
-                            text: 'Mês'
+                            text: ''
                         },
                         ticks: {
                             autoSkip: false,

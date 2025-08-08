@@ -1,7 +1,8 @@
-function carregarParcialCompleta(dataInicio, dataFim) {
+function carregarParcialCompleta(dataInicio, dataFim, operador = "") {
     const params = new URLSearchParams();
     if (dataInicio) params.append("data_inicial", dataInicio);
     if (dataFim) params.append("data_final", dataFim);
+    if (operador) params.append("operador", operador); // Novo filtro
 
     fetch("../backendDash/analisePHP/parcial_completa.php", {
         method: "POST",
@@ -24,7 +25,7 @@ function carregarParcialCompleta(dataInicio, dataFim) {
         const ctx = document.getElementById("graficoParcialCompleta").getContext("2d");
 
         window.graficoParcialCompleta = new Chart(ctx, {
-            type: "bar",
+            type: "pie",
             data: {
                 labels: ["Parciais", "Completas"],
                 datasets: [{
@@ -79,7 +80,7 @@ function carregarParcialCompleta(dataInicio, dataFim) {
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: 'Quantidade'
+                            text: ''
                         }
                     }
                 }

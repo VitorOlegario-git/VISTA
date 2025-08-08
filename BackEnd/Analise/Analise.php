@@ -4,55 +4,72 @@ session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+// Cabeçalhos para evitar cache e garantir JSON
 header('Content-Type: application/json');
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-header("Cache-Control: post-check=0, pre-check=0", false); // Compatibilidade adicional
-header("Pragma: no-cache"); // Compatível com HTTP/1.0
-header("Expires: 0"); // Expira imediatamente
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+header("Expires: 0");
 
-// Verifica se o usuário está logado
+// Verifica se o usuário está autenticado
 if (!isset($_SESSION['username'])) {
     echo json_encode(["error" => "Usuário não autenticado"]);
     exit();
 }
 
-require_once $_SERVER['DOCUMENT_ROOT'] . "/localhost/BackEnd/conexao.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "/sistema/KPI_2.0/BackEnd/conexao.php";
 
-// Função para sanitizar entradas
 function sanitizeInput($input) {
-    return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
+    return htmlspecialchars(trim((string)$input), ENT_QUOTES, 'UTF-8');
 }
 
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    // Coleta e sanitiza os dados
+    
+    // Dados principais
     $cnpj = sanitizeInput($_POST['cnpj'] ?? '');
     $nota_fiscal = sanitizeInput($_POST['nota_fiscal'] ?? '');
-    $data_inicio_analise = trim($_POST['data_inicio_analise'] ?? '');
-    $data_envio_orcamento = trim($_POST['data_envio_orcamento'] ?? '');
-    $data_envio_orcamento = $data_envio_orcamento === '' ? null : $data_envio_orcamento;
     $razao_social = sanitizeInput($_POST['razao_social'] ?? '');
     $quantidade = (int)($_POST['quantidade'] ?? 0);
-    $op_parcial = sanitizeInput($_POST['sim_nao'] ?? 'nao');
-    $quantidade_parcial = isset($_POST['quantidade_parcial']) && $_POST['quantidade_parcial'] !== '' ? (int)$_POST['quantidade_parcial'] : null;
+    
+    // Datas
+    $data_inicio_analise = isset($_POST['data_inicio_analise']) ? trim($_POST['data_inicio_analise']) : '';
+    $data_envio_orcamento = isset($_POST['data_envio_orcamento']) ? trim($_POST['data_envio_orcamento']) : '';
+    $data_envio_orcamento = $data_envio_orcamento === '' ? null : $data_envio_orcamento;
+  
+    // Orçamento
     $numero_orcamento = sanitizeInput($_POST['numero_orcamento'] ?? null);
     $valor_orcamento = isset($_POST['valor_orcamento']) ? str_replace(',', '.', trim($_POST['valor_orcamento'])) : null;
+    
+    // Operações
     $operacao_origem = sanitizeInput($_POST['operacao_origem'] ?? '');
     $operacao_destino = sanitizeInput($_POST['operacao_destino'] ?? '');
     $setor = sanitizeInput($_POST['setor'] ?? '');
     $operador = sanitizeInput($_SESSION['username']);
+    
+    // Controle parcial
+    $op_parcial = sanitizeInput($_POST['sim_nao'] ?? 'nao');
+    $quantidade_parcial = isset($_POST['quantidade_parcial']) && $_POST['quantidade_parcial'] !== '' ? (int)$_POST['quantidade_parcial'] : null;
+    
+    // Outros
     $observacoes = sanitizeInput($_POST['obs'] ?? '');
     $acao = sanitizeInput($_POST['acao'] ?? 'inicio');
 
+
     // Validação básica
+    if ($acao === 'inicio') {
     if (empty($cnpj) || empty($nota_fiscal) || empty($razao_social) || $quantidade <= 0 || empty($operacao_origem) || empty($operacao_destino)) {
         http_response_code(400);
         echo json_encode(["error" => "Todos os campos obrigatórios devem ser preenchidos corretamente."]);
         exit();
     }
+}
 
-    // Verifica se já existe resumo
+
+    // Verifica se já existe um registro na analise_resumo
     $stmt_check_resumo = $conn->prepare("
-        SELECT quantidade_total, quantidade_analisada, status FROM analise_resumo 
+        SELECT quantidade_total, quantidade_analisada, status 
+        FROM analise_resumo 
         WHERE cnpj = ? AND nota_fiscal = ?
     ");
     $stmt_check_resumo->bind_param("ss", $cnpj, $nota_fiscal);
@@ -65,9 +82,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $quantidade_analisada = (int)$row_resumo['quantidade_analisada'];
         $status_atual = $row_resumo['status'];
     } else {
+        // Insere novo resumo
         $stmt_insert_resumo = $conn->prepare("
-            INSERT INTO analise_resumo (cnpj, nota_fiscal, razao_social, quantidade_total, quantidade_analisada, status, numero_orcamento, valor_orcamento, setor)
-            VALUES (?, ?, ?, ?, 0, 'envio_analise', ?, ?, ?)
+            INSERT INTO analise_resumo (
+                cnpj, nota_fiscal, razao_social, quantidade_total, quantidade_analisada, 
+                status, numero_orcamento, valor_orcamento, setor
+            ) VALUES (?, ?, ?, ?, 0, 'envio_analise', ?, ?, ?)
         ");
         $stmt_insert_resumo->bind_param("sssisds", $cnpj, $nota_fiscal, $razao_social, $quantidade, $numero_orcamento, $valor_orcamento, $setor);
         $stmt_insert_resumo->execute();
@@ -90,7 +110,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if ($acao === 'inicio') {
         $quantidade_restante = $quantidade_total - $quantidade_analisada;
         if (!is_null($quantidade_parcial) && $quantidade_parcial > $quantidade_restante) {
-            echo json_encode(["error" => "Quantidade parcial informada ($quantidade_parcial) excede o restante disponível ($quantidade_restante)."]);
+            echo json_encode([
+                "error" => "Quantidade parcial informada ($quantidade_parcial) excede o restante disponível ($quantidade_restante)."
+            ]);
             exit();
         }
 
@@ -121,7 +143,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt_update_resumo->close();
 
         if ($status_atual === 'envio_analise' && $novo_total_analisado >= $quantidade_total) {
-            $stmt_status = $conn->prepare("UPDATE analise_resumo SET status = 'em_analise' WHERE cnpj = ? AND nota_fiscal = ?");
+            $stmt_status = $conn->prepare("
+                UPDATE analise_resumo SET status = 'em_analise' 
+                WHERE cnpj = ? AND nota_fiscal = ?
+            ");
             $stmt_status->bind_param("ss", $cnpj, $nota_fiscal);
             $stmt_status->execute();
             $stmt_status->close();
@@ -131,10 +156,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt_update = $conn->prepare("
             UPDATE analise_parcial 
             SET operacao_destino = ?, observacoes = ?, data_envio_orcamento = ?, numero_orcamento = ?, valor_orcamento = ?
-            WHERE cnpj = ? AND nota_fiscal = ? AND data_inicio_analise = ? AND operador = ? AND operacao_destino = 'em_analise'
+            WHERE cnpj = ? AND nota_fiscal = ? AND data_inicio_analise = ? AND operador = ? 
+            AND operacao_destino = 'em_analise' 
             ORDER BY id DESC LIMIT 1
         ");
-        $stmt_update->bind_param("ssssdssss", $operacao_destino, $observacoes, $data_envio_orcamento, $numero_orcamento, $valor_orcamento, $cnpj, $nota_fiscal, $data_inicio_analise, $operador);
+        $stmt_update->bind_param(
+            "ssssdssss",
+            $operacao_destino, $observacoes, $data_envio_orcamento, $numero_orcamento, $valor_orcamento,
+            $cnpj, $nota_fiscal, $data_inicio_analise, $operador
+        );
         $stmt_update->execute();
 
         if ($stmt_update->affected_rows === 0) {
@@ -165,7 +195,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $stmt_total->close();
 
     if ($total_concluido >= $quantidade_total) {
-        $stmt_finaliza = $conn->prepare("UPDATE analise_resumo SET status = 'aguardando_pg' WHERE cnpj = ? AND nota_fiscal = ?");
+        $stmt_finaliza = $conn->prepare("
+            UPDATE analise_resumo SET status = 'aguardando_pg' 
+            WHERE cnpj = ? AND nota_fiscal = ?
+        ");
         $stmt_finaliza->bind_param("ss", $cnpj, $nota_fiscal);
         $stmt_finaliza->execute();
         $stmt_finaliza->close();

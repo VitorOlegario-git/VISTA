@@ -1,10 +1,15 @@
-function carregarEquipamentosPorOperador(dataInicio, dataFim) {
-    console.log("Enviando requisição com:", { dataInicio, dataFim });
+function carregarEquipamentosPorOperador(dataInicio, dataFim, operador = "") {
+    console.log("Enviando requisição com:", { dataInicio, dataFim, operador });
 
-    fetch("/localhost/DashBoard/backendDash/reparoPHP/getEquipamentosReparadosPorTecnico.php", {
+    const formData = new URLSearchParams();
+    formData.append("data_inicial", dataInicio);
+    formData.append("data_final", dataFim);
+    formData.append("operador", operador);
+
+    fetch("/sistema/KPI_2.0/DashBoard/backendDash/reparoPHP/getEquipamentosReparadosPorTecnico.php", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `data_inicial=${dataInicio}&data_final=${dataFim}`
+        body: formData.toString()
     })
     .then(res => {
         console.log("Resposta recebida:", res);

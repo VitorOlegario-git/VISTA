@@ -1,10 +1,10 @@
-function carregarCustoTotalPorProduto(dataInicio, dataFim) {
-    console.log("Enviando requisição com:", { dataInicio, dataFim });
+function carregarCustoTotalPorProduto(dataInicio, dataFim, operador = "") {
+    console.log("Enviando requisição com:", { dataInicio, dataFim, operador });
 
-    fetch("/localhost/DashBoard/backendDash/reparoPHP/getCustoTotalPorRemessa.php", {
+    fetch("/sistema/KPI_2.0/DashBoard/backendDash/reparoPHP/getCustoTotalPorRemessa.php", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `data_inicial=${dataInicio}&data_final=${dataFim}`
+        body: `data_inicial=${encodeURIComponent(dataInicio)}&data_final=${encodeURIComponent(dataFim)}&operador=${encodeURIComponent(operador)}`
     })
     .then(res => {
         console.log("Resposta recebida:", res);
@@ -14,16 +14,27 @@ function carregarCustoTotalPorProduto(dataInicio, dataFim) {
     .then(data => {
         console.log("Dados recebidos do PHP:", data);
 
+        const container = document.getElementById("graficoCustoTotal");
+        if (container.style.display === "none") {
+            container.style.display = "block"; // Torna visível antes de acessar o canvas
+        }
+
         if (!Array.isArray(data) || data.length === 0) {
             console.warn("Nenhum dado retornado para Custo por Produto.");
-            document.getElementById("graficoCustoTotalCanvas").parentElement.innerHTML = "<p>Nenhum dado disponível para o período selecionado.</p>";
+            container.innerHTML = "<p>Nenhum dado disponível para o período selecionado.</p>";
             return;
         }
 
         const produtos = data.map(item => item.produto || "Desconhecido");
         const valores = data.map(item => parseFloat(item.valor_total));
 
-        const ctx = document.getElementById("graficoCustoTotalCanvas").getContext("2d");
+        const canvas = document.getElementById("graficoCustoTotalCanvas");
+        if (!canvas) {
+            console.error("❌ Canvas não encontrado.");
+            return;
+        }
+
+        const ctx = canvas.getContext("2d");
         if (window.custoProdutoChart) window.custoProdutoChart.destroy();
 
         window.custoProdutoChart = new Chart(ctx, {

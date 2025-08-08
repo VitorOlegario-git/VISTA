@@ -1,7 +1,16 @@
 document.addEventListener("DOMContentLoaded", function () {
     let jsonData = [];
 
-    // Importar dados do Excel
+    // Função para normalizar texto (remove acentos, espaços e padroniza para maiúsculas)
+    function normalizar(texto) {
+        return texto
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/\s+/g, "")
+            .toUpperCase();
+    }
+
+    // Importar dados do Excel com validação de colunas
     function importExcel() {
         const fileInput = document.getElementById("excel-file");
         if (!fileInput.files || fileInput.files.length === 0) {
@@ -22,6 +31,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 if (jsonData.length === 0) {
                     alert("O arquivo Excel está vazio ou inválido.");
+                    return;
+                }
+
+                // ✅ Validação robusta das colunas esperadas
+                const colunasEsperadas = ["IMEI", "MODELO", "LAUDO", "NF"];
+                const colunasNormalizadasEsperadas = colunasEsperadas.map(normalizar);
+                const colunasDoArquivo = Object.keys(jsonData[0]);
+                const colunasNormalizadasDoArquivo = colunasDoArquivo.map(normalizar);
+
+                const colunasFaltando = colunasNormalizadasEsperadas.filter(col => !colunasNormalizadasDoArquivo.includes(col));
+                const colunasExtras = colunasNormalizadasDoArquivo.filter(col => !colunasNormalizadasEsperadas.includes(col));
+
+                if (colunasFaltando.length > 0 || colunasExtras.length > 0) {
+                    alert("Erro: O arquivo Excel contém colunas inválidas.\n" +
+                        (colunasFaltando.length > 0 ? "Faltando: " + colunasFaltando.join(", ") + "\n" : "") +
+                        (colunasExtras.length > 0 ? "Colunas não esperadas: " + colunasExtras.join(", ") : ""));
                     return;
                 }
 
@@ -87,7 +112,7 @@ document.addEventListener("DOMContentLoaded", function () {
         formData.append("jsonData", JSON.stringify(jsonData));
         formData.append("entrada_id", entradaId);
 
-        fetch("http://localhost/BackEnd/Analise/salvar_dados_no_banco.php", {
+        fetch("http://172.16.0.50/sistema/KPI_2.0/BackEnd/Analise/salvar_dados_no_banco.php", {
             method: "POST",
             body: formData
         })
@@ -98,8 +123,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (response.success) {
                 alert("Dados salvos com sucesso!");
                 setTimeout(() => {
-                    // Redirecionamento mais seguro
-                    window.location.href = "/localhost/BackEnd/cadastro_realizado.php";
+                    window.location.href = "/sistema/KPI_2.0/BackEnd/cadastro_realizado.php";
                 }, 1000);
             } else {
                 alert("Erro ao salvar: " + (response.error || "Erro desconhecido."));

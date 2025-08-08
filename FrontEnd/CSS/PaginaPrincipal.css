@@ -18,7 +18,61 @@ body {
     justify-content: center;
     align-items: center;
 }
+  .header {
+  height: 80px;
+  width: 800px;
+  position: fixed;
+  top: 10px;
+  left: -250px;
+  background-image: url('../CSS/imagens/Suntech-Sunlab.png');
+  background-size: 38%;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 1000;
+}
+/* Estilo básico para o footer */
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #2c3e50;  /* tom escuro elegante */
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 14px;
+    box-shadow: 0 -1px 5px rgba(0,0,0,0.2);
+    z-index: 100;
+}
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
 
+body > *:not(footer) {
+    flex: 1;
+}
+
+footer {
+    background-color: #2c3e50;
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+}
+
+
+/* Link transparente ocupando a área da imagem central */
+.link-clicavel {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;  /* ajuste conforme o tamanho da imagem */
+  height: 100px;
+  z-index: 1001;
+}
 .container-principal {
     position: absolute;
     width: 70vmin; /* Usa 'vmin' para manter proporção relativa à menor dimensão da tela */
@@ -148,4 +202,13 @@ body {
     .botao-6 { top: 80%; left: 10%; }
     .botao-7 { top: 50%; left: 5%;  }
     .botao-8 { top: 25%; left: 15%; }
+}
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-3px); }
+    75% { transform: translateX(3px); }
+}
+
+.shake {
+    animation: shake 0.3s;
 }

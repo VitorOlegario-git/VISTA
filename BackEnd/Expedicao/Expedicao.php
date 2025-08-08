@@ -32,7 +32,7 @@ if (!isset($_SESSION['username'])) {
 }
 $_SESSION['last_activity'] = time();
 
-require_once $_SERVER['DOCUMENT_ROOT'] . "/localhost/BackEnd/conexao.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "/sistema/KPI_2.0/BackEnd/conexao.php";
 
 // Função de limpeza
 function limpar($valor) {
@@ -130,7 +130,7 @@ if (!empty(trim($saidaIndesejada))) {
     echo json_encode([
         "success" => true,
         "message" => "Cadastro/atualização concluída com sucesso.",
-        "redirect" => "/localhost/BackEnd/cadastro_realizado.php"
+        "redirect" => "/sistema/KPI_2.0/BackEnd/cadastro_realizado.php"
     ]);
 }
 exit();

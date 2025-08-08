@@ -13,13 +13,13 @@ $tempo_limite = 1200; // 20 minutos
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $tempo_limite) {
     session_unset();
     session_destroy();
-    header("Location: /localhost/FrontEnd/tela_login.php");
+    header("Location: /sistema/KPI_2.0/FrontEnd/tela_login.php");
     exit();
 }
 
 // Verifica se a sessão está ativa
 if (!isset($_SESSION['username'])) {
-    header("Location: /localhost/FrontEnd/tela_login.php");
+    header("Location: /sistema/KPI_2.0/FrontEnd/tela_login.php");
     exit();
 }
 
@@ -34,7 +34,7 @@ $_SESSION['last_activity'] = time();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro Reparo</title>
     <link rel="stylesheet" href="../CSS/reparo.css">
-    <link rel="icon" href="/localhost/FrontEnd/CSS/imagens/VISTA.png">
+    <link rel="icon" href="/sistema/KPI_2.0/FrontEnd/CSS/imagens/VISTA.png">
 
     <style>
         .button-group2 button.ativo {
@@ -56,27 +56,27 @@ $_SESSION['last_activity'] = time();
         <!-- Inputs -->
         <div class="input-group1">
             <label for="cnpj">CNPJ</label>
-            <input type="text" id="cnpj" name="cnpj" required oninput="applyCNPJMask(this);" maxlength="18" placeholder="Digite o CNPJ">
+            <input type="text" id="cnpj" name="cnpj" required oninput="applyCNPJMask(this);" maxlength="18" placeholder="Digite o CNPJ" readonly>
         </div>
         <div class="input-group2">
             <label for="nota_fiscal">NF</label>
-            <input type="text" id="nota_fiscal" name="nota_fiscal" required placeholder="Nota fiscal de entrada">
+            <input type="text" id="nota_fiscal" name="nota_fiscal" required placeholder="Nota fiscal de entrada"   readonly>
         </div>
         <div class="input-group3">
             <label for="data_inicio_reparo">Data de início do reparo</label>
             <input type="date" id="data_inicio_reparo" name="data_inicio_reparo" required>
         </div>
         <div class="input-group4">
-            <label for="data_solicitacao_nf">Data da solicitação da NF de retorno</label>
+            <label for="data_solicitacao_nf">Data do encerramento do reparo</label>
             <input type="date" id="data_solicitacao_nf" name="data_solicitacao_nf">
         </div>
         <div class="input-group5">
             <label for="razao_social">Razão Social</label>
-            <input type="text" id="razao_social" name="razao_social" required placeholder="Razão Social do cliente">
+            <input type="text" id="razao_social" name="razao_social" required placeholder="Razão Social do cliente" readonly>
         </div>
         <div class="input-group6">
             <label for="quantidade">Quantidade Total</label>
-            <input type="number" id="quantidade" name="quantidade" required placeholder="Quantidade total de peças">
+            <input type="number" id="quantidade" name="quantidade" required placeholder="Quantidade total de peças" readonly>
         </div>
         <div class="input-group7">
             <label for="op_parcial">Reparo Parcial?</label>
@@ -88,7 +88,7 @@ $_SESSION['last_activity'] = time();
         </div>
         <div class="input-group8">
             <label for="quantidade_parcial">Quantidade Parcial</label>
-            <input type="number" id="quantidade_parcial" name="quantidade_parcial" placeholder="Quantidade parcial analisada">
+            <input type="number" id="quantidade_parcial" name="quantidade_parcial" placeholder="Quantidade parcial reparada">
         </div>
         <div class="input-group9">
             <label for="acao">Ação</label>
@@ -120,12 +120,13 @@ $_SESSION['last_activity'] = time();
                 <option value="">Selecione</option>
                 <option value="em_reparo">Em reparo</option>
                 <option value="aguardando_NF_retorno">Aguardando NF de retorno</option>
+                <option value="segregado">Segregado</option>
                 <option value="estocado">Estocado</option>
                 <option value="reparo_pendente">Reparo pendente</option>
             </select>
         </div>
 
-        <div class="input-group16">
+        <div class="input-group16" >
                 <label for="setor">Setor</label>
                 <i class="fas fa-industry"></i>
                 <select id="setor" name="setor" required>
@@ -140,7 +141,7 @@ $_SESSION['last_activity'] = time();
                     -->
                 </select>
             </div>
-        <div class="input-group14">
+        <div class="input-group14" style="display: none;">
             <label for="operador">Operador</label>
             <input type="text" id="operador" name="operador" value="<?php echo $_SESSION['username'] ?? ''; ?>" readonly>
         </div>
@@ -169,7 +170,7 @@ $_SESSION['last_activity'] = time();
             <thead>
                 <tr>
                     <th>Setor</th><th>CNPJ</th><th>Razão Social</th><th>NF</th>
-                    <th>Data de envio do orçamento</th><th>Quantidade</th><th>Status</th>
+                    <th>Quantidade</th><th>Status</th>
                     <th>Numero do orçamento</th>
                     <th>Valor do orçamento</th>
                 </tr>
@@ -195,7 +196,7 @@ $_SESSION['last_activity'] = time();
 
 function voltarComReload() {
     // Redireciona e força o recarregamento
-    window.top.location.href = "/localhost/FrontEnd/html/PaginaPrincipal.php?reload=" + new Date().getTime();
+    window.top.location.href = "/sistema/KPI_2.0/FrontEnd/html/PaginaPrincipal.php?reload=" + new Date().getTime();
 }
 
 let dadosAguardandoPg = [];
@@ -203,30 +204,94 @@ let dadosEmReparo = [];
 
 document.addEventListener("DOMContentLoaded", function () {
     const acaoSelect = document.getElementById("acao");
+    const parcialSelect = document.getElementById("sim_nao");
     const inputNumero = document.querySelector("input[name='numero_orcamento']");
     const inputValor = document.querySelector("input[name='valor_orcamento']");
     const quantidadeParcial = document.getElementById("quantidade_parcial");
     const form = document.getElementById("form-reparo");
     const mensagemErro = document.getElementById("mensagemErro");
+    const operacaoOrigem = document.getElementById("operacao_origem");
+    const operacaoDestino = document.getElementById("operacao_destino");
+    const dataSolicitacaoNF = document.getElementById("data_solicitacao_nf");
+
 
     const btnAguardando = document.getElementById('btn-aguardando-pg');
     const btnEmReparo = document.getElementById('btn-em-reparo');
     const tabelaAguardando = document.getElementById('tabela-info-aguardando-pagamento');
     const tabelaEmReparo = document.getElementById('tabela-info-em-reparo');
-
     acaoSelect.addEventListener("change", function () {
-        const isFim = this.value === "fim";
-        inputNumero.required = isFim;
-        inputValor.required = isFim;
-        quantidadeParcial.disabled = isFim;
-        if (isFim) quantidadeParcial.value = "";
+    const valorSelecionado = this.value;
+
+    // Regras para "inicio"
+    const isInicio = valorSelecionado === "inicio";
+    parcialSelect.required = isInicio;
+
+    // Regras para "fim"
+    const isFim = valorSelecionado === "fim";
+    inputNumero.required = isFim;
+    inputValor.required = isFim;
+    quantidadeParcial.disabled = isFim;
+    dataSolicitacaoNF.required = isFim;
+
+    if (isFim) {
+        quantidadeParcial.value = "";
+    }
     });
+
+    
+    function atualizarOperacaoDestinoReparo() {
+    const acao = acaoSelect.value;
+    const origem = operacaoOrigem.value;
+    const setor = document.getElementById("setor").value;
+    
+    // Limpa o destino e adiciona o "Selecione"
+    operacaoDestino.innerHTML = '<option value="">Selecione</option>';
+    
+    if (acao === "inicio") {
+        operacaoDestino.innerHTML += '<option value="em_reparo">Em reparo</option>';
+        operacaoDestino.innerHTML += '<option value="segregado">Segregado</option>';
+        return; // impede que o restante execute
+    }
+    
+    if (acao === "fim") {
+        if (setor === "dev-varejo" || setor === "dev-datora") {
+            operacaoDestino.innerHTML += '<option value="estocado">Estocado</option>';
+            return;
+        } else {
+            operacaoDestino.innerHTML += '<option value="aguardando_NF_retorno">Aguardando NF de retorno</option>';
+            operacaoDestino.innerHTML += '<option value="reparo_pendente">Reparo pendente</option>';
+            return; // impede que a lista padrão abaixo seja carregada
+        }
+    }
+    
+    // Caso nenhuma condição acima seja satisfeita, carrega as opções completas
+    const opcoes = [
+        { value: "em_reparo", text: "Em reparo" },
+        { value: "aguardando_NF_retorno", text: "Aguardando NF de retorno" },
+        { value: "estocado", text: "Estocado" },
+        { value: "reparo_pendente", text: "Reparo pendente" }
+    ];
+    
+    opcoes.forEach(opcao => {
+        const opt = document.createElement("option");
+        opt.value = opcao.value;
+        opt.textContent = opcao.text;
+        operacaoDestino.appendChild(opt);
+    });
+    }
+
+        // Dispara a atualização ao mudar ação, setor ou origem
+         acaoSelect.addEventListener("change", atualizarOperacaoDestinoReparo);
+         operacaoOrigem.addEventListener("change", atualizarOperacaoDestinoReparo);
+         document.getElementById("setor").addEventListener("change", atualizarOperacaoDestinoReparo);
+
+
 
    form.addEventListener("submit", function (e) {
     e.preventDefault();
     const formData = new FormData(this);
 
-    fetch("http://localhost/BackEnd/Reparo/Reparo.php", {
+    fetch("http://172.16.0.50/sistema/KPI_2.0/BackEnd/Reparo/Reparo.php", {
         method: "POST",
         body: formData
     })
@@ -244,10 +309,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 if (data.acao === "inicio") {
                     window.top.location.href = window.top.location.origin +
-                        "/localhost/FrontEnd/html/cadastro_excel_pos_analise.php?cnpj=" +
+                        "/sistema/KPI_2.0/FrontEnd/html/cadastro_excel_pos_analise.php?cnpj=" +
                         encodeURIComponent(cnpj) + "&nf_entrada=" + encodeURIComponent(nf);
                 } else if (data.acao === "fim") {
-                    window.top.location.href = "/localhost/BackEnd/cadastro_realizado.php";
+                    window.top.location.href = "/sistema/KPI_2.0/BackEnd/cadastro_realizado.php";
                 }
             } else if (data.error) {
                 mensagemErro.innerHTML = `<p style='color:red;'>${data.error}</p>`;
@@ -268,42 +333,43 @@ document.addEventListener("DOMContentLoaded", function () {
         tabela.querySelector('tbody').innerHTML = '';
     }
 
-    function preencherInputs(item, tipo) {
-        document.querySelector('#cnpj').value = item.cnpj || '';
-        document.querySelector('#razao_social').value = item.razao_social || '';
-        document.querySelector('#nota_fiscal').value = item.nota_fiscal || '';
-        document.querySelector("#setor").value = item.setor || '';
-        const qtdTotal = parseInt(item.quantidade_total) || 0;
-        const qtdParcial = parseInt(item.quantidade_reparada) || 0;
+   function preencherInputs(item, tipo) {
+    document.querySelector('#cnpj').value = item.cnpj || '';
+    document.querySelector('#razao_social').value = item.razao_social || '';
+    document.querySelector('#nota_fiscal').value = item.nota_fiscal || '';
+    document.querySelector("#setor").value = item.setor || '';
 
-    // Lógica condicional aplicada no preenchimento do campo #quantidade
-        document.querySelector('#quantidade').value = qtdParcial > 0 ? qtdParcial : qtdTotal;
+    // Verifica se há diferença entre total e parcial
+        const qtdTotal = parseInt(item.quantidade_total || 0);
+        const qtdParcial = parseInt(item.quantidade_parcial || 0);
+        const campoQuantidade = document.querySelector('#quantidade');
 
-    // Preenche também o campo de referência, se quiser exibir a original
-        document.querySelector('#quantidade_parcial').value = qtdParcial;
-
-        if (tipo === "aguardando") {
-            document.querySelector('#numero_orcamento').value = item.numero_orcamento || '';
-            document.querySelector('#valor_orcamento').value = item.valor_orcamento || '';
-            document.querySelector('#operacao_origem').value = item.status || '';
-        } else if (tipo === "reparo") {
-            document.querySelector('#data_inicio_reparo').value = item.data_atualizacao ? item.data_atualizacao.split(" ")[0] : '';
-
-            const qtdTotal = parseInt(item.quantidade_total) || 0;
-            const qtdParcial = parseInt(item.quantidade_reparada) || 0;
-
-    // Lógica condicional aplicada no preenchimento do campo #quantidade
-            document.querySelector('#quantidade').value = qtdParcial > 0 ? qtdParcial : qtdTotal;
-
-    // Preenche também o campo de referência, se quiser exibir a original
-            document.querySelector('#quantidade_parcial').value = qtdParcial;
-
-            document.querySelector('#operacao_origem').value = item.status || '';
-            document.querySelector('#numero_orcamento').value = item.numero_orcamento || '';
-            document.querySelector('#valor_orcamento').value = item.valor_orcamento || '';
+        if (qtdParcial > 0 && qtdParcial !== qtdTotal) {
+            campoQuantidade.value = qtdParcial;
+        } else {
+            campoQuantidade.value = qtdTotal;
         }
 
+    if (tipo === "aguardando") {
+        document.querySelector('#numero_orcamento').value = item.numero_orcamento || '';
+        document.querySelector('#valor_orcamento').value = item.valor_orcamento || '';
+        document.querySelector('#operacao_origem').value = item.status || '';
+
+    } else if (tipo === "reparo") {
+        const campoDataInicio = document.querySelector('#data_inicio_reparo');
+        campoDataInicio.value = item.data_inicio_reparo ? item.data_inicio_reparo.split(" ")[0] : '';
+        campoDataInicio.readOnly = true;
+
+        // Reaproveita a mesma lógica no modo reparo
+        document.querySelector('#quantidade').value = (qtdParcial > 0 && qtdParcial !== qtdTotal) ? qtdParcial : qtdTotal;
+        document.querySelector('#quantidade_parcial').value = qtdParcial;
+
+        document.querySelector('#operacao_origem').value = item.status || '';
+        document.querySelector('#numero_orcamento').value = item.numero_orcamento || '';
+        document.querySelector('#valor_orcamento').value = item.valor_orcamento || '';
     }
+    }
+
 
     function preencherTabelaAguardando(dados) {
         mostrarTabela(tabelaAguardando);
@@ -315,7 +381,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td>${item.cnpj || ''}</td>
                 <td>${item.razao_social || ''}</td>
                 <td>${item.nota_fiscal || ''}</td>
-                <td>${item.data_atualizacao ? item.data_atualizacao.split(" ")[0] : ''}</td>
                 <td>${item.quantidade_total || ''}</td>
                 <td>${item.status || ''}</td>
                 <td>${item.numero_orcamento || ''}</td>
@@ -336,9 +401,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td>${item.cnpj || ''}</td>
                 <td>${item.razao_social || ''}</td>
                 <td>${item.nota_fiscal || ''}</td>
-                <td>${item.data_atualizacao ? item.data_atualizacao.split(" ")[0] : ''}</td>
+                <td>${item.data_inicio_reparo ? item.data_inicio_reparo.split(" ")[0] : ''}</td>
                 <td>${item.quantidade_total || ''}</td>
-                <td>${item.quantidade_reparada || ''}</td>
+                <td>${item.quantidade_parcial || ''}</td>
                 <td>${item.status || ''}</td>
                 <td>${item.numero_orcamento || ''}</td>
                 <td>${item.valor_orcamento || ''}</td>
@@ -364,11 +429,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     btnAguardando.addEventListener('click', () => {
         destacarBotao(btnAguardando);
-        fetch("http://localhost/BackEnd/Reparo/consulta_reparo.php")
+        fetch("http://172.16.0.50/sistema/KPI_2.0/BackEnd/Reparo/consulta_reparo.php")
             .then(res => res.json())
             .then(reparo => {
                 dadosEmReparo = reparo;
-                fetch("http://localhost/BackEnd/Reparo/consulta_aguardando_pg.php")
+                fetch("http://172.16.0.50/sistema/KPI_2.0/BackEnd/Reparo/consulta_aguardando_pg.php")
                     .then(res => res.json())
                     .then(aguardando => {
                         dadosAguardando = aguardando;
@@ -380,7 +445,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     btnEmReparo.addEventListener('click', () => {
         destacarBotao(btnEmReparo);
-        fetch("http://localhost/BackEnd/Reparo/consulta_reparo.php")
+        fetch("http://172.16.0.50/sistema/KPI_2.0/BackEnd/Reparo/consulta_reparo.php")
             .then(res => res.json())
             .then(dados => {
                 dadosEmReparo = dados;

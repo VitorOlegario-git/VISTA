@@ -12,13 +12,13 @@ $tempo_limite = 1200; // 20 minutos
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $tempo_limite) {
     session_unset();
     session_destroy();
-    header("Location: /localhost/FrontEnd/tela_login.php");
+    header("Location: /sistema/KPI_2.0/FrontEnd/tela_login.php");
     exit();
 }
 
 // Verifica se a sessão está ativa
 if (!isset($_SESSION['username'])) {
-    header("Location: /localhost/FrontEnd/tela_login.php");
+    header("Location: /sistema/KPI_2.0/FrontEnd/tela_login.php");
     exit();
 }
 
@@ -33,7 +33,7 @@ $_SESSION['last_activity'] = time();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro Recebimento</title>
     <link rel="stylesheet" href="../CSS/recebimento.css">
-    <link rel="icon" href="/localhost/FrontEnd/CSS/imagens/VISTA.png">
+    <link rel="icon" href="/sistema/KPI_2.0/FrontEnd/CSS/imagens/VISTA.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="../JS/CnpjMask.js"></script>
@@ -44,7 +44,7 @@ $_SESSION['last_activity'] = time();
     <i class="fas fa-spinner fa-spin"></i> Carregando...
 </div>
     <div class="recebimento-container">
-        <form action="http://localhost/BackEnd/Recebimento/Recebimento.php" method="POST">
+        <form action="http://172.16.0.50/sistema/KPI_2.0/BackEnd/Recebimento/Recebimento.php" method="POST">
 
             <div class="input-group1">
                 <label for="cod_rastreio">Código do rastreio</label>
@@ -180,7 +180,7 @@ $_SESSION['last_activity'] = time();
 </div>
 <script>
 function forcarRecarregamento() {
-    window.location.assign("/localhost/FrontEnd/html/PaginaPrincipal.php?nocache=" + new Date().getTime());
+    window.location.assign("/sistema/KPI_2.0/FrontEnd/html/PaginaPrincipal.php?nocache=" + new Date().getTime());
 }
 
 function showSuccessModal(message) {
@@ -195,24 +195,32 @@ function closeSuccessModal() {
 
 document.addEventListener("DOMContentLoaded", function () {
     const cnpjInput = document.getElementById("cnpj");
+
     if (cnpjInput) {
         cnpjInput.addEventListener("blur", function () {
             let cnpj = this.value.trim();
             if (cnpj.length === 18) {
-                fetch("http://localhost/BackEnd/buscar_cliente.php", {
+                fetch("http://172.16.0.50/sistema/KPI_2.0/BackEnd/buscar_cliente.php", {
                     method: "POST",
                     headers: { "Content-Type": "application/x-www-form-urlencoded" },
                     body: "cnpj=" + encodeURIComponent(cnpj)
                 })
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById("razao_social").value = data.razao_social || "Não encontrado";
+                    if (data.encontrado) {
+                        document.getElementById("razao_social").value = data.razao_social;
+                    } else {
+                        alert("Cliente não cadastrado. Você será redirecionado para o cadastro.");
+                        window.location.href = "/sistema/KPI_2.0/FrontEnd/html/cadastrar_cliente.php?cnpj=" + encodeURIComponent(data.cnpj_usado);
+                    }
                 })
                 .catch(error => console.error("Erro ao buscar cliente:", error));
             }
         });
     }
-    fetch("http://localhost/BackEnd/Recebimento/consulta_recebimento.php")
+
+    // Consulta de recebimentos
+    fetch("http://172.16.0.50/sistema/KPI_2.0/BackEnd/Recebimento/consulta_recebimento.php")
         .then(response => response.json())
         .then(dados => {
             const tbody = document.querySelector('#tabela-info tbody');
@@ -257,5 +265,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 </script>
+
 </body>
 </html>

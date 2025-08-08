@@ -1,9 +1,13 @@
-function carregarTicketMedio(dataInicio = "", dataFim = "") {
+function carregarTicketMedio(dataInicio = "", dataFim = "", operador = "") {
     const formData = new URLSearchParams();
 
     if (dataInicio && dataFim) {
         formData.append("data_inicial", dataInicio);
         formData.append("data_final", dataFim);
+    }
+
+    if (operador) {
+        formData.append("operador", operador);
     }
 
     fetch("../backendDash/analisePHP/ticket_medio.php", {
@@ -14,7 +18,7 @@ function carregarTicketMedio(dataInicio = "", dataFim = "") {
     .then(res => res.json())
     .then(data => {
         if (!data.ticket_medio || data.ticket_medio.length === 0) {
-            document.getElementById("graficoTicketMedio").parentElement.innerHTML = "<p>Nenhum dado disponível para o período selecionado.</p>";
+            document.getElementById("graficoTicketMedio").parentElement.innerHTML = "<p>Nenhum dado disponível para o período e operador selecionado.</p>";
             return;
         }
 
@@ -49,8 +53,9 @@ function carregarTicketMedio(dataInicio = "", dataFim = "") {
                         color: '#000',
                         font: {
                             weight: 'bold',
-                            size: 10
+                            size: 11
                         },
+                        rotation: -90,
                         formatter: value => `R$ ${parseFloat(value).toFixed(2)}`
                     },
                     tooltip: {

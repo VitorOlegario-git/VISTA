@@ -173,6 +173,10 @@ button i {
     font-size: 14px;
     vertical-align: middle;
 }
+#grafico-status{
+    max-width: 200px;
+    height: 300px;
+}
 
 /* Responsivo para telas pequenas */
 @media (max-width: 768px) {

@@ -26,7 +26,7 @@ if (!isset($_SESSION['username'])) {
 $_SESSION['last_activity'] = time();
 
 // Conexão
-require_once $_SERVER['DOCUMENT_ROOT'] . "/localhost/BackEnd/conexao.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "/sistema/KPI_2.0/BackEnd/conexao.php";
 
 // Sanitização
 function limpar($valor) {
@@ -68,7 +68,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 setor = ?, 
                 operador = ?, 
                 observacoes = ?, 
-                nota_fiscal_retorno = ?
+                nota_fiscal_retorno = ?,
+                data_cadastro = NOW()
             WHERE cnpj = ? AND nota_fiscal = ?";
 
     $stmt = $conn->prepare($sql);
@@ -103,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode([
             "success" => true,
             "message" => "Dados atualizados com sucesso.",
-            "redirect" => "/localhost/BackEnd/cadastro_realizado.php"
+            "redirect" => "/sistema/KPI_2.0/BackEnd/cadastro_realizado.php"
         ]);
     }
     exit();

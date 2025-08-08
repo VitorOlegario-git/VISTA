@@ -3,16 +3,21 @@ let chartTempoOperacoes = null;
 function carregarGraficoTempoOperacoes(dataInicio, dataFim) {
     console.log("Enviando requisição de Tempo Médio entre Operações:", { dataInicio, dataFim });
 
-    fetch("/localhost/DashBoard/backendDash/recebimentoPHP/tempo_medio_operacoes.php", {
+    fetch("/sistema/KPI_2.0/DashBoard/backendDash/recebimentoPHP/tempo_medio_operacoes.php", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `data_inicial=${dataInicio}&data_final=${dataFim}`
+        body: new URLSearchParams({
+            data_inicial: dataInicio,
+            data_final: dataFim
+        }).toString()
     })
     .then(response => {
         if (!response.ok) throw new Error("Erro na requisição: " + response.status);
-        return response.json();
+        return response.json(); // ✅ já retorna um objeto JS
     })
     .then(data => {
+        console.log("Dados recebidos:", data);
+
         const container = document.getElementById("tempoOperacoes");
 
         if (!data.dados || data.dados.length === 0) {
@@ -33,9 +38,9 @@ function carregarGraficoTempoOperacoes(dataInicio, dataFim) {
         chartTempoOperacoes = new Chart(ctx, {
             type: "bar",
             data: {
-                labels: operacoes,
+                labels: operacoes.map(op => op.replace(" → ", "\n→ ")), // quebra linha
                 datasets: [{
-                    label: "Tempo Médio Entre Operações (dias)",
+                    label: "Tempo médio entre operações",
                     data: tempos,
                     backgroundColor: "rgba(255, 206, 86, 0.6)",
                     borderColor: "rgba(255, 206, 86, 1)",
@@ -57,14 +62,11 @@ function carregarGraficoTempoOperacoes(dataInicio, dataFim) {
                     },
                     tooltip: {
                         callbacks: {
-                            label: function (context) {
-                                return `Tempo médio: ${context.raw} dias`;
-                            }
+                            label: context => `Tempo médio: ${context.raw} dias`
                         }
                     },
                     legend: {
-                        display: true,
-                        position: 'top'
+                        display: false
                     }
                 },
                 scales: {
@@ -72,7 +74,7 @@ function carregarGraficoTempoOperacoes(dataInicio, dataFim) {
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: 'Dias'
+                            text: 'Tempo médio (dias)'
                         }
                     },
                     x: {
@@ -92,6 +94,8 @@ function carregarGraficoTempoOperacoes(dataInicio, dataFim) {
     })
     .catch(error => {
         console.error("Erro ao carregar gráfico de tempo médio entre operações:", error);
-        document.getElementById("tempoOperacoes").innerHTML = "<p>Erro ao carregar os dados.</p>";
+        document.getElementById("tempoOperacoes").innerHTML = `
+            <p style="color:red">Erro ao carregar os dados.</p>
+        `;
     });
 }

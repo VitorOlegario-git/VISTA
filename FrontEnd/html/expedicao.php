@@ -13,13 +13,13 @@ $tempo_limite = 1200; // 20 minutos
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $tempo_limite) {
     session_unset();
     session_destroy();
-    header("Location: /localhost/FrontEnd/tela_login.php");
+    header("Location: /sistema/KPI_2.0/FrontEnd/tela_login.php");
     exit();
 }
 
 // Verifica se a sessão está ativa
 if (!isset($_SESSION['username'])) {
-    header("Location: /localhost/FrontEnd/tela_login.php");
+    header("Location: /sistema/KPI_2.0/FrontEnd/tela_login.php");
     exit();
 }
 
@@ -34,7 +34,7 @@ $_SESSION['last_activity'] = time();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro Expedicao</title>
     <link rel="stylesheet" href="../CSS/expedicao.css">
-    <link rel="icon" href="/localhost/FrontEnd/CSS/imagens/VISTA.png">
+    <link rel="icon" href="/sistema/KPI_2.0/FrontEnd/CSS/imagens/VISTA.png">
     <style>
         .button-group2 button.ativo {
             background-color: #1d3557;
@@ -55,15 +55,15 @@ $_SESSION['last_activity'] = time();
         <!-- Inputs -->
         <div class="input-group1">
             <label for="cnpj">CNPJ</label>
-            <input type="text" id="cnpj" name="cnpj" required oninput="applyCNPJMask(this);" maxlength="18" placeholder="Digite o CNPJ">
+            <input type="text" id="cnpj" name="cnpj" required oninput="applyCNPJMask(this);" maxlength="18" placeholder="Digite o CNPJ" readonly> 
         </div>
         <div class="input-group2">
             <label for="nota_fiscal">NF</label>
-            <input type="text" id="nota_fiscal" name="nota_fiscal" required placeholder="Nota fiscal de entrada">
+            <input type="text" id="nota_fiscal" name="nota_fiscal" required placeholder="Nota fiscal de entrada" readonly>
         </div>
         <div class="input-group3">
             <label for="data_envio_expedicao">Data do envio para expedição</label>
-            <input type="date" id="data_envio_expedicao" name="data_envio_expedicao">
+            <input type="date" id="data_envio_expedicao" name="data_envio_expedicao" readonly>
         </div>
         <div class="input-group4">
             <label for="data_envio_cliente">Data do envio para o cliente</label>
@@ -71,15 +71,15 @@ $_SESSION['last_activity'] = time();
         </div>
         <div class="input-group5">
             <label for="razao_social">Razão Social</label>
-            <input type="text" id="razao_social" name="razao_social" required placeholder="Razão Social do cliente">
+            <input type="text" id="razao_social" name="razao_social" required placeholder="Razão Social do cliente" readonly>
         </div>
         <div class="input-group6">
             <label for="quantidade">Quantidade Total</label>
-            <input type="number" id="quantidade" name="quantidade" required placeholder="Quantidade total de peças">
+            <input type="number" id="quantidade" name="quantidade" required placeholder="Quantidade total de peças" readonly>
         </div>
         <div class="input-group7">
             <label for="codigo_rastreio_envio">Cód. rastreio do envio</label>
-            <input type="text" id="codigo_rastreio_envio" name="codigo_rastreio_envio" required placeholder="Código de rastreio do envio">
+            <input type="text" id="codigo_rastreio_envio" name="codigo_rastreio_envio" required placeholder="Código de rastreio do envio" required>
         </div>
         <div class="input-group8">
             <label for="operacao_origem">Operação Origem</label>
@@ -96,7 +96,7 @@ $_SESSION['last_activity'] = time();
             </select>
         </div>
 
-        <div class="input-group10">
+        <div class="input-group10" readonly>
                 <label for="setor">Setor</label>
                 <i class="fas fa-industry"></i>
                 <select id="setor" name="setor" required>
@@ -111,7 +111,7 @@ $_SESSION['last_activity'] = time();
                     -->
                 </select>
             </div>
-        <div class="input-group11">
+        <div class="input-group11" style="display: none;">
             <label for="operador">Operador</label>
             <input type="text" id="operador" name="operador" value="<?php echo $_SESSION['username'] ?? ''; ?>" readonly>
         </div>
@@ -137,7 +137,7 @@ $_SESSION['last_activity'] = time();
             <button type="button" id="btn-enviado">Remessa enviada ao cliente</button>
         </div>
 
-        <input type="text" id="filtro-nf" placeholder="Pesquisar por NF..." class="filtro-nf-input">
+        <input type="text" id="filtro-nf" placeholder="Pesquisar por NF entrada / retorno" class="filtro-nf-input">
 
         <table id="tabela-info-aguardando-expedicao" style="display: none;">
             <thead>
@@ -165,7 +165,7 @@ $_SESSION['last_activity'] = time();
 <script>
 function voltarComReload() {
     // Redireciona e força o recarregamento
-    window.location.href = "/localhost/FrontEnd/html/PaginaPrincipal.php?reload=" + new Date().getTime();
+    window.location.href = "/sistema/KPI_2.0/FrontEnd/html/PaginaPrincipal.php?reload=" + new Date().getTime();
 }
 
 let dadosAguardandoExpedicao = [];
@@ -184,7 +184,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const formData = new FormData(this);
 
         try {
-            const res = await fetch("http://localhost/BackEnd/Expedicao/Expedicao.php", {
+            const res = await fetch("http://172.16.0.50/sistema/KPI_2.0/BackEnd/Expedicao/Expedicao.php", {
                 method: "POST",
                 body: formData
             });
@@ -284,8 +284,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     btnExpedicao.addEventListener('click', async () => {
         destacarBotao(btnExpedicao);
-        const expedicao = await fetch("http://localhost/BackEnd/Expedicao/consulta_expedicao.php").then(res => res.json());
-        const aguardando = await fetch("http://localhost/BackEnd/Expedicao/consulta_aguardando_envio.php").then(res => res.json());
+        const expedicao = await fetch("http://172.16.0.50/sistema/KPI_2.0/BackEnd/Expedicao/consulta_expedicao.php").then(res => res.json());
+        const aguardando = await fetch("http://172.16.0.50/sistema/KPI_2.0/BackEnd/Expedicao/consulta_aguardando_envio.php").then(res => res.json());
         dadosExpedido = expedicao;
         dadosAguardandoExpedicao = aguardando;
         const filtrados = filtrarAguardando(aguardando, expedicao);
@@ -294,14 +294,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     btnEnviado.addEventListener('click', async () => {
         destacarBotao(btnEnviado);
-        const dados = await fetch("http://localhost/BackEnd/Expedicao/consulta_expedicao.php").then(res => res.json());
+        const dados = await fetch("http://172.16.0.50/sistema/KPI_2.0/BackEnd/Expedicao/consulta_expedicao.php").then(res => res.json());
         dadosExpedido = dados;
         preencherTabelaExpedido(dados);
     });
 
     btnExpedicao.click();
 
-    document.getElementById("filtro-nf").addEventListener("input", function () {
+document.getElementById("filtro-nf").addEventListener("input", function () {
     const termo = this.value.toLowerCase().trim();
 
     // Impede o uso de caracteres especiais perigosos
@@ -312,8 +312,10 @@ document.addEventListener("DOMContentLoaded", function () {
     tabelas.forEach(tabela => {
         const linhas = tabela.querySelectorAll("tbody tr");
         linhas.forEach(linha => {
-            const colunaNF = linha.cells[3];
-            if (colunaNF && colunaNF.textContent.toLowerCase().includes(termo)) {
+            const notaFiscal = linha.cells[3]?.textContent.toLowerCase().trim() || '';
+            const notaFiscalRetorno = linha.cells[7]?.textContent.toLowerCase().trim() || '';
+
+            if (notaFiscal === termo || notaFiscalRetorno === termo) {
                 linha.style.display = "";
             } else {
                 linha.style.display = "none";

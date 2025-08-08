@@ -16,6 +16,12 @@
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
+.bloqueado {
+    pointer-events: none;
+    background-color: #f0f0f0;
+    color: #555;
+}
+
 html, body {
     height: 100%;
     margin: 0;

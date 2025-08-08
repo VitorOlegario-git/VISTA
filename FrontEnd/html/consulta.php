@@ -6,7 +6,7 @@
     <title>Consultar</title>
     <link rel="stylesheet" href="../CSS/consulta.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="icon" href="/localhost/FrontEnd/CSS/imagens/VISTA.png">
+    <link rel="icon" href="/sistema/KPI_2.0/FrontEnd/CSS/imagens/VISTA.png">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="../JS/CnpjMask.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -22,6 +22,10 @@
 <div class="main-container">
     <div class="top-container">
         <h1>Área para consulta</h1>
+        <div class="input-group">
+            <label for="cod_rast">Código de rastreio</label>
+            <input type="text" id="cod_rast" placeholder="Digite o Código de rastreio para consulta">
+        </div>
         <div class="input-group">
             <label for="cnpj">CNPJ</label>
             <input type="text" id="cnpj" placeholder="Digite o cnpj para consulta">
@@ -66,8 +70,8 @@
         <button id="consultar-status">Consultar Saldo Geral</button>
         <button onclick="voltarComReload()">Voltar</button>
     </div>
-    <div id="status-geral" class="resultado-container" style="margin-top: 20px;">
-       <canvas id="grafico-status" width="400" height="100" style="display: none; margin-top: 20px;"></canvas>
+    <div id="status-geral" class="resultado-container" style="margin-top: 20px;" style="display: none">
+       <canvas id="grafico-status" width="150" height="100" style="display: none; margin-top: 20px;"></canvas>
     </div>
     <!-- ✅ NOVA DIV PARA RESULTADOS -->
     <div id="resultado-consulta" class="resultado-container"></div>
@@ -78,11 +82,23 @@
 
 function voltarComReload() {
     // Redireciona e força o recarregamento
-    window.location.href = "/localhost/FrontEnd/html/PaginaPrincipal.php?reload=" + new Date().getTime();
+    window.location.href = "/sistema/KPI_2.0/FrontEnd/html/PaginaPrincipal.php?reload=" + new Date().getTime();
 }
+
+const statusGeral = document.getElementById("status-geral");
+const btnConsultarSaldo = document.getElementById("consultar-status");
+
+btnConsultarSaldo.addEventListener("click", function(){
+    if(statusGeral.style.display == "none"){
+        statusGeral.style.display = "block";
+    }else{
+        statusGeral.style.display = "none";
+    }
+});
 
 document.getElementById("consultar").addEventListener("click", function () {
     const formData = new FormData();
+    formData.append("cod_rast", document.getElementById("cod_rast").value);
     formData.append("cnpj", document.getElementById("cnpj").value);
     formData.append("nota_fiscal", document.getElementById("nota_fiscal").value);
     formData.append("imei", document.getElementById("imei").value); // IMEI incluso
@@ -90,7 +106,7 @@ document.getElementById("consultar").addEventListener("click", function () {
 
     console.log("🔎 Enviando dados:", Object.fromEntries(formData.entries()));
 
-    fetch("http://localhost/BackEnd/Consulta/consulta_resumo_geral.php", {
+    fetch("http://172.16.0.50/sistema/KPI_2.0/BackEnd/Consulta/consulta_resumo_geral.php", {
         method: "POST",
         body: formData
     })
@@ -214,7 +230,7 @@ function exportarDOCX() {
 
 
 document.getElementById("consultar-status").addEventListener("click", function () {
-    fetch("http://localhost/BackEnd/Consulta/consulta_status.php")
+    fetch("http://172.16.0.50/sistema/KPI_2.0/BackEnd/Consulta/consulta_status.php")
         .then(response => response.json())
         .then(data => {
             const container = document.getElementById("status-geral");
@@ -251,7 +267,7 @@ document.getElementById("consultar-status").addEventListener("click", function (
                     // Canvas do gráfico
                     const canvas = document.createElement("canvas");
                     canvas.id = `grafico-${setor}`;
-                    canvas.height = 300;
+                    canvas.height = "300px";
                     canvas.style.maxWidth = "600px";
                     section.appendChild(canvas);
 

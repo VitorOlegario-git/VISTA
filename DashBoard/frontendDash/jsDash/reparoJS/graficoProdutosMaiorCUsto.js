@@ -1,5 +1,5 @@
 function carregarProdutosMaiorCusto(dataInicio, dataFim) {
-    fetch("/localhost/DashBoard/backendDash/reparoPHP/getProdutosMaiorCustoAcumulado.php", {
+    fetch("/sistema/KPI_2.0/DashBoard/backendDash/reparoPHP/getProdutosMaiorCustoAcumulado.php", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: `data_inicial=${dataInicio}&data_final=${dataFim}`

@@ -4,7 +4,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 header('Content-Type: application/json');
 
-require_once $_SERVER['DOCUMENT_ROOT'] . "/localhost/BackEnd/conexao.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "/sistema/KPI_2.0/BackEnd/conexao.php";
 
 $cnpj = preg_replace('/\D/', '', $_POST['cnpj'] ?? '');
 file_put_contents("debug_cnpj.txt", $cnpj);
@@ -29,12 +29,14 @@ $conn->close();
 if (!empty($razao_social)) {
     echo json_encode([
         "razao_social" => $razao_social,
-        "cnpj_usado" => $cnpj
+        "cnpj_usado" => $cnpj,
+        "encontrado" => true
     ]);
 } else {
     echo json_encode([
         "razao_social" => "Não encontrado",
-        "cnpj_usado" => $cnpj
+        "cnpj_usado" => $cnpj,
+        "encontrado" => false
     ]);
 }
 ?>

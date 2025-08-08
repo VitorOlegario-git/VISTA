@@ -10,20 +10,20 @@ $tempo_limite = 1200; // 20 minutos
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $tempo_limite) {
     session_unset();
     session_destroy();
-    header("Location: /localhost/FrontEnd/tela_login.php");
+    header("Location: /sistema/KPI_2.0/FrontEnd/tela_login.php");
     exit();
 }
 
 // Verifica se a sessão está ativa
 if (!isset($_SESSION['username'])) {
-    header("Location: /localhost/FrontEnd/tela_login.php");
+    header("Location: /sistema/KPI_2.0/FrontEnd/tela_login.php");
     exit();
 }
 
 $_SESSION['last_activity'] = time();
 
 
-require_once $_SERVER['DOCUMENT_ROOT'] . "/localhost/BackEnd/conexao.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "/sistema/KPI_2.0/BackEnd/conexao.php";
 
 
 function sanitizeInput($input) {
@@ -130,7 +130,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt_insert->close();
     }
     if ($cadastro_sucesso) {
-        header("Location: /localhost/BackEnd/cadastro_realizado.php");
+        header("Location: /sistema/KPI_2.0/BackEnd/cadastro_realizado.php");
         exit();
     } else {
         echo "Erro ao cadastrar!";

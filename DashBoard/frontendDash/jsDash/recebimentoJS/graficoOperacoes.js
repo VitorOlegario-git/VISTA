@@ -3,7 +3,7 @@ let chartOperacoes = null;
 function carregarGraficoOperacoes(dataInicio, dataFim) {
     console.log("Enviando requisição de Operações Origem-Destino:", { dataInicio, dataFim });
 
-    fetch("//localhost/DashBoard/backendDash/recebimentoPHP/operacoes_origem_destino.php", {
+    fetch("/sistema/KPI_2.0/DashBoard/backendDash/recebimentoPHP/operacoes_origem_destino.php", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: `data_inicial=${dataInicio}&data_final=${dataFim}`
@@ -35,7 +35,7 @@ function carregarGraficoOperacoes(dataInicio, dataFim) {
             data: {
                 labels: operacoes,
                 datasets: [{
-                    label: "Quantidade de Operações",
+                    label: "",
                     data: valores,
                     backgroundColor: "rgba(153, 102, 255, 0.6)",
                     borderColor: "rgba(153, 102, 255, 1)",
@@ -64,8 +64,7 @@ function carregarGraficoOperacoes(dataInicio, dataFim) {
                         }
                     },
                     legend: {
-                        display: true,
-                        position: 'top'
+                       display: false
                     }
                 },
                 scales: {
@@ -73,13 +72,13 @@ function carregarGraficoOperacoes(dataInicio, dataFim) {
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: 'Quantidade'
+                            text: ''
                         }
                     },
                     y: {
                         title: {
                             display: true,
-                            text: 'Operações'
+                            text: ''
                         }
                     }
                 }

@@ -13,13 +13,13 @@ $tempo_limite = 1200; // 20 minutos
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $tempo_limite) {
     session_unset();
     session_destroy();
-    header("Location: /localhost/FrontEnd/tela_login.php");
+    header("Location: /sistema/KPI_2.0/FrontEnd/tela_login.php");
     exit();
 }
 
 // Verifica se a sessão está ativa
 if (!isset($_SESSION['username'])) {
-    header("Location: /localhost/FrontEnd/tela_login.php");
+    header("Location: /sistema/KPI_2.0/FrontEnd/tela_login.php");
     exit();
 }
 
@@ -34,7 +34,7 @@ $_SESSION['last_activity'] = time();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro Qualidade</title>
     <link rel="stylesheet" href="../CSS/qualidade.css">
-    <link rel="icon" href="/localhost/FrontEnd/CSS/imagens/VISTA.png">
+    <link rel="icon" href="/sistema/KPI_2.0/FrontEnd/CSS/imagens/VISTA.png">
 
     <style>
         .button-group2 button.ativo {
@@ -56,11 +56,11 @@ $_SESSION['last_activity'] = time();
         <!-- Inputs -->
         <div class="input-group1">
             <label for="cnpj">CNPJ</label>
-            <input type="text" id="cnpj" name="cnpj" required oninput="applyCNPJMask(this);" maxlength="18" placeholder="Digite o CNPJ">
+            <input type="text" id="cnpj" name="cnpj" required oninput="applyCNPJMask(this);" maxlength="18" placeholder="Digite o CNPJ" readonly>
         </div>
         <div class="input-group2">
             <label for="nota_fiscal">NF</label>
-            <input type="text" id="nota_fiscal" name="nota_fiscal" required placeholder="Nota fiscal de entrada">
+            <input type="text" id="nota_fiscal" name="nota_fiscal" required placeholder="Nota fiscal de entrada" readonly>
         </div>
         <div class="input-group3">
             <label for="data_inicio_qualidade">Data do início da inspeção</label>
@@ -72,15 +72,15 @@ $_SESSION['last_activity'] = time();
         </div>
         <div class="input-group5">
             <label for="razao_social">Razão Social</label>
-            <input type="text" id="razao_social" name="razao_social" required placeholder="Razão Social do cliente">
+            <input type="text" id="razao_social" name="razao_social" required placeholder="Razão Social do cliente" readonly>
         </div>
         <div class="input-group6">
             <label for="quantidade">Quantidade Total</label>
-            <input type="number" id="quantidade" name="quantidade" required placeholder="Quantidade total de peças">
+            <input type="number" id="quantidade" name="quantidade" required placeholder="Quantidade total de peças" readonly>
         </div>
         <div class="input-group7">
             <label for="quantidade_parcial">Quantidade Parcial</label>
-            <input type="number" id="quantidade_parcial" name="quantidade_parcial" placeholder="Quantidade parcial analisada">
+            <input type="number" id="quantidade_parcial" name="quantidade_parcial" placeholder="Quantidade parcial analisada" readonly>
         </div>
         <div class="input-group8">
             <label for="operacao_origem">Operação Origem</label>
@@ -99,7 +99,7 @@ $_SESSION['last_activity'] = time();
             </select>
         </div>
 
-        <div class="input-group10">
+        <div class="input-group10" readonly>
                 <label for="setor">Setor</label>
                 <i class="fas fa-industry"></i>
                 <select id="setor" name="setor" required>
@@ -114,7 +114,7 @@ $_SESSION['last_activity'] = time();
                     -->
                 </select>
             </div>
-        <div class="input-group11">
+        <div class="input-group11" style="display: none;">
             <label for="operador">Operador</label>
             <input type="text" id="operador" name="operador" value="<?php echo $_SESSION['username'] ?? ''; ?>" readonly>
         </div>
@@ -140,13 +140,13 @@ $_SESSION['last_activity'] = time();
             <button type="button" id="btn-setor-qualidade">Setor de Qualidade</button>
     </div>
 
-        <input type="text" id="filtro-nf" placeholder="Pesquisar por NF..." class="filtro-nf-input">
+        <input type="text" id="filtro-nf" placeholder="Pesquisar por NF entrada / retorno" class="filtro-nf-input">
 
         <table id="tabela-info-aguardando-nf-retorno" style="display: none;">
             <thead>
                 <tr>
                     <th>Setor</th><th>CNPJ</th><th>Razão Social</th><th>NF</th>
-                    <th>Data da solicitação da NF</th><th>Quantidade</th><th>Quantidade Parcial</th><th>Status</th>
+                    <th>Quantidade</th><th>Quantidade Parcial</th><th>Status</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -167,7 +167,7 @@ $_SESSION['last_activity'] = time();
 
 function voltarComReload() {
     // Redireciona e força o recarregamento
-    window.top.location.href = "/localhost/FrontEnd/html/PaginaPrincipal.php?reload=" + new Date().getTime();
+    window.top.location.href = "/sistema/KPI_2.0/FrontEnd/html/PaginaPrincipal.php?reload=" + new Date().getTime();
 }
 
 let dadosAguardandoNFRetorno = [];
@@ -180,17 +180,39 @@ document.addEventListener("DOMContentLoaded", function () {
     const quantidadeParcial = document.getElementById("quantidade_parcial");
     const form = document.getElementById("form-qualidade");
     const mensagemErro = document.getElementById("mensagemErro");
+    const opOrigem = document.getElementById("operacao_origem");
+    const opDestino = document.getElementById("operacao_destino");
 
     const btnAguardandoNfRetorno = document.getElementById('btn-aguardando-nf-retorno');
     const btnQualidade = document.getElementById('btn-setor-qualidade');
     const tabelaAguardando = document.getElementById('tabela-info-aguardando-nf-retorno');
     const tabelaQualidade = document.getElementById('tabela-info-em-inspecao');
 
+   opOrigem.addEventListener("change", function () {
+    if (opOrigem.value === "aguardando_NF_retorno") {
+        // Limpa todas as opções existentes do destino
+        opDestino.innerHTML = '';
+
+        // Cria e adiciona a única opção permitida
+        const novaOpcao = document.createElement("option");
+        novaOpcao.value = "inspecao_qualidade";
+        opDestino.appendChild(novaOpcao);
+    } else {
+        // Restaura as opções originais caso seja outra origem
+        opDestino.innerHTML = `
+            <option value="">Selecione</option>
+            <option value="inspecao_qualidade">Envio qualidade</option>
+            <option value="envio_expedicao">Enviado para expedição</option>
+        `;
+    }
+});
+
+
     form.addEventListener("submit", function (e) {
     e.preventDefault();
     const formData = new FormData(this);
 
-    fetch("http://localhost/BackEnd/Qualidade/Qualidade.php", {
+    fetch("http://172.16.0.50/sistema/KPI_2.0/BackEnd/Qualidade/Qualidade.php", {
         method: "POST",
         body: formData
     })
@@ -237,7 +259,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (tipo === "aguardando") {
             document.querySelector('#operacao_origem').value = item.operacao_destino || '';
-            document.querySelector('#data_inicio_qualidade').value = item.data_inicio_qualidade || '';
         } else if (tipo === "qualidade") {      
             document.querySelector('#data_inicio_qualidade').value = item.data_inicio_qualidade || '';
             document.querySelector('#quantidade').value = item.quantidade|| '';
@@ -257,7 +278,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td>${item.cnpj || ''}</td>
                 <td>${item.razao_social || ''}</td>
                 <td>${item.nota_fiscal || ''}</td>
-                <td>${item.data_inicio_qualidade || ''}</td>
                 <td>${item.quantidade || ''}</td>
                 <td>${item.quantidade_parcial || ''}</td>
                 <td>${item.operacao_destino || ''}</td>
@@ -304,11 +324,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     btnAguardandoNfRetorno.addEventListener('click', () => {
         destacarBotao(btnAguardandoNfRetorno);
-        fetch("http://localhost/BackEnd/Qualidade/consulta_qualidade.php")
+        fetch("http://172.16.0.50/sistema/KPI_2.0/BackEnd/Qualidade/consulta_qualidade.php")
             .then(res => res.json())
             .then(qualidade => {
                 dadosQualidade = qualidade;
-                fetch("http://localhost/BackEnd/Qualidade/consulta_aguardando_nf.php")
+                fetch("http://172.16.0.50/sistema/KPI_2.0/BackEnd/Qualidade/consulta_aguardando_nf.php")
                     .then(res => res.json())
                     .then(aguardandoNF => {
                         dadosAguardandoNFRetorno = aguardandoNF;
@@ -320,7 +340,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     btnQualidade.addEventListener('click', () => {
         destacarBotao(btnQualidade);
-        fetch("http://localhost/BackEnd/Qualidade/consulta_qualidade.php")
+        fetch("http://172.16.0.50/sistema/KPI_2.0/BackEnd/Qualidade/consulta_qualidade.php")
             .then(res => res.json())
             .then(dados => {
                 dadosQualidade = dados;
@@ -331,11 +351,10 @@ document.addEventListener("DOMContentLoaded", function () {
     // Inicializa com "Aguardando análise" visível
     btnAguardandoNfRetorno.click();
 
-    // Filtro por NF
-   document.getElementById("filtro-nf").addEventListener("input", function () {
+document.getElementById("filtro-nf").addEventListener("input", function () {
     const termo = this.value.toLowerCase().trim();
 
-    // Ignora termos inválidos com caracteres especiais perigosos
+    // Ignora termos com caracteres especiais perigosos
     if (!/^[\w\s\-./]*$/.test(termo)) return;
 
     const tabelas = [
@@ -346,8 +365,10 @@ document.addEventListener("DOMContentLoaded", function () {
     tabelas.forEach(tabela => {
         const linhas = tabela.querySelectorAll("tbody tr");
         linhas.forEach(linha => {
-            const colunaNF = linha.cells[3];
-            if (colunaNF && colunaNF.textContent.trim().toLowerCase() === termo) {
+            const notaFiscal = linha.cells[3]?.textContent.trim().toLowerCase() || '';
+            const notaFiscalRetorno = linha.cells[8]?.textContent.trim().toLowerCase() || ''; // só existe na tabela de inspeção
+
+            if (notaFiscal === termo || notaFiscalRetorno === termo) {
                 linha.style.display = "";
             } else {
                 linha.style.display = "none";
@@ -355,7 +376,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
-
 
 
 });

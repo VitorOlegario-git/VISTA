@@ -3,7 +3,7 @@ let chartTopEmpresas = null;
 function carregarGraficoEmpresas(dataInicio, dataFim) {
     console.log("Enviando requisição de Top Empresas:", { dataInicio, dataFim });
 
-    fetch("/localhost/DashBoard/backendDash/recebimentoPHP/top_empresas.php", {
+    fetch("/sistema/KPI_2.0/DashBoard/backendDash/recebimentoPHP/top_empresas.php", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: `data_inicial=${dataInicio}&data_final=${dataFim}`
@@ -20,7 +20,14 @@ function carregarGraficoEmpresas(dataInicio, dataFim) {
             return;
         }
 
-        const empresas = data.dados.map(item => item.empresa);
+        function decodeHTML(text) {
+        const textarea = document.createElement('textarea');
+        textarea.innerHTML = text;
+        return textarea.value;
+       }
+    
+        const empresas = data.dados.map(item => decodeHTML(item.empresa));
+
         const valores = data.dados.map(item => item.total_pecas);
 
         if (chartTopEmpresas instanceof Chart) {
@@ -35,7 +42,7 @@ function carregarGraficoEmpresas(dataInicio, dataFim) {
             data: {
                 labels: empresas,
                 datasets: [{
-                    label: "Top 5 Empresas com Maior Volume de Recebimentos",
+                    label: "",
                     data: valores,
                     backgroundColor: "rgba(255, 99, 132, 0.6)",
                     borderColor: "rgba(255, 99, 132, 1)",
@@ -61,8 +68,8 @@ function carregarGraficoEmpresas(dataInicio, dataFim) {
                         }
                     },
                     legend: {
-                        display: true,
-                        position: 'top'
+                        display: false,
+                        
                     }
                 },
                 scales: {
@@ -70,13 +77,13 @@ function carregarGraficoEmpresas(dataInicio, dataFim) {
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: 'Quantidade de Peças'
+                            text: ''
                         }
                     },
                     x: {
                         title: {
                             display: true,
-                            text: 'Empresas'
+                            text: ''
                         },
                         ticks: {
                             autoSkip: false,

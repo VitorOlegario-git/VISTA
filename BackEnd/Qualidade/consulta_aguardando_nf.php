@@ -1,10 +1,10 @@
 <?php
 
-require_once $_SERVER['DOCUMENT_ROOT'] . "/localhost/BackEnd/conexao.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "/sistema/KPI_2.0/BackEnd/conexao.php";
 
 
 // Consulta: traz onde NF de entrada está vazia ou NULL
-$sql = "SELECT cnpj, razao_social, nota_fiscal, data_inicio_qualidade, quantidade, quantidade_parcial, setor, operacao_destino
+$sql = "SELECT cnpj, razao_social, nota_fiscal, quantidade, quantidade_parcial, setor, operacao_destino
         FROM qualidade_registro
         WHERE operacao_destino = 'aguardando_NF_retorno'";
 

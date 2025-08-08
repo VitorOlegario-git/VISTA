@@ -1,10 +1,10 @@
-function carregarTempoSolicitacaoNF(dataInicio, dataFim) {
-    console.log("⏱️ Carregando Tempo Médio para Solicitação de NF...", { dataInicio, dataFim });
+function carregarTempoSolicitacaoNF(dataInicio, dataFim, operador = "") {
+    console.log("⏱️ Carregando Tempo Médio para Solicitação de NF...", { dataInicio, dataFim, operador });
 
-    fetch("/localhost/DashBoard/backendDash/reparoPHP/getTempoSolicitacaoNf.php", {
+    fetch("/sistema/KPI_2.0/DashBoard/backendDash/reparoPHP/getTempoSolicitacaoNf.php", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `data_inicial=${dataInicio}&data_final=${dataFim}`
+        body: `data_inicial=${encodeURIComponent(dataInicio)}&data_final=${encodeURIComponent(dataFim)}&operador=${encodeURIComponent(operador)}`
     })
     .then(res => {
         if (!res.ok) throw new Error("Erro na requisição: " + res.status);

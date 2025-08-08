@@ -1,8 +1,13 @@
-function carregarCustoMedioPorProduto(dataInicio, dataFim) {
-    fetch("/localhost/DashBoard/backendDash/reparoPHP/getCustoMedioPorProduto.php", {
+function carregarCustoMedioPorProduto(dataInicio, dataFim, operador = "") {
+    const formData = new URLSearchParams();
+    formData.append("data_inicial", dataInicio);
+    formData.append("data_final", dataFim);
+    formData.append("operador", operador);
+
+    fetch("/sistema/KPI_2.0/DashBoard/backendDash/reparoPHP/getCustoMedioPorProduto.php", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `data_inicial=${dataInicio}&data_final=${dataFim}`
+        body: formData.toString()
     })
     .then(res => {
         if (!res.ok) throw new Error("Erro na requisição: " + res.status);

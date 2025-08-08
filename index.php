@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Suntech - Login KPI</title>
+
+  <!-- Tailwind para ajudar com responsividade e centralização -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
   <style>
     * {
       margin: 0;
@@ -14,11 +18,8 @@
     body {
       background: radial-gradient(circle, #001e3c, #000000);
       height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
       font-family: Arial, sans-serif;
+      overflow: hidden;
     }
 
     .kpi-wrapper {
@@ -32,8 +33,10 @@
 
     .scanner-ring {
       position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       border: 2px solid rgba(0, 174, 255, 0.3);
       border-radius: 50%;
       animation: rotate 10s linear infinite;
@@ -46,7 +49,8 @@
 
     .login-button {
       position: absolute;
-      top: 50%; left: 50%;
+      top: 50%;
+      left: 50%;
       transform: translate(-50%, -50%);
       width: 300px;
       height: 300px;
@@ -74,7 +78,8 @@
       height: 300px;
     }
 
-    @media(max-width: 768px) {
+    /* Responsividade */
+    @media (max-width: 768px) {
       .kpi-wrapper {
         width: 250px;
         height: 250px;
@@ -93,10 +98,10 @@
     }
   </style>
 </head>
-<body>
+<body class="flex items-center justify-center">
 
   <div class="kpi-wrapper">
-    <img class="logo-topo" src="Suntech-Sunlab.png" alt="Suntech Logo">
+    <img class="logo-topo" src="Suntech-Sunlab.png" alt="Suntech Logo" />
     <div class="scanner-ring"></div>
     <button class="login-button" onclick="location.href='./FrontEnd/tela_login.php'"></button>
   </div>

@@ -3,26 +3,35 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 header("Content-Type: application/json");
 
-require_once $_SERVER['DOCUMENT_ROOT'] . "/localhost/BackEnd/conexao.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "/sistema/KPI_2.0/BackEnd/conexao.php";
 
-// Função para aplicar filtro de data apenas se houver entrada válida
-function getFiltroDatas(&$tipos, &$params) {
+function getFiltroDatasEOperador(&$tipos, &$params) {
+    $condicoes = [];
+
     if (!empty($_POST['data_inicial']) && !empty($_POST['data_final'])) {
         $data_inicio = str_replace("/", "-", $_POST['data_inicial']);
         $data_fim = str_replace("/", "-", $_POST['data_final']);
 
         if (preg_match("/^\d{4}-\d{2}-\d{2}$/", $data_inicio) && preg_match("/^\d{4}-\d{2}-\d{2}$/", $data_fim)) {
-            $tipos = "ss";
-            $params = [$data_inicio, $data_fim];
-            return "WHERE DATE(data_recebimento) BETWEEN ? AND ?";
+            $condicoes[] = "DATE(data_recebimento) BETWEEN ? AND ?";
+            $tipos .= "ss";
+            $params[] = $data_inicio;
+            $params[] = $data_fim;
         }
     }
-    return ""; // Sem filtro
+
+    if (!empty($_POST['operador'])) {
+        $condicoes[] = "operador = ?";
+        $tipos .= "s";
+        $params[] = $_POST['operador'];
+    }
+
+    return !empty($condicoes) ? "WHERE " . implode(" AND ", $condicoes) : "";
 }
 
 $tipos = "";
 $params = [];
-$where = getFiltroDatas($tipos, $params);
+$where = getFiltroDatasEOperador($tipos, $params);
 
 // Consulta 1: Total geral
 $sql_total = "SELECT SUM(quantidade) AS total_recebido FROM recebimentos $where";
@@ -46,7 +55,7 @@ while ($row = $result_setor->fetch_assoc()) {
     ];
 }
 
-// Consulta 3: Por semana (corrigida para ONLY_FULL_GROUP_BY)
+// Consulta 3: Por semana
 $sql_semanal = "
     SELECT 
         semana_inicio,
@@ -77,7 +86,7 @@ while ($row = $result_semanal->fetch_assoc()) {
     ];
 }
 
-// Consulta 4: Por mês (corrigida para ONLY_FULL_GROUP_BY)
+// Consulta 4: Por mês
 $sql_mensal = "
     SELECT 
         mes_chave,
@@ -106,7 +115,6 @@ while ($row = $result_mensal->fetch_assoc()) {
     ];
 }
 
-
 // Retorna o JSON final
 echo json_encode([
     "total_recebido" => $total_recebido,
@@ -115,10 +123,8 @@ echo json_encode([
     "mensal" => $dados_mensal
 ]);
 
-// Fecha as conexões
 $stmt_total->close();
 $stmt_setor->close();
 $stmt_semanal->close();
 $stmt_mensal->close();
 $conn->close();
-?>

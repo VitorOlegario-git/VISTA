@@ -2,14 +2,14 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-require_once $_SERVER['DOCUMENT_ROOT'] . "/localhost/BackEnd/conexao.php";
-
+require_once $_SERVER['DOCUMENT_ROOT'] . "/sistema/KPI_2.0/BackEnd/conexao.php";
 
 header('Content-Type: application/json');
 
-$sql = "SELECT setor, status, COUNT(*) as total 
-        FROM resumo_geral 
-        GROUP BY setor, status 
+// Aqui SOMAMOS a coluna 'quantidade' ao invés de contar registros
+$sql = "SELECT setor, status, SUM(quantidade) as total
+        FROM resumo_geral
+        GROUP BY setor, status
         ORDER BY setor, status";
 
 $result = $conn->query($sql);

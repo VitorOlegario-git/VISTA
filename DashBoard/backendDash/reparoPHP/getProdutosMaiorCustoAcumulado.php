@@ -1,5 +1,5 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . "/localhost/BackEnd/conexao.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "/sistema/KPI_2.0/BackEnd/conexao.php";
 
 header("Content-Type: application/json");
 
@@ -25,6 +25,7 @@ $sql = "
         pc.produto
     ORDER BY 
         custo_total DESC
+        LIMIT 10
 ";
 
 $stmt = $conn->prepare($sql);

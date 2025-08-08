@@ -1,9 +1,10 @@
 let chartTempoMedioAnalise = null;
 
-function carregarTempoMedioAnalise(dataInicio, dataFim) {
+function carregarTempoMedioAnalise(dataInicio, dataFim, operador = "") {
     const params = new URLSearchParams();
     if (dataInicio) params.append("data_inicial", dataInicio);
     if (dataFim) params.append("data_final", dataFim);
+    if (operador) params.append("operador", operador);
 
     fetch("../backendDash/analisePHP/tempo_medio_analise.php", {
         method: "POST",
@@ -13,7 +14,7 @@ function carregarTempoMedioAnalise(dataInicio, dataFim) {
     .then(res => res.json())
     .then(data => {
         if (!data || data.length === 0) {
-            document.getElementById("graficoTempoMedioAnalise").parentElement.innerHTML = "<p>Nenhum dado disponível para o período selecionado.</p>";
+            document.getElementById("graficoTempoMedioAnalise").parentElement.innerHTML = "<p>Nenhum dado disponível para o período e operador selecionado.</p>";
             return;
         }
 
@@ -31,7 +32,7 @@ function carregarTempoMedioAnalise(dataInicio, dataFim) {
             data: {
                 labels: labels,
                 datasets: [{
-                    label: "Tempo Médio de Análise (dias)",
+                    label: "",
                     data: valores,
                     backgroundColor: "rgba(75, 192, 192, 0.5)",
                     borderColor: "rgba(75, 192, 192, 1)",
@@ -58,8 +59,8 @@ function carregarTempoMedioAnalise(dataInicio, dataFim) {
                         }
                     },
                     legend: {
-                        display: true,
-                        position: 'top'
+                        display: false,
+                        
                     }
                 },
                 scales: {
@@ -67,7 +68,7 @@ function carregarTempoMedioAnalise(dataInicio, dataFim) {
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: "Dias"
+                            text: ""
                         }
                     },
                     x: {
@@ -80,7 +81,7 @@ function carregarTempoMedioAnalise(dataInicio, dataFim) {
                         },
                         title: {
                             display: true,
-                            text: "Operador"
+                            text: ""
                         }
                     }
                 }

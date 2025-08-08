@@ -32,7 +32,7 @@ if (!isset($_SESSION['username'])) {
 $_SESSION['last_activity'] = time();
 
 // Conexão com o banco de dados
-require_once $_SERVER['DOCUMENT_ROOT'] . "/localhost/BackEnd/conexao.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "/sistema/KPI_2.0/BackEnd/conexao.php";
 
 // Função para limpar entradas
 function limparTexto($str) {

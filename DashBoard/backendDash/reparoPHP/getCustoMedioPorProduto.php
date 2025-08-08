@@ -1,10 +1,11 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . "/localhost/BackEnd/conexao.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "/sistema/KPI_2.0/BackEnd/conexao.php";
 
 header("Content-Type: application/json");
 
 $data_inicio = !empty($_POST['data_inicial']) ? $_POST['data_inicial'] : "2000-01-01";
 $data_fim = !empty($_POST['data_final']) ? $_POST['data_final'] : date("Y-m-d");
+$operador = isset($_POST['operador']) ? trim($_POST['operador']) : "";
 
 if (empty($data_inicio) || empty($data_fim)) {
     echo json_encode(["error" => "Datas não fornecidas"]);
@@ -21,14 +22,32 @@ $sql = "
         produtos_catalogo pc ON ag.produto = pc.produto
     WHERE 
         ag.data_cadastro BETWEEN ? AND ?
+";
+
+$params = [$data_inicio, $data_fim];
+$tipos = "ss";
+
+if (!empty($operador)) {
+    $sql .= " AND ag.operador = ?";
+    $params[] = $operador;
+    $tipos .= "s";
+}
+
+$sql .= "
     GROUP BY 
         pc.produto
     ORDER BY 
         custo_medio DESC
+        LIMIT 10
 ";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("ss", $data_inicio, $data_fim);
+if (!$stmt) {
+    echo json_encode(["error" => "Erro ao preparar a consulta: " . $conn->error]);
+    exit;
+}
+
+$stmt->bind_param($tipos, ...$params);
 $stmt->execute();
 
 $result = $stmt->get_result();

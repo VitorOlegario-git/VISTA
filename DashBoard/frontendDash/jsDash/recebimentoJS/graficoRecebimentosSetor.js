@@ -3,7 +3,7 @@ let chartRecebimentosSetor = null;
 function carregarGraficoSetor(dataInicio, dataFim) {
     console.log("Enviando requisição de Recebimentos por Setor:", { dataInicio, dataFim });
 
-    fetch("/localhost/DashBoard/backendDash/recebimentoPHP/recebimentos_por_setor.php", {
+    fetch("/sistema/KPI_2.0/DashBoard/backendDash/recebimentoPHP/recebimentos_por_setor.php", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: `data_inicial=${dataInicio}&data_final=${dataFim}`
@@ -34,7 +34,7 @@ function carregarGraficoSetor(dataInicio, dataFim) {
             data: {
                 labels: setores,
                 datasets: [{
-                    label: "Quantidade de Peças Recebidas por Setor",
+                    label: "",
                     data: valores,
                     backgroundColor: "rgba(54, 162, 235, 0.6)",
                     borderColor: "rgba(54, 162, 235, 1)",
@@ -62,8 +62,8 @@ function carregarGraficoSetor(dataInicio, dataFim) {
                         }
                     },
                     legend: {
-                        display: true,
-                        position: 'top'
+                        display: false,
+                        
                     }
                 },
                 scales: {
@@ -71,13 +71,13 @@ function carregarGraficoSetor(dataInicio, dataFim) {
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: 'Quantidade'
+                            text: ''
                         }
                     },
                     x: {
                         title: {
                             display: true,
-                            text: 'Setor'
+                            text: ''
                         },
                         ticks: {
                             autoSkip: false,

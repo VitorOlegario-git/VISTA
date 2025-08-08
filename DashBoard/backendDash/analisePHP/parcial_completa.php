@@ -1,12 +1,12 @@
 <?php
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
-require_once $_SERVER['DOCUMENT_ROOT'] . "/localhost/BackEnd/conexao.php";
-
 header('Content-Type: application/json');
+require_once $_SERVER['DOCUMENT_ROOT'] . "/sistema/KPI_2.0/BackEnd/conexao.php";
 
-$data_inicio = !empty($_POST['data_inicial']) ? $_POST['data_inicial'] : null;
-$data_fim    = !empty($_POST['data_final'])   ? $_POST['data_final']   : null;
+$data_inicio = $_POST['data_inicial'] ?? null;
+$data_fim    = $_POST['data_final']   ?? null;
+$operador    = $_POST['operador']     ?? null;
 
 try {
     $where = [];
@@ -14,38 +14,33 @@ try {
     $types = "";
 
     if ($data_inicio && $data_fim) {
-        $where[] = "data_inicio_analise BETWEEN ? AND ?";
+        $where[] = "data_envio_orcamento BETWEEN ? AND ?";
         $params[] = $data_inicio;
         $params[] = $data_fim;
         $types .= "ss";
     }
 
-    // WHERE comum para ambas as queries
-    $whereClause = "";
-    if (!empty($where)) {
-        $whereClause = "WHERE " . implode(" AND ", $where);
+    if (!empty($operador)) {
+        $where[] = "operador = ?";
+        $params[] = $operador;
+        $types .= "s";
     }
 
-    // Query total de análises
-    $sqlTotal = "SELECT COUNT(id) AS total FROM analise_parcial $whereClause";
+    $whereClause = !empty($where) ? "WHERE " . implode(" AND ", $where) : "";
 
-    // Query de parciais: quantidade_parcial < quantidade_total
+    $sqlTotal = "SELECT COUNT(id) AS total FROM analise_parcial $whereClause";
     $sqlParciais = "SELECT COUNT(id) AS parciais FROM analise_parcial $whereClause" . 
                    (!empty($where) ? " AND" : " WHERE") . " quantidade_parcial < quantidade_total";
 
-    // Prepara total
+    // Total
     $stmtTotal = $conn->prepare($sqlTotal);
-    if (!empty($params)) {
-        $stmtTotal->bind_param($types, ...$params);
-    }
+    if (!empty($params)) $stmtTotal->bind_param($types, ...$params);
     $stmtTotal->execute();
     $total = $stmtTotal->get_result()->fetch_assoc()['total'] ?? 0;
 
-    // Prepara parciais
+    // Parciais
     $stmtParciais = $conn->prepare($sqlParciais);
-    if (!empty($params)) {
-        $stmtParciais->bind_param($types, ...$params);
-    }
+    if (!empty($params)) $stmtParciais->bind_param($types, ...$params);
     $stmtParciais->execute();
     $parciais = $stmtParciais->get_result()->fetch_assoc()['parciais'] ?? 0;
 

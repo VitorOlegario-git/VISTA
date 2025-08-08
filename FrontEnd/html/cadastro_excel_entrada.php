@@ -12,13 +12,13 @@ $tempo_limite = 1200; // 20 minutos
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $tempo_limite) {
     session_unset();
     session_destroy();
-    header("Location: /localhost/FrontEnd/tela_login.php");
+    header("Location: /sistema/KPI_2.0/FrontEnd/tela_login.php");
     exit();
 }
 
 // Verifica se a sessão está ativa
 if (!isset($_SESSION['username'])) {
-    header("Location: /localhost/FrontEnd/tela_login.php");
+    header("Location: /sistema/KPI_2.0/FrontEnd/tela_login.php");
     exit();
 }
 
@@ -33,12 +33,12 @@ $_SESSION['last_activity'] = time();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Assistência Técnica - Cadastro de Laudos</title>
     <link rel="stylesheet" href="../CSS/cadastro_excel_entrada.css">
-    <link rel="icon" href="/localhost/FrontEnd/CSS/imagens/VISTA.png">
+    <link rel="icon" href="/sistema/KPI_2.0/FrontEnd/CSS/imagens/VISTA.png">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-    <script src="/localhost/FrontEnd/JS/excelInput.js"></script>
-    <script src="/localhost/FrontEnd/JS/CnpjMask.js"></script> <!-- Caso você tenha máscara de CNPJ -->
+    <script src="/sistema/KPI_2.0/FrontEnd/JS/excelInput.js"></script>
+    <script src="/sistema/KPI_2.0/FrontEnd/JS/CnpjMask.js"></script> <!-- Caso você tenha máscara de CNPJ -->
 </head>
 <body>
 <div class="excel-container">
@@ -55,7 +55,8 @@ $_SESSION['last_activity'] = time();
 
     <input type="text" id="entrada_id" name="entrada_id" readonly placeholder="ID será preenchido automaticamente">
 
-    <input type="file" id="excel-file" accept=".xlsx">
+    <label for="excel-file" class="btn-excel">📁 Selecionar arquivo Excel</label>
+    <input type="file" id="excel-file" accept=".xlsx,.xls" style="display: none;">
     <button id="import-excel">Importar Excel</button>
     <button id="save-to-database">Cadastrar</button>
 

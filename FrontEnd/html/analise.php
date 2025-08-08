@@ -13,13 +13,13 @@ $tempo_limite = 1200; // 20 minutos
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $tempo_limite) {
     session_unset();
     session_destroy();
-    header("Location: /localhost/FrontEnd/tela_login.php");
+    header("Location: /sistema/KPI_2.0/FrontEnd/tela_login.php");
     exit();
 }
 
 // Verifica se a sessão está ativa
 if (!isset($_SESSION['username'])) {
-    header("Location: /localhost/FrontEnd/tela_login.php");
+    header("Location: /sistema/KPI_2.0/FrontEnd/tela_login.php");
     exit();
 }
 
@@ -44,7 +44,7 @@ $_SESSION['last_activity'] = time();
         }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="/localhost/FrontEnd/JS/CnpjMask.js"></script>
+    <script src="/sistema/KPI_2.0/FrontEnd/JS/CnpjMask.js"></script>
 </head>
 <body>
 <div class="analise-container">
@@ -55,27 +55,27 @@ $_SESSION['last_activity'] = time();
         <!-- Inputs -->
         <div class="input-group1">
             <label for="cnpj">CNPJ</label>
-            <input type="text" id="cnpj" name="cnpj" required oninput="applyCNPJMask(this);" maxlength="18" placeholder="Digite o CNPJ">
+            <input type="text" id="cnpj" name="cnpj" required oninput="applyCNPJMask(this);" maxlength="18" placeholder="Digite o CNPJ" readonly>
         </div>
         <div class="input-group2">
             <label for="nota_fiscal">NF</label>
-            <input type="text" id="nota_fiscal" name="nota_fiscal" required placeholder="Nota fiscal de entrada">
+            <input type="text" id="nota_fiscal" name="nota_fiscal" required placeholder="Nota fiscal de entrada" readonly>
         </div>
         <div class="input-group3">
             <label for="data_inicio_analise">Data de início da análise</label>
             <input type="date" id="data_inicio_analise" name="data_inicio_analise" required>
         </div>
         <div class="input-group4">
-            <label for="data_envio_orcamento">Data do envio do orçamento</label>
+            <label for="data_envio_orcamento">Data do encerramento da análise</label>
             <input type="date" id="data_envio_orcamento" name="data_envio_orcamento">
         </div>
         <div class="input-group5">
             <label for="razao_social">Razão Social</label>
-            <input type="text" id="razao_social" name="razao_social" required placeholder="Razão Social do cliente">
+            <input type="text" id="razao_social" name="razao_social" required placeholder="Razão Social do cliente" readonly>
         </div>
         <div class="input-group6">
             <label for="quantidade">Quantidade Total</label>
-            <input type="number" id="quantidade" name="quantidade" required placeholder="Quantidade total de peças">
+            <input type="number" id="quantidade" name="quantidade" required placeholder="Quantidade total de peças" readonly>
         </div>
         <div class="input-group7">
             <label for="sim_nao">Análise Parcial?</label>
@@ -118,16 +118,16 @@ $_SESSION['last_activity'] = time();
             <select id="operacao_destino" name="operacao_destino" required>
                 <option value="">Selecione</option>
                 <option value="em_analise">Em análise</option>
-                <option value="aguardando_pg">Aguardando Pagamento</option>
+                <option value="aguardando_pg">Análise finalisada</option>
                 <!--<option value="aguardando_NF_retorno">Aguardando NF de retorno</option>
                 <option value="analise_pendente">Análise pendente</option>-->
             </select>
         </div>
 
-        <div class="input-group16">
+        <div class="input-group16" >
                 <label for="setor">Setor</label>
                 <i class="fas fa-industry"></i>
-                <select id="setor" name="setor" required>
+                <select id="setor" name="setor" required  >
                     <option value="">Selecione o setor</option>
                     <option value="manut-varejo">Manutenção Varejo</option>
                     <option value="dev-varejo">Devolução Varejo</option>
@@ -137,9 +137,9 @@ $_SESSION['last_activity'] = time();
                     <option value="manut-lumini">Manutenção Lumini</option>
                 </select>
             </div>
-        <div class="input-group14">
+        <div class="input-group14" style="display: none;">
             <label for="operador">Operador</label>
-            <input type="text" id="operador" name="operador" value="<?php echo $_SESSION['username'] ?? ''; ?>" readonly>
+            <input type="text" id="operador" name="operador" value="<?php echo $_SESSION['username'] ?? ''; ?>" readonly >
         </div>
         <div class="input-group15">
             <label for="obs">Observações</label>
@@ -165,7 +165,7 @@ $_SESSION['last_activity'] = time();
             <thead>
                 <tr>
                     <th>Setor</th><th>CNPJ</th><th>Razão Social</th><th>NF</th>
-                    <th>Data de envio para análise</th><th>Quantidade</th><th>Status</th>
+                    <th>Quantidade</th><th>Status</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -175,7 +175,7 @@ $_SESSION['last_activity'] = time();
             <thead>
                 <tr>
                     <th>CNPJ</th><th>Razão Social</th><th>NF</th>
-                    <th>Data do início da análise</th><th>Quantidade</th>
+                    <th>Data do início da análise</th><th>Quantidade</th><th>Quantidade parcial</th>
                     <th>Status</th><th>Setor</th>
                 </tr>
             </thead>
@@ -186,9 +186,11 @@ $_SESSION['last_activity'] = time();
 
 <script>
 
+    
+
 function voltarComReload() {
     // Redireciona e força o recarregamento
-    window.top.location.href = "/localhost/FrontEnd/html/PaginaPrincipal.php?reload=" + new Date().getTime();
+    window.top.location.href = "/sistema/KPI_2.0/FrontEnd/html/PaginaPrincipal.php?reload=" + new Date().getTime();
 }
 
 let dadosAguardando = [];
@@ -202,6 +204,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const quantidadeParcial = document.getElementById("quantidade_parcial");
     const form = document.getElementById("form-analise");
     const mensagemErro = document.getElementById("mensagemErro");
+    const operacaoOrigem = document.getElementById("operacao_origem");
+    const operacaoDestino = document.getElementById("operacao_destino");
+    const dataEnvioOrcamento = document.getElementById("data_envio_orcamento");
 
     const btnAguardando = document.getElementById('btn-aguardando-analise');
     const btnEmAnalise = document.getElementById('btn-em-analise');
@@ -217,9 +222,51 @@ document.addEventListener("DOMContentLoaded", function () {
         const isFim = this.value === "fim";
         inputNumero.required = isFim;
         inputValor.required = isFim;
+        dataEnvioOrcamento.required = isFim;
         quantidadeParcial.disabled = isFim;
         if (isFim) quantidadeParcial.value = "";
     });
+
+    function atualizarOperacaoDestino() {
+    const acao = acaoSelect.value;
+    const origem = operacaoOrigem.value;
+
+    // Limpa o destino e adiciona o "Selecione"
+    operacaoDestino.innerHTML = '<option value="">Selecione</option>';
+
+    if (acao === "inicio") {
+        if (origem === "envio_analise") {
+            operacaoDestino.innerHTML += '<option value="em_analise">Em análise</option>';
+            return; // já adicionou, pode sair da função
+        }
+    }
+
+    if (acao === "fim") {
+        if (origem === "em_analise") {
+            operacaoDestino.innerHTML += '<option value="aguardando_pg">Análise finalizada</option>';
+            return;
+        }
+    }
+
+    // Se não atender a nenhuma das regras específicas, mostra todas as opções
+    const opcoes = [
+        { value: "em_analise", text: "Em análise" },
+        { value: "aguardando_pg", text: "Análise finalizada" },
+        { value: "analise_pendente", text: "Análise pendente" }
+    ];
+
+    opcoes.forEach(opcao => {
+        const opt = document.createElement("option");
+        opt.value = opcao.value;
+        opt.textContent = opcao.text;
+        operacaoDestino.appendChild(opt);
+    });
+}
+
+// Eventos que disparam a verificação
+acaoSelect.addEventListener("change", atualizarOperacaoDestino);
+operacaoOrigem.addEventListener("change", atualizarOperacaoDestino);
+
 
     form.addEventListener("submit", async function (e) {
     e.preventDefault();
@@ -234,7 +281,7 @@ document.addEventListener("DOMContentLoaded", function () {
     mensagemErro.innerHTML = ""; // Limpa mensagens antigas
 
     try {
-        const res = await fetch("http://localhost/BackEnd/Analise/Analise.php", {
+        const res = await fetch("http://172.16.0.50/sistema/KPI_2.0/BackEnd/Analise/Analise.php", {
             method: "POST",
             body: formData
         });
@@ -257,9 +304,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (data.acao === "inicio") {
                     const cnpj = encodeURIComponent(formData.get("cnpj"));
                     const nf = encodeURIComponent(formData.get("nota_fiscal"));
-                    window.top.location.href = `${window.top.location.origin}/localhost/FrontEnd/html/cadastro_excel_entrada.php?cnpj=${cnpj}&nf_entrada=${nf}`;
+                    window.top.location.href = `${window.top.location.origin}/sistema/KPI_2.0/FrontEnd/html/cadastro_excel_entrada.php?cnpj=${cnpj}&nf_entrada=${nf}`;
                 } else if (data.acao === "fim") {
-                    window.top.location.href = "/localhost/BackEnd/cadastro_realizado.php";
+                    window.top.location.href = "/sistema/KPI_2.0/BackEnd/cadastro_realizado.php";
                 }
             }, 200); // Delay curto evita travamentos
 
@@ -287,22 +334,35 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function preencherInputs(item, tipo) {
-        document.querySelector('#cnpj').value = item.cnpj || '';
-        document.querySelector('#razao_social').value = item.razao_social || '';
-        document.querySelector('#nota_fiscal').value = item.nota_fiscal || '';
-        document.querySelector("#setor").value = item.setor || '';
-        document.querySelector('#quantidade').value = item.quantidade_total || '';
+    document.querySelector('#cnpj').value = item.cnpj || '';
+    document.querySelector('#razao_social').value = item.razao_social || '';
+    document.querySelector('#nota_fiscal').value = item.nota_fiscal || '';
+    document.querySelector("#setor").value = item.setor || '';
+    document.querySelector('#quantidade_parcial').value = item.quantidade_parcial || '';
 
-        if (tipo === "aguardando") {
-           
-            document.querySelector('#operacao_origem').value = item.status || '';
-        } else if (tipo === "analise") {      
-            document.querySelector('#data_inicio_analise').value = item.data_atualizacao ? item.data_atualizacao.split(" ")[0] : '';
-            document.querySelector('#quantidade').value = item.quantidade_total || '';
-            document.querySelector('#operacao_origem').value = item.status || '';
-            
+    if (tipo === "aguardando") {
+        document.querySelector('#quantidade').value = item.quantidade_total || '';
+        document.querySelector('#operacao_origem').value = item.status || '';
+    } else if (tipo === "analise") {
+        const campoDataInicio = document.querySelector('#data_inicio_analise');
+        campoDataInicio.value = item.data_inicio_analise ? item.data_inicio_analise.split(" ")[0] : '';
+        campoDataInicio.readOnly = true;
+
+        // Verifica se há diferença entre total e parcial
+        const qtdTotal = parseInt(item.quantidade_total || 0);
+        const qtdParcial = parseInt(item.quantidade_parcial || 0);
+        const campoQuantidade = document.querySelector('#quantidade');
+
+        if (qtdParcial > 0 && qtdParcial !== qtdTotal) {
+            campoQuantidade.value = qtdParcial;
+        } else {
+            campoQuantidade.value = qtdTotal;
         }
+
+        document.querySelector('#operacao_origem').value = item.status || '';
     }
+    }
+
 
     function preencherTabelaAguardando(dados) {
         mostrarTabela(tabelaAguardando);
@@ -314,7 +374,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td>${item.cnpj || ''}</td>
                 <td>${item.razao_social || ''}</td>
                 <td>${item.nota_fiscal || ''}</td>
-                <td>${item.data_atualizacao ? item.data_atualizacao.split(" ")[0] : ''}</td>
                 <td>${item.quantidade_total || ''}</td>
                 <td>${item.status || ''}</td>
             `;
@@ -332,8 +391,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td>${item.cnpj || ''}</td>
                 <td>${item.razao_social || ''}</td>
                 <td>${item.nota_fiscal || ''}</td>
-                <td>${item.data_atualizacao ? item.data_atualizacao.split(" ")[0] : ''}</td>
+                <td>${item.data_inicio_analise ? item.data_inicio_analise.split(" ")[0] : ''}</td>
                 <td>${item.quantidade_total || ''}</td>
+                <td>${item.quantidade_parcial || ''}</td>
                 <td>${item.status || ''}</td>
                 <td>${item.setor || ''}</td>
             `;
@@ -358,11 +418,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     btnAguardando.addEventListener('click', () => {
         destacarBotao(btnAguardando);
-        fetch("http://localhost/BackEnd/Analise/consulta_analise.php")
+        fetch("http://172.16.0.50/sistema/KPI_2.0/BackEnd/Analise/consulta_analise.php")
             .then(res => res.json())
             .then(analise => {
                 dadosEmAnalise = analise;
-                fetch("http://localhost/BackEnd/Analise/consulta_aguardando_analise.php")
+                fetch("http://172.16.0.50/sistema/KPI_2.0/BackEnd/Analise/consulta_aguardando_analise.php")
                     .then(res => res.json())
                     .then(aguardando => {
                         dadosAguardando = aguardando;
@@ -374,7 +434,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     btnEmAnalise.addEventListener('click', () => {
         destacarBotao(btnEmAnalise);
-        fetch("http://localhost/BackEnd/Analise/consulta_analise.php")
+        fetch("http://172.16.0.50/sistema/KPI_2.0/BackEnd/Analise/consulta_analise.php")
             .then(res => res.json())
             .then(dados => {
                 dadosEmAnalise = dados;

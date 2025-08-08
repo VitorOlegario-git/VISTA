@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     let jsonData = [];
 
-    // Importar dados do Excel
+    // Importar dados do Excel com validação de colunas
     function importExcel() {
         const fileInput = document.getElementById("excel-file");
         if (!fileInput.files || fileInput.files.length === 0) {
@@ -22,6 +22,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 if (jsonData.length === 0) {
                     alert("O arquivo Excel está vazio ou inválido.");
+                    return;
+                }
+
+                // ✅ Validação das colunas esperadas
+                const colunasEsperadas = [
+                    "IMEI", "MODELO", "GARANTIA", "IMEI_DEVOL", "RECLAMAÇÃO",
+                    "PRODUTO", "SERVIÇO", "OCORRÊNCIA", "COND. GARANTIA VIOLADA", "ORÇAM"
+                ];
+
+                const colunasExcel = Object.keys(jsonData[0]);
+                const colunasFaltando = colunasEsperadas.filter(c => !colunasExcel.includes(c));
+                const colunasExtras = colunasExcel.filter(c => !colunasEsperadas.includes(c));
+
+                if (colunasFaltando.length > 0 || colunasExtras.length > 0) {
+                    alert("Erro: O arquivo Excel contém colunas inválidas.\n" +
+                        (colunasFaltando.length > 0 ? "Faltando: " + colunasFaltando.join(", ") + "\n" : "") +
+                        (colunasExtras.length > 0 ? "Colunas não esperadas: " + colunasExtras.join(", ") : ""));
                     return;
                 }
 
@@ -83,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function () {
         btn.disabled = true;
         btn.textContent = "Salvando...";
 
-        fetch("http://localhost/BackEnd/Reparo/salvar_dados_no_banco_2.php", {
+        fetch("http://172.16.0.50/sistema/KPI_2.0/BackEnd/Reparo/salvar_dados_no_banco_2.php", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -103,7 +120,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (response.success) {
                     alert("Dados salvos com sucesso!");
                     setTimeout(() => {
-                        window.location.href = "/localhost/BackEnd/cadastro_realizado.php";
+                        window.location.href = "/sistema/KPI_2.0/BackEnd/cadastro_realizado.php";
                     }, 1000);
                 } else {
                     alert("Erro ao salvar: " + (response.error || "Erro desconhecido."));

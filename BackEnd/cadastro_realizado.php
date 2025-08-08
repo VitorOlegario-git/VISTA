@@ -11,12 +11,12 @@ $tempo_limite = 1200;
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $tempo_limite) {
     session_unset();
     session_destroy();
-    header("Location: /localhost/FrontEnd/tela_login.php");
+    header("Location: /sistema/KPI_2.0/FrontEnd/tela_login.php");
     exit();
 }
 
 if (!isset($_SESSION['username'])) {
-    header("Location: /localhost/FrontEnd/tela_login.php");
+    header("Location: /sistema/KPI_2.0/FrontEnd/tela_login.php");
     exit();
 }
 
@@ -80,7 +80,7 @@ $_SESSION['last_activity'] = time();
 <body>
 
 <video id="video-fundo" autoplay muted playsinline>
-    <source src="/localhost/BackEnd/video_cadastrado_pronto.mp4?nocache=<?php echo time(); ?>" type="video/mp4">
+    <source src="/sistema/KPI_2.0/BackEnd/video_cadastrado_pronto.mp4?nocache=<?php echo time(); ?>" type="video/mp4">
     Seu navegador não suporta vídeo.
 </video>
 
@@ -98,7 +98,7 @@ $_SESSION['last_activity'] = time();
     function redirecionar() {
         if (!redirecionado) {
             redirecionado = true;
-            window.top.location.href = "/localhost/FrontEnd/html/PaginaPrincipal.php";
+            window.top.location.href = "/sistema/KPI_2.0/FrontEnd/html/PaginaPrincipal.php";
         }
     }
 

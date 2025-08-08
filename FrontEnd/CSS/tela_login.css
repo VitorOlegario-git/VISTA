@@ -15,16 +15,28 @@
   }
 
   .header {
-    height: 100px;
-    width: 100%;
-    position: fixed;
-    top: 10px;
-    background-image: url('../CSS/imagens/Suntech-Sunlab.png');
-    background-size: 38%;
-    background-position: center;
-    background-repeat: no-repeat;
-    z-index: 1000;
-  }
+  height: 100px;
+  width: 100%;
+  position: fixed;
+  top: 10px;
+  background-image: url('../CSS/imagens/Suntech-Sunlab.png');
+  background-size: 38%;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 1000;
+}
+
+/* Link transparente ocupando a área da imagem central */
+.link-clicavel {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;  /* ajuste conforme o tamanho da imagem */
+  height: 100px;
+  z-index: 1001;
+}
+
 
   .login-container {
     background-color: rgba(0, 0, 0, 0.6);

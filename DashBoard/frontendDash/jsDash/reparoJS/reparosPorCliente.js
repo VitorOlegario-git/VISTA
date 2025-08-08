@@ -1,10 +1,10 @@
-function carregarReparosPorCliente(dataInicio, dataFim) {
-    console.log("📊 Carregando Distribuição de Reparos por Cliente...", { dataInicio, dataFim });
+function carregarReparosPorCliente(dataInicio, dataFim, operador = "") {
+    console.log("📊 Carregando Distribuição de Reparos por Cliente...", { dataInicio, dataFim, operador });
 
-    fetch("/localhost/DashBoard/backendDash/reparoPHP/reparosPorCliente.php", {
+    fetch("/sistema/KPI_2.0/DashBoard/backendDash/reparoPHP/reparosPorCliente.php", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `data_inicial=${dataInicio}&data_final=${dataFim}`
+        body: `data_inicial=${encodeURIComponent(dataInicio)}&data_final=${encodeURIComponent(dataFim)}&operador=${encodeURIComponent(operador)}`
     })
     .then(res => {
         if (!res.ok) throw new Error("Erro na requisição: " + res.status);
@@ -32,7 +32,7 @@ function carregarReparosPorCliente(dataInicio, dataFim) {
             data: {
                 labels: clientes,
                 datasets: [{
-                    label: "Total de Reparos",
+                    label: "",
                     data: totais,
                     backgroundColor: "rgba(255, 99, 132, 0.6)",
                     borderColor: "rgba(255, 99, 132, 1)",
@@ -45,7 +45,7 @@ function carregarReparosPorCliente(dataInicio, dataFim) {
                 plugins: {
                     title: {
                         display: true,
-                        text: "Distribuição de Reparos por Cliente"
+                        text: ""
                     },
                     datalabels: {
                         anchor: 'end',
@@ -69,7 +69,7 @@ function carregarReparosPorCliente(dataInicio, dataFim) {
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: "Qtd. Reparos"
+                            text: ""
                         }
                     },
                     x: {
