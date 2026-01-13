@@ -1,0 +1,1089 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    width: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    width: 100%;
+    background: linear-gradient(135deg, #0f1419 0%, #1a2332 50%, #0f1419 100%);
+    color: #e1e8ed;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+/* ================= HEADER CORPORATIVO ================= */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    background: rgba(15, 20, 25, 0.98);
+    border-bottom: 1px solid rgba(56, 139, 253, 0.15);
+    padding: 12px 32px;
+    z-index: 1000;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.header-content {
+    max-width: 1600px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+}
+
+/* ================= HEADER LEFT ================= */
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+
+.header-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.system-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #388bfd;
+    letter-spacing: 2.5px;
+    line-height: 1;
+    margin: 0;
+}
+
+.system-subtitle {
+    font-size: 12px;
+    font-weight: 400;
+    color: #7b8a99;
+    letter-spacing: 0.4px;
+    line-height: 1;
+}
+
+/* ================= HEADER RIGHT ================= */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.user-greeting {
+    font-size: 14px;
+    color: #cbd5e1;
+    font-weight: 400;
+}
+
+.user-greeting strong {
+    font-weight: 600;
+    color: #e1e8ed;
+}
+
+/* ================= USER AVATAR ================= */
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #388bfd 0%, #60a5fa 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+    border: 2px solid rgba(56, 139, 253, 0.3);
+    box-shadow: 0 2px 8px rgba(56, 139, 253, 0.2);
+}
+
+/* ================= BOTÃO LOGOUT (HEADER) ================= */
+.btn-logout {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 6px;
+    color: #fca5a5;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    font-family: inherit;
+}
+
+.btn-logout svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2;
+}
+
+.btn-logout:hover {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.5);
+    color: #ef4444;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
+}
+
+.btn-logout:active {
+    transform: translateY(0);
+}
+
+/* ================= MAIN CONTAINER ================= */
+.main-container {
+    flex: 1;
+    margin-top: 56px;
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.content-wrapper {
+    width: 100%;
+    max-width: 1400px;
+    animation: fadeIn 0.6s ease;
+}
+
+/* ================= CARDS GRID ================= */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    padding: 0;
+}
+
+/* ================= MODULE CARD ================= */
+.module-card {
+    background: rgba(20, 30, 45, 0.8);
+    border: 1px solid rgba(56, 139, 253, 0.2);
+    border-radius: 12px;
+    padding: 32px 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 0.5s ease both;
+}
+
+.module-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(56, 139, 253, 0.1), transparent);
+    transition: left 0.6s ease;
+}
+
+.module-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(56, 139, 253, 0.5);
+    box-shadow: 
+        0 8px 24px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(56, 139, 253, 0.2) inset;
+}
+
+.module-card:hover::before {
+    left: 100%;
+}
+
+.module-card:active {
+    transform: translateY(-2px);
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+/* ================= CARD ICON ================= */
+.card-icon-svg {
+    width: 32px;
+    height: 32px;
+    color: #60a5fa;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.module-card:hover .card-icon-svg {
+    transform: scale(1.1);
+    color: #3b82f6;
+}
+
+/* ================= CARD TITLE ================= */
+.card-title {
+    font-size: 20px;
+    font-weight: 500;
+    color: #e1e8ed;
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
+/* ================= CARD DESCRIPTION ================= */
+.card-description {
+    font-size: 14px;
+    color: #8b98a5;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* ================= LOGOUT CARD ================= */
+.card-logout {
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+.card-logout:hover {
+    border-color: rgba(239, 68, 68, 0.6);
+    box-shadow: 
+        0 8px 24px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(239, 68, 68, 0.2) inset;
+}
+
+.card-logout .card-icon-svg {
+    color: #f87171;
+}
+
+.card-logout:hover .card-icon-svg {
+    color: #ef4444;
+}
+
+/* ================= FOOTER ================= */
+footer {
+    width: 100%;
+    background: rgba(15, 20, 25, 0.95);
+    border-top: 1px solid rgba(56, 139, 253, 0.2);
+    padding: 16px 20px;
+    text-align: center;
+    color: #8b98a5;
+    font-size: 13px;
+    margin-top: auto;
+}
+
+/* ================= IFRAME ================= */
+#conteudo-frame {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    border: none;
+    display: none;
+    z-index: 999;
+}
+
+/* ================= ANIMATIONS ================= */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ================= RESPONSIVO - TABLET ================= */
+@media (max-width: 1024px) {
+    .cards-grid {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 20px;
+    }
+
+    .header-content {
+        padding: 12px 20px;
+        height: 56px;
+    }
+
+    .logo-img {
+        height: 32px;
+    }
+
+    .system-title {
+        font-size: 18px;
+        letter-spacing: 2px;
+    }
+
+    .system-subtitle {
+        font-size: 11px;
+    }
+
+    .user-greeting {
+        font-size: 13px;
+    }
+
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+        font-size: 12px;
+    }
+
+    .btn-logout {
+        padding: 7px 12px;
+        font-size: 12px;
+    }
+
+    .btn-logout span {
+        display: none;
+    }
+
+    .btn-logout svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .main-container {
+        margin-top: 56px;
+    }
+}
+
+/* ================= RESPONSIVO - MOBILE ================= */
+@media (max-width: 640px) {
+    .main-container {
+        margin-top: 110px;
+        padding: 24px 16px;
+    }
+
+    .cards-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .module-card {
+        padding: 28px 20px;
+    }
+
+    .card-icon-svg {
+        width: 28px;
+        height: 28px;
+    }
+
+    .card-title {
+        font-size: 18px;
+    }
+
+    .card-description {
+        font-size: 13px;
+    }
+
+    .header-content {
+        padding: 10px 16px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        height: auto;
+    }
+
+    .header-left {
+        gap: 12px;
+    }
+
+    .header-brand {
+        padding-left: 12px;
+    }
+
+    .logo-img {
+        height: 28px;
+    }
+
+    .system-title {
+        font-size: 16px;
+        letter-spacing: 1.5px;
+    }
+
+    .system-subtitle {
+        font-size: 10px;
+    }
+
+    .header-right {
+        width: 100%;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .user-greeting {
+        font-size: 12px;
+    }
+
+    .user-avatar {
+        width: 28px;
+        height: 28px;
+        font-size: 11px;
+    }
+
+    .btn-logout {
+        padding: 6px 10px;
+        font-size: 11px;
+    }
+
+    .btn-logout svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    footer {
+        padding: 12px 16px;
+        font-size: 12px;
+    }
+}
+
+/* ================= RESPONSIVO - MOBILE PEQUENO ================= */
+@media (max-width: 375px) {
+    .module-card {
+        padding: 24px 16px;
+    }
+
+    .card-icon-svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .card-title {
+        font-size: 16px;
+    }
+}
+
+/* ================= HEADER ================= */
+.header {
+    width: 100%;
+    background: rgba(15, 20, 25, 0.95);
+    border-bottom: 1px solid rgba(56, 139, 253, 0.2);
+    padding: 0;
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+}
+
+.header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.logo-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.logo {
+    height: 50px;
+    width: auto;
+    object-fit: contain;
+}
+
+.system-title {
+    font-size: 24px;
+    font-weight: 300;
+    color: #388bfd;
+    letter-spacing: 3px;
+    margin: 0;
+}
+
+/* ================= MAIN CONTAINER ================= */
+.main-container {
+    flex: 1;
+    margin-top: 90px;
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.content-wrapper {
+    width: 100%;
+    max-width: 1400px;
+    animation: fadeIn 0.6s ease;
+}
+
+/* ================= PAGE TITLE ================= */
+.page-title {
+    font-size: 32px;
+    font-weight: 300;
+    color: #e1e8ed;
+    text-align: center;
+    margin-bottom: 48px;
+    letter-spacing: 1px;
+}
+
+/* ================= CARDS GRID ================= */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    padding: 0;
+}
+
+/* ================= MODULE CARD ================= */
+.module-card {
+    background: rgba(20, 30, 45, 0.8);
+    border: 1px solid rgba(56, 139, 253, 0.2);
+    border-radius: 12px;
+    padding: 32px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 0.5s ease both;
+}
+
+.module-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(56, 139, 253, 0.1), transparent);
+    transition: left 0.6s ease;
+}
+
+.module-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(56, 139, 253, 0.5);
+    box-shadow: 
+        0 8px 24px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(56, 139, 253, 0.2) inset;
+}
+
+.module-card:hover::before {
+    left: 100%;
+}
+
+.module-card:active {
+    transform: translateY(-2px);
+}
+
+/* ================= CARD ICON ================= */
+.card-icon {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: rgba(56, 139, 253, 0.1);
+    padding: 12px;
+    transition: all 0.3s ease;
+}
+
+.module-card:hover .card-icon {
+    background: rgba(56, 139, 253, 0.15);
+    transform: scale(1.05);
+}
+
+.card-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+/* ================= CARD TITLE ================= */
+.card-title {
+    font-size: 20px;
+    font-weight: 500;
+    color: #e1e8ed;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
+
+/* ================= CARD DESCRIPTION ================= */
+.card-description {
+    font-size: 14px;
+    color: #8b98a5;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* ================= LOGOUT CARD (DESTAQUE VISUAL) ================= */
+.card-logout {
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+.card-logout:hover {
+    border-color: rgba(239, 68, 68, 0.6);
+    box-shadow: 
+        0 8px 24px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(239, 68, 68, 0.2) inset;
+}
+
+.card-logout .card-icon {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.card-logout:hover .card-icon {
+    background: rgba(239, 68, 68, 0.15);
+}
+
+/* ================= FOOTER ================= */
+footer {
+    width: 100%;
+    background: rgba(15, 20, 25, 0.95);
+    border-top: 1px solid rgba(56, 139, 253, 0.2);
+    padding: 16px 20px;
+    text-align: center;
+    color: #8b98a5;
+    font-size: 13px;
+    margin-top: auto;
+}
+
+/* ================= IFRAME (MANTIDO PARA FUNCIONALIDADE) ================= */
+#conteudo-frame {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    border: none;
+    display: none;
+    z-index: 999;
+}
+
+/* ================= ANIMATIONS ================= */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ================= RESPONSIVO - TABLET ================= */
+@media (max-width: 1024px) {
+    .cards-grid {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 20px;
+    }
+
+    .page-title {
+        font-size: 28px;
+        margin-bottom: 36px;
+    }
+
+    .header-content {
+        padding: 14px 24px;
+    }
+
+    .logo {
+        height: 42px;
+    }
+
+    .system-title {
+        font-size: 20px;
+    }
+}
+
+/* ================= RESPONSIVO - MOBILE ================= */
+@media (max-width: 640px) {
+    .main-container {
+        margin-top: 80px;
+        padding: 24px 16px;
+    }
+
+    .page-title {
+        font-size: 24px;
+        margin-bottom: 32px;
+    }
+
+    .cards-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .module-card {
+        padding: 28px 20px;
+    }
+
+    .card-icon {
+        width: 56px;
+        height: 56px;
+        margin-bottom: 16px;
+    }
+
+    .card-title {
+        font-size: 18px;
+    }
+
+    .card-description {
+        font-size: 13px;
+    }
+
+    .header-content {
+        padding: 12px 16px;
+        gap: 16px;
+    }
+
+    .logo {
+        height: 36px;
+    }
+
+    .system-title {
+        font-size: 18px;
+        letter-spacing: 2px;
+    }
+
+    footer {
+        padding: 12px 16px;
+        font-size: 12px;
+    }
+}
+
+/* ================= RESPONSIVO - MOBILE PEQUENO ================= */
+@media (max-width: 375px) {
+    .page-title {
+        font-size: 20px;
+    }
+
+    .module-card {
+        padding: 24px 16px;
+    }
+
+    .card-icon {
+        width: 48px;
+        height: 48px;
+    }
+
+    .card-title {
+        font-size: 16px;
+    }
+}
+
+/* ================= HIGH DPI SCREENS ================= */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .module-card {
+        border-width: 0.5px;
+    }
+}
+
+/* vídeo de fundo */
+#bg-video {
+  position: fixed;
+  top: -90px;
+  left: 0;
+  min-width: 100%;
+  min-height: 100%;
+  object-fit: cover; /* cobre toda a tela sem distorcer */
+  z-index: -1; /* fica atrás do conteúdo */
+}
+
+
+  .header {
+  height: 80px;
+  width: 800px;
+  position: fixed;
+  top: 10px;
+  left: -250px;
+  background-image: url('../CSS/imagens/Suntech-Sunlab.png');
+  background-size: 38%;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 1000;
+}
+/* Estilo básico para o footer */
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #2c3e50;  /* tom escuro elegante */
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 14px;
+    box-shadow: 0 -1px 5px rgba(0,0,0,0.2);
+    z-index: 100;
+}
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+body > *:not(footer) {
+    flex: 1;
+}
+
+footer {
+    background-color: #2c3e50;
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+}
+
+
+/* Link transparente ocupando a área da imagem central */
+.link-clicavel {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;  /* ajuste conforme o tamanho da imagem */
+  height: 100px;
+  z-index: 1001;
+}
+.container-principal {
+    position: absolute;
+    width: 70vmin; /* Usa 'vmin' para manter proporção relativa à menor dimensão da tela */
+    height: 70vmin; /* Garante que o círculo escale proporcionalmente */
+    max-width: 800px; /* Ajuste o limite máximo para telas grandes */
+    max-height: 800px;
+    border-radius: 50%;
+    background-image: transparent;
+    background-size: contain; /* Mantém a proporção do círculo de luz */
+    background-position: center;
+    background-repeat: no-repeat;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.7);
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centraliza perfeitamente */
+}
+
+
+.botao-wrapper {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.botao-circular {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    transition: transform 0.3s;
+}
+
+.botao-circular:hover {
+    transform: scale(1.15);
+    box-shadow: 0 0 20px #00ffff, 0 0 30px #00ffff, 0 0 40px #00ffff;
+}
+
+
+.nome-botao {
+    margin-top: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #00ffff;
+    text-shadow: 0px 0px 5px black;
+}
+
+/* Posições dos botões dentro do círculo */
+.botao-1 { top: 10%; left: 50%; transform: translate(-50%, -50%); }
+.botao-2 { top: 25%; left: 80%; transform: translate(-50%, -50%); }
+.botao-3 { top: 50%; left: 90%; transform: translate(-50%, -50%); }
+.botao-4 { top: 75%; left: 80%; transform: translate(-50%, -50%); }
+.botao-5 { top: 90%; left: 50%; transform: translate(-50%, -50%); }
+.botao-6 { top: 75%; left: 20%; transform: translate(-50%, -50%); }
+.botao-7 { top: 50%; left: 10%; transform: translate(-50%, -50%); }
+.botao-8 { top: 25%; left: 20%; transform: translate(-50%, -50%); }
+
+/* Estilo para as linhas de conexão */
+.line {
+    position: absolute;
+    background-color: #00c4ff; /* Cor da linha, pode ser ajustada */
+    height: 2px;
+    transform-origin: 0 0;
+    opacity: 0;
+    transition: opacity 0.5s, width 0.5s;
+}
+
+.line.visible {
+    opacity: 1;
+}
+
+/* Animação de carregamento (rotação) */
+.loading {
+    animation: spin 1s infinite linear;
+}
+
+@keyframes spin {
+    100% {
+        transform: scale(1.1) rotate(360deg); /* Mantém o scale do hover */
+    }
+}
+
+/* ======== Estilização Mobile Melhorada ======== */
+@media (max-width: 768px) {
+
+    body {
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    /* Centraliza e mantém proporção circular */
+    .container-principal {
+        width: 85vmin;
+        height: 85vmin;
+        max-width: 95vw;
+        max-height: 95vw;
+        top: 47%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+    }
+    #bg-video {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      min-width: 50%;
+      min-height: 10%;
+      width: auto;
+      height: auto;
+      transform: translate(-50%, -50%); /* Centraliza perfeitamente */
+      object-fit: cover; /* Preenche a tela mantendo proporção */
+      object-position: center center; /* Foca o centro do vídeo */
+      z-index: -1;
+      background-color: #040915; /* Fallback se o vídeo não carregar */
+    }
+    
+
+    .botao-wrapper {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        transform: translate(-50%, -50%);
+    }
+
+    .botao-circular {
+        width: clamp(50px, 10vmin, 70px);
+        height: clamp(50px, 10vmin, 70px);
+        box-shadow: 0 0 8px rgba(0, 255, 255, 0.4);
+        transition: transform 0.25s;
+    }
+
+    .botao-circular:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 20px #00ffff, 0 0 30px #00ffff;
+    }
+
+    .nome-botao {
+        font-size: clamp(11px, 2.5vmin, 14px);
+        margin-top: 4px;
+        text-shadow: 0px 0px 4px black;
+    }
+
+    /* ==== Reorganização radial mais equilibrada ==== */
+    .botao-1 { top: 12%; left: 50%; }
+    .botao-2 { top: 28%; left: 82%; }
+    .botao-3 { top: 52%; left: 92%; }
+    .botao-4 { top: 76%; left: 80%; }
+    .botao-5 { top: 90%; left: 50%; }
+    .botao-6 { top: 76%; left: 20%; }
+    .botao-7 { top: 52%; left: 8%; }
+    .botao-8 { top: 28%; left: 18%; }
+
+    /* ==== Header e footer mais discretos ==== */
+    .header {
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        background-size: 45%;
+        background-position: center;
+    }
+
+    footer {
+        font-size: 12px;
+        padding: 8px 0;
+    }
+
+    /* ==== Ajuste para modo paisagem (deitado) ==== */
+    @media (orientation: landscape) {
+        .container-principal {
+            width: 75vmin;
+            height: 75vmin;
+            top: 52%;
+        }
+        .botao-circular {
+            width: clamp(45px, 8vmin, 65px);
+            height: clamp(45px, 8vmin, 65px);
+        }
+    }
+}
+#conteudo-frame {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    border: none;
+    display: none;       /* inicia escondido */
+    z-index: 999;        /* aparece por cima somente quando ativo */
+}
+
+

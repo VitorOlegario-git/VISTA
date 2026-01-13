@@ -1,0 +1,1476 @@
+/* Container principal para os inputs */
+.analise-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    background-image: url("../CSS/imagens/FundoDashBoard.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%; /* ocupa a largura total */
+    height: 600px;
+    max-width: 1200px; /* limita o tamanho em telas muito grandes */
+    margin: 0 auto; /* centraliza */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.bloqueado {
+    pointer-events: none;
+    background-color: #f0f0f0;
+    color: #555;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+.input-group1 {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre os elementos */
+    margin-top: 0px;
+    
+}
+
+.input-group1 label {
+    order: 2; /* Coloca primeiro a label */
+    white-space: nowrap;
+    color: azure;
+    font-weight: bold;
+}
+
+.input-group1 input {
+    order: 3; /* Coloca depois a label */
+    flex: 1; /* Faz o input crescer */
+    border: none;              /* Remove todas as bordas */
+    border-bottom: 2px solid #ffffff; /* Apenas a borda inferior */
+    outline: none;             /* Remove o contorno azul ao focar */
+    background: transparent;   /* Deixa o fundo transparente (opcional) */
+    padding: 5px;
+    font-size: 14px;
+    max-width: 170px;
+    color: white;
+}
+.input-group1 i {
+    order: 1;
+    margin-left: 5px;
+    color: azure;
+}
+.input-group1 input::placeholder {
+    color: white;
+    opacity: 1; /* Garante que fique 100% branco */
+}
+.input-group2 {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre os elementos */
+    margin-top: -30px;
+    margin-left: 250px;
+    
+}
+
+.input-group2 label {
+    order: 2; /* Coloca primeiro a label */
+    white-space: nowrap;
+    color: azure;
+    font-weight: bold;
+}
+
+.input-group2 input {
+    order: 3; /* Coloca depois a label */
+    flex: 1; /* Faz o input crescer */
+    border: none;              /* Remove todas as bordas */
+    border-bottom: 2px solid #ffffff; /* Apenas a borda inferior */
+    outline: none;             /* Remove o contorno azul ao focar */
+    background: transparent;   /* Deixa o fundo transparente (opcional) */
+    padding: 5px;
+    font-size: 14px;
+    max-width: 170px;
+    color: white;
+}
+.input-group2 i {
+    order: 1;
+    margin-left: 5px;
+    color: azure;
+}
+.input-group2 input::placeholder {
+    color: white;
+    opacity: 1; /* Garante que fique 100% branco */
+}
+.input-group3 {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre os elementos */
+    margin-top: -30px;
+    margin-left: 500px;
+    
+}
+
+.input-group3 label {
+    order: 2; /* Coloca primeiro a label */
+    white-space: nowrap;
+    color: azure;
+    font-weight: bold;
+}
+.input-group3 input[type="date"] {
+    color: white; /* Deixa o texto branco */
+}
+
+/* Para deixar o ícone do calendário branco no Chrome */
+.input-group3 input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+
+.input-group3 input {
+    order: 3; /* Coloca depois a label */
+    flex: 1; /* Faz o input crescer */
+    border: none;              /* Remove todas as bordas */
+    border-bottom: 2px solid #ffffff; /* Apenas a borda inferior */
+    outline: none;             /* Remove o contorno azul ao focar */
+    background: transparent;   /* Deixa o fundo transparente (opcional) */
+    padding: 5px;
+    font-size: 14px;
+    max-width: 100px;
+}
+.input-group3 i {
+    order: 1;
+    margin-left: 5px;
+    color: azure;
+}
+.input-group4 {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre os elementos */
+    margin-top: -30px;
+    margin-left: 850px;
+    
+}
+
+.input-group4 label {
+    order: 2; /* Coloca primeiro a label */
+    white-space: nowrap;
+    color: azure;
+    font-weight: bold;
+}
+.input-group4 input[type="date"] {
+    color: white; /* Deixa o texto branco */
+}
+
+/* Para deixar o ícone do calendário branco no Chrome */
+.input-group4 input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+
+.input-group4 input {
+    order: 3; /* Coloca depois a label */
+    flex: 1; /* Faz o input crescer */
+    border: none;              /* Remove todas as bordas */
+    border-bottom: 2px solid #ffffff; /* Apenas a borda inferior */
+    outline: none;             /* Remove o contorno azul ao focar */
+    background: transparent;   /* Deixa o fundo transparente (opcional) */
+    padding: 5px;
+    font-size: 14px;
+    max-width: 100px;
+}
+.input-group4 i {
+    order: 1;
+    margin-left: 5px;
+    color: azure;
+}
+.input-group5 {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre os elementos */
+    margin-top: 20px; 
+}
+
+.input-group5 label {
+    order: 2; /* Coloca primeiro a label */
+    white-space: nowrap;
+    color: azure;
+    font-weight: bold;
+}
+
+.input-group5 input {
+    order: 3; /* Coloca depois a label */
+    flex: 1; /* Faz o input crescer */
+    border: none;              /* Remove todas as bordas */
+    border-bottom: 2px solid #ffffff; /* Apenas a borda inferior */
+    outline: none;             /* Remove o contorno azul ao focar */
+    background: transparent;   /* Deixa o fundo transparente (opcional) */
+    padding: 5px;
+    font-size: 14px;
+    max-width: 300px;
+    color: white;
+}
+.input-group5 i {
+    order: 1;
+    margin-left: 5px;
+    color: azure;
+}
+.input-group5 input::placeholder {
+    color: white;
+    opacity: 1; /* Garante que fique 100% branco */
+}
+.input-group6 {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre os elementos */
+    margin-top: -30px;
+    margin-left: 450px; 
+}
+
+.input-group6 label {
+    order: 2; /* Coloca primeiro a label */
+    white-space: nowrap;
+    color: azure;
+    font-weight: bold;
+}
+
+.input-group6 input {
+    order: 3; /* Coloca depois a label */
+    flex: 1; /* Faz o input crescer */
+    border: none;              /* Remove todas as bordas */
+    border-bottom: 2px solid #ffffff; /* Apenas a borda inferior */
+    outline: none;             /* Remove o contorno azul ao focar */
+    background: transparent;   /* Deixa o fundo transparente (opcional) */
+    padding: 5px;
+    font-size: 14px;
+    max-width: 200px;
+    color: white;
+}
+.input-group6 i {
+    order: 1;
+    margin-left: 5px;
+    color: azure;
+}
+.input-group6 input::placeholder {
+    color: white;
+    opacity: 1; /* Garante que fique 100% branco */
+}
+.input-group7 {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre os elementos */
+    margin-top: -30px;
+    margin-left: 800px;
+}
+
+.input-group7 label {
+    order: 2; /* Coloca primeiro a label */
+    white-space: nowrap;
+    color: azure;
+    font-weight: bold;
+}
+
+.input-group7 select {
+    order: 3;
+    flex: 1;
+    border: none;
+    border-bottom: 2px solid #ffffff;
+    outline: none;
+    background: transparent;
+    padding: 5px;
+    font-size: 14px;
+    color: white; /* Define a cor do texto selecionado */
+    max-width: 100px;
+}
+
+.input-group7 select option {
+    background-color: #1a1a1a; /* Fundo escuro nas opções */
+    color: white;              /* Letras brancas nas opções */
+}
+
+.input-group7 i {
+    order: 1;
+    margin-left: 5px;
+    color: azure;
+}
+.input-group8 {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre os elementos */
+    margin-top: 20px;
+}
+
+.input-group8 label {
+    order: 2; /* Coloca primeiro a label */
+    white-space: nowrap;
+    color: azure;
+    font-weight: bold;
+}
+
+.input-group8 input {
+    order: 3; /* Coloca depois a label */
+    flex: 1; /* Faz o input crescer */
+    border: none;              /* Remove todas as bordas */
+    border-bottom: 2px solid #ffffff; /* Apenas a borda inferior */
+    outline: none;             /* Remove o contorno azul ao focar */
+    background: transparent;   /* Deixa o fundo transparente (opcional) */
+    padding: 5px;
+    font-size: 14px;
+    max-width: 200px;
+    color: white;
+}
+.input-group8 i {
+    order: 1;
+    margin-left: 5px;
+    color: azure;
+}
+.input-group8 input::placeholder {
+    color: white;
+    opacity: 1; /* Garante que fique 100% branco */
+}
+
+.input-group9 {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre os elementos */
+    margin-top: -30px;
+    margin-left: 400px;
+}
+
+.input-group9 label {
+    order: 2; /* Coloca primeiro a label */
+    white-space: nowrap;
+    color: azure;
+    font-weight: bold;
+}
+
+.input-group9 select {
+    order: 3;
+    flex: 1;
+    border: none;
+    border-bottom: 2px solid #ffffff;
+    outline: none;
+    background: transparent;
+    padding: 5px;
+    font-size: 14px;
+    color: white; /* Define a cor do texto selecionado */
+    max-width: 150px;
+}
+
+.input-group9 select option {
+    background-color: #1a1a1a; /* Fundo escuro nas opções */
+    color: white;              /* Letras brancas nas opções */
+}
+
+.input-group9 i {
+    order: 1;
+    margin-left: 5px;
+    color: azure;
+}
+.input-group10 {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre os elementos */
+    margin-top: -30px;
+    margin-left: 650px;
+}
+
+.input-group10 label {
+    order: 2; /* Coloca primeiro a label */
+    white-space: nowrap;
+    color: azure;
+    font-weight: bold;
+}
+
+.input-group10 input {
+    order: 3; /* Coloca depois a label */
+    flex: 1; /* Faz o input crescer */
+    border: none;              /* Remove todas as bordas */
+    border-bottom: 2px solid #ffffff; /* Apenas a borda inferior */
+    outline: none;             /* Remove o contorno azul ao focar */
+    background: transparent;   /* Deixa o fundo transparente (opcional) */
+    padding: 5px;
+    font-size: 14px;
+    max-width: 100px;
+    color: white;
+}
+.input-group10 i {
+    order: 1;
+    margin-left: 5px;
+    color: azure;
+}
+.input-group10 input::placeholder {
+    color: white;
+    opacity: 1; /* Garante que fique 100% branco */
+}
+.input-group11 {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre os elementos */
+    margin-top: -30px;
+    margin-left: 900px;
+}
+
+.input-group11 label {
+    order: 2; /* Coloca primeiro a label */
+    white-space: nowrap;
+    color: azure;
+    font-weight: bold;
+}
+
+.input-group11 input {
+    order: 3; /* Coloca depois a label */
+    flex: 1; /* Faz o input crescer */
+    border: none;              /* Remove todas as bordas */
+    border-bottom: 2px solid #ffffff; /* Apenas a borda inferior */
+    outline: none;             /* Remove o contorno azul ao focar */
+    background: transparent;   /* Deixa o fundo transparente (opcional) */
+    padding: 5px;
+    font-size: 14px;
+    max-width: 100px;
+    color: white;
+}
+.input-group11 i {
+    order: 1;
+    margin-left: 5px;
+    color: azure;
+}
+.input-group11 input::placeholder {
+    color: white;
+    opacity: 1; /* Garante que fique 100% branco */
+}
+.input-group12 {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre os elementos */
+    margin-top: 20px;
+}
+
+.input-group12 label {
+    order: 2; /* Coloca primeiro a label */
+    white-space: nowrap;
+    color: azure;
+    font-weight: bold;
+}
+
+.input-group12 select {
+    order: 3;
+    flex: 1;
+    border: none;
+    border-bottom: 2px solid #ffffff;
+    outline: none;
+    background: transparent;
+    padding: 5px;
+    font-size: 14px;
+    color: white; /* Define a cor do texto selecionado */
+    max-width: 150px;
+}
+
+.input-group12 select option {
+    background-color: #1a1a1a; /* Fundo escuro nas opções */
+    color: white;              /* Letras brancas nas opções */
+}
+
+.input-group12 i {
+    order: 1;
+    margin-left: 5px;
+    color: azure;
+}
+.input-group13 {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre os elementos */
+    margin-top: -30px;
+    margin-left: 300px;
+}
+
+.input-group13 label {
+    order: 2; /* Coloca primeiro a label */
+    white-space: nowrap;
+    color: azure;
+    font-weight: bold;
+}
+
+.input-group13 select {
+    order: 3;
+    flex: 1;
+    border: none;
+    border-bottom: 2px solid #ffffff;
+    outline: none;
+    background: transparent;
+    padding: 5px;
+    font-size: 14px;
+    color: white; /* Define a cor do texto selecionado */
+    max-width: 150px;
+}
+
+.input-group13 select option {
+    background-color: #1a1a1a; /* Fundo escuro nas opções */
+    color: white;              /* Letras brancas nas opções */
+}
+
+.input-group13 i {
+    order: 1;
+    margin-left: 5px;
+    color: azure;
+}
+.input-group14 {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre os elementos */
+    margin-top: -30px;
+    margin-left: 900px;
+}
+
+.input-group14 label {
+    order: 2; /* Coloca primeiro a label */
+    white-space: nowrap;
+    color: azure;
+    font-weight: bold;
+}
+
+.input-group14 input {
+    order: 3; /* Coloca depois a label */
+    flex: 1; /* Faz o input crescer */
+    border: none;              /* Remove todas as bordas */
+    border-bottom: 2px solid #ffffff; /* Apenas a borda inferior */
+    outline: none;             /* Remove o contorno azul ao focar */
+    background: transparent;   /* Deixa o fundo transparente (opcional) */
+    padding: 5px;
+    font-size: 14px;
+    max-width: 100px;
+    color: white;
+}
+.input-group14 i {
+    order: 1;
+    margin-left: 5px;
+    color: azure;
+}
+.input-group14 input::placeholder {
+    color: white;
+    opacity: 1; /* Garante que fique 100% branco */
+}
+.input-group15 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.input-group15 label {
+    order: 2;
+    white-space: nowrap;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.input-group15 textarea {
+    order: 3;
+    width: 500px;
+    height: 20px;              /* Altura fixa como você pediu */
+    border: 1px solid #ccc;    /* Borda visível */
+    outline: none;
+    background: white;         /* Fundo branco */
+    padding: 5px 10px;
+    font-size: 14px;
+    resize: none;              /* Impede redimensionamento */
+    color: #000;               /* Texto preto para contraste */
+    border-radius: 4px;        /* Cantos levemente arredondados (opcional) */
+}
+
+.input-group15 i {
+    order: 1;
+    margin-left: 5px;
+    color: #ffffff;
+}
+
+.input-group15 textarea::placeholder {
+    color: #666;
+    opacity: 1;
+}
+.input-group16 {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre os elementos */
+    margin-top: -30px;
+    margin-left: 600px;
+}
+
+.input-group16 label {
+    order: 2; /* Coloca primeiro a label */
+    white-space: nowrap;
+    color: azure;
+    font-weight: bold;
+}
+
+.input-group16 select {
+    order: 3;
+    flex: 1;
+    border: none;
+    border-bottom: 2px solid #ffffff;
+    outline: none;
+    background: transparent;
+    padding: 5px;
+    font-size: 14px;
+    color: white; /* Define a cor do texto selecionado */
+    max-width: 150px;
+}
+
+.input-group16 select option {
+    background-color: #1a1a1a; /* Fundo escuro nas opções */
+    color: white;              /* Letras brancas nas opções */
+}
+
+.input-group16 i {
+    order: 1;
+    margin-left: 5px;
+    color: azure;
+}
+/* Botões */
+.button-group {
+    display: flex;
+    gap: 20px; /* Espaço entre os botões */
+    margin-left: 700px; /* Ou centralize com justify-content */
+    margin-top: -30px;
+}
+
+.button-group button {
+    width: 150px;
+    height: 30px;
+    background-color: red;
+    border-radius: 8px;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+    transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+    border: none;
+}
+
+.button-group button:hover {
+    background-color: darkred;
+    transform: scale(1.05);
+}
+
+/* Responsividade */
+@media (max-width: 1024px) {
+    .input-group {
+        width: 100%; /* Em telas menores, coloca uma coluna */
+    }
+
+    .recebimento-container {
+        width: 95%;
+    }
+}
+.container-informacao {
+    background-color: #ffffff;
+    width: 100%;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    overflow-x: auto;
+}
+
+.button-group2 {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.button-group2 button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #007BFF;
+    color: white;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.button-group2 button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+#tabela-info-aguardando-analise,
+#tabela-info-em-analise {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+#tabela-info-aguardando-analise th,
+#tabela-info-em-analise th,
+#tabela-info-aguardando-analise td,
+#tabela-info-em-analise td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    font-size: 14px;
+    text-align: left;
+}
+
+#tabela-info-aguardando-analise tr:hover,
+#tabela-info-em-analise tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+}
+
+#tabela-info-aguardando-analise thead,
+#tabela-info-em-analise thead {
+    background-color: #f8f9fa;
+    color: #333;
+}
+.filtro-nf-input {
+    margin: 10px 0;
+    padding: 6px 12px;
+    width: 250px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+@media (max-width: 768px)  {
+    .analise-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        background-image: url("../CSS/imagens/FundoDashBoard.jpg");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        width: 100%; /* ocupa a largura total */
+        height: 600px;
+        max-width: 1200px; /* limita o tamanho em telas muito grandes */
+        margin: 0 auto; /* centraliza */
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        overflow-y: auto;
+        overflow-x: auto;
+    }
+}
+@media (max-width: 1024px) and (orientation: landscape) {
+.analise-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    background-image: url("../CSS/imagens/FundoDashBoard.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%; /* ocupa a largura total */
+    height: 600px;
+    max-width: 1200px; /* limita o tamanho em telas muito grandes */
+    margin: 0 auto; /* centraliza */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+.input-group1 {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre os elementos */
+    margin-top: 0px;
+    
+}
+
+.input-group1 label {
+    order: 2; /* Coloca primeiro a label */
+    white-space: nowrap;
+    color: azure;
+    font-weight: bold;
+}
+
+.input-group1 input {
+    order: 3; /* Coloca depois a label */
+    flex: 1; /* Faz o input crescer */
+    border: none;              /* Remove todas as bordas */
+    border-bottom: 2px solid #ffffff; /* Apenas a borda inferior */
+    outline: none;             /* Remove o contorno azul ao focar */
+    background: transparent;   /* Deixa o fundo transparente (opcional) */
+    padding: 5px;
+    font-size: 14px;
+    max-width: 170px;
+    color: white;
+}
+.input-group1 i {
+    order: 1;
+    margin-left: 5px;
+    color: azure;
+}
+.input-group1 input::placeholder {
+    color: white;
+    opacity: 1; /* Garante que fique 100% branco */
+}
+.input-group2 {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre os elementos */
+    margin-top: -30px;
+    margin-left: 250px;
+    
+}
+
+.input-group2 label {
+    order: 2; /* Coloca primeiro a label */
+    white-space: nowrap;
+    color: azure;
+    font-weight: bold;
+}
+
+.input-group2 input {
+    order: 3; /* Coloca depois a label */
+    flex: 1; /* Faz o input crescer */
+    border: none;              /* Remove todas as bordas */
+    border-bottom: 2px solid #ffffff; /* Apenas a borda inferior */
+    outline: none;             /* Remove o contorno azul ao focar */
+    background: transparent;   /* Deixa o fundo transparente (opcional) */
+    padding: 5px;
+    font-size: 14px;
+    max-width: 170px;
+    color: white;
+}
+.input-group2 i {
+    order: 1;
+    margin-left: 5px;
+    color: azure;
+}
+.input-group2 input::placeholder {
+    color: white;
+    opacity: 1; /* Garante que fique 100% branco */
+}
+.input-group3 {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre os elementos */
+    margin-top: -30px;
+    margin-left: 500px;
+    
+}
+
+.input-group3 label {
+    order: 2; /* Coloca primeiro a label */
+    white-space: nowrap;
+    color: azure;
+    font-weight: bold;
+}
+.input-group3 input[type="date"] {
+    color: white; /* Deixa o texto branco */
+}
+
+/* Para deixar o ícone do calendário branco no Chrome */
+.input-group3 input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+
+.input-group3 input {
+    order: 3; /* Coloca depois a label */
+    flex: 1; /* Faz o input crescer */
+    border: none;              /* Remove todas as bordas */
+    border-bottom: 2px solid #ffffff; /* Apenas a borda inferior */
+    outline: none;             /* Remove o contorno azul ao focar */
+    background: transparent;   /* Deixa o fundo transparente (opcional) */
+    padding: 5px;
+    font-size: 14px;
+    max-width: 100px;
+}
+.input-group3 i {
+    order: 1;
+    margin-left: 5px;
+    color: azure;
+}
+.input-group4 {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre os elementos */
+    margin-top: -30px;
+    margin-left: 850px;
+    
+}
+
+.input-group4 label {
+    order: 2; /* Coloca primeiro a label */
+    white-space: nowrap;
+    color: azure;
+    font-weight: bold;
+}
+.input-group4 input[type="date"] {
+    color: white; /* Deixa o texto branco */
+}
+
+/* Para deixar o ícone do calendário branco no Chrome */
+.input-group4 input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+
+.input-group4 input {
+    order: 3; /* Coloca depois a label */
+    flex: 1; /* Faz o input crescer */
+    border: none;              /* Remove todas as bordas */
+    border-bottom: 2px solid #ffffff; /* Apenas a borda inferior */
+    outline: none;             /* Remove o contorno azul ao focar */
+    background: transparent;   /* Deixa o fundo transparente (opcional) */
+    padding: 5px;
+    font-size: 14px;
+    max-width: 100px;
+}
+.input-group4 i {
+    order: 1;
+    margin-left: 5px;
+    color: azure;
+}
+.input-group5 {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre os elementos */
+    margin-top: 20px; 
+}
+
+.input-group5 label {
+    order: 2; /* Coloca primeiro a label */
+    white-space: nowrap;
+    color: azure;
+    font-weight: bold;
+}
+
+.input-group5 input {
+    order: 3; /* Coloca depois a label */
+    flex: 1; /* Faz o input crescer */
+    border: none;              /* Remove todas as bordas */
+    border-bottom: 2px solid #ffffff; /* Apenas a borda inferior */
+    outline: none;             /* Remove o contorno azul ao focar */
+    background: transparent;   /* Deixa o fundo transparente (opcional) */
+    padding: 5px;
+    font-size: 14px;
+    max-width: 300px;
+    color: white;
+}
+.input-group5 i {
+    order: 1;
+    margin-left: 5px;
+    color: azure;
+}
+.input-group5 input::placeholder {
+    color: white;
+    opacity: 1; /* Garante que fique 100% branco */
+}
+.input-group6 {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre os elementos */
+    margin-top: -30px;
+    margin-left: 450px; 
+}
+
+.input-group6 label {
+    order: 2; /* Coloca primeiro a label */
+    white-space: nowrap;
+    color: azure;
+    font-weight: bold;
+}
+
+.input-group6 input {
+    order: 3; /* Coloca depois a label */
+    flex: 1; /* Faz o input crescer */
+    border: none;              /* Remove todas as bordas */
+    border-bottom: 2px solid #ffffff; /* Apenas a borda inferior */
+    outline: none;             /* Remove o contorno azul ao focar */
+    background: transparent;   /* Deixa o fundo transparente (opcional) */
+    padding: 5px;
+    font-size: 14px;
+    max-width: 200px;
+    color: white;
+}
+.input-group6 i {
+    order: 1;
+    margin-left: 5px;
+    color: azure;
+}
+.input-group6 input::placeholder {
+    color: white;
+    opacity: 1; /* Garante que fique 100% branco */
+}
+.input-group7 {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre os elementos */
+    margin-top: -30px;
+    margin-left: 800px;
+}
+
+.input-group7 label {
+    order: 2; /* Coloca primeiro a label */
+    white-space: nowrap;
+    color: azure;
+    font-weight: bold;
+}
+
+.input-group7 select {
+    order: 3;
+    flex: 1;
+    border: none;
+    border-bottom: 2px solid #ffffff;
+    outline: none;
+    background: transparent;
+    padding: 5px;
+    font-size: 14px;
+    color: white; /* Define a cor do texto selecionado */
+    max-width: 100px;
+}
+
+.input-group7 select option {
+    background-color: #1a1a1a; /* Fundo escuro nas opções */
+    color: white;              /* Letras brancas nas opções */
+}
+
+.input-group7 i {
+    order: 1;
+    margin-left: 5px;
+    color: azure;
+}
+.input-group8 {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre os elementos */
+    margin-top: 20px;
+}
+
+.input-group8 label {
+    order: 2; /* Coloca primeiro a label */
+    white-space: nowrap;
+    color: azure;
+    font-weight: bold;
+}
+
+.input-group8 input {
+    order: 3; /* Coloca depois a label */
+    flex: 1; /* Faz o input crescer */
+    border: none;              /* Remove todas as bordas */
+    border-bottom: 2px solid #ffffff; /* Apenas a borda inferior */
+    outline: none;             /* Remove o contorno azul ao focar */
+    background: transparent;   /* Deixa o fundo transparente (opcional) */
+    padding: 5px;
+    font-size: 14px;
+    max-width: 200px;
+    color: white;
+}
+.input-group8 i {
+    order: 1;
+    margin-left: 5px;
+    color: azure;
+}
+.input-group8 input::placeholder {
+    color: white;
+    opacity: 1; /* Garante que fique 100% branco */
+}
+
+.input-group9 {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre os elementos */
+    margin-top: -30px;
+    margin-left: 400px;
+}
+
+.input-group9 label {
+    order: 2; /* Coloca primeiro a label */
+    white-space: nowrap;
+    color: azure;
+    font-weight: bold;
+}
+
+.input-group9 select {
+    order: 3;
+    flex: 1;
+    border: none;
+    border-bottom: 2px solid #ffffff;
+    outline: none;
+    background: transparent;
+    padding: 5px;
+    font-size: 14px;
+    color: white; /* Define a cor do texto selecionado */
+    max-width: 150px;
+}
+
+.input-group9 select option {
+    background-color: #1a1a1a; /* Fundo escuro nas opções */
+    color: white;              /* Letras brancas nas opções */
+}
+
+.input-group9 i {
+    order: 1;
+    margin-left: 5px;
+    color: azure;
+}
+.input-group10 {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre os elementos */
+    margin-top: -30px;
+    margin-left: 650px;
+}
+
+.input-group10 label {
+    order: 2; /* Coloca primeiro a label */
+    white-space: nowrap;
+    color: azure;
+    font-weight: bold;
+}
+
+.input-group10 input {
+    order: 3; /* Coloca depois a label */
+    flex: 1; /* Faz o input crescer */
+    border: none;              /* Remove todas as bordas */
+    border-bottom: 2px solid #ffffff; /* Apenas a borda inferior */
+    outline: none;             /* Remove o contorno azul ao focar */
+    background: transparent;   /* Deixa o fundo transparente (opcional) */
+    padding: 5px;
+    font-size: 14px;
+    max-width: 100px;
+    color: white;
+}
+.input-group10 i {
+    order: 1;
+    margin-left: 5px;
+    color: azure;
+}
+.input-group10 input::placeholder {
+    color: white;
+    opacity: 1; /* Garante que fique 100% branco */
+}
+.input-group11 {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre os elementos */
+    margin-top: -30px;
+    margin-left: 900px;
+}
+
+.input-group11 label {
+    order: 2; /* Coloca primeiro a label */
+    white-space: nowrap;
+    color: azure;
+    font-weight: bold;
+}
+
+.input-group11 input {
+    order: 3; /* Coloca depois a label */
+    flex: 1; /* Faz o input crescer */
+    border: none;              /* Remove todas as bordas */
+    border-bottom: 2px solid #ffffff; /* Apenas a borda inferior */
+    outline: none;             /* Remove o contorno azul ao focar */
+    background: transparent;   /* Deixa o fundo transparente (opcional) */
+    padding: 5px;
+    font-size: 14px;
+    max-width: 100px;
+    color: white;
+}
+.input-group11 i {
+    order: 1;
+    margin-left: 5px;
+    color: azure;
+}
+.input-group11 input::placeholder {
+    color: white;
+    opacity: 1; /* Garante que fique 100% branco */
+}
+.input-group12 {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre os elementos */
+    margin-top: 20px;
+}
+
+.input-group12 label {
+    order: 2; /* Coloca primeiro a label */
+    white-space: nowrap;
+    color: azure;
+    font-weight: bold;
+}
+
+.input-group12 select {
+    order: 3;
+    flex: 1;
+    border: none;
+    border-bottom: 2px solid #ffffff;
+    outline: none;
+    background: transparent;
+    padding: 5px;
+    font-size: 14px;
+    color: white; /* Define a cor do texto selecionado */
+    max-width: 150px;
+}
+
+.input-group12 select option {
+    background-color: #1a1a1a; /* Fundo escuro nas opções */
+    color: white;              /* Letras brancas nas opções */
+}
+
+.input-group12 i {
+    order: 1;
+    margin-left: 5px;
+    color: azure;
+}
+.input-group13 {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre os elementos */
+    margin-top: -30px;
+    margin-left: 300px;
+}
+
+.input-group13 label {
+    order: 2; /* Coloca primeiro a label */
+    white-space: nowrap;
+    color: azure;
+    font-weight: bold;
+}
+
+.input-group13 select {
+    order: 3;
+    flex: 1;
+    border: none;
+    border-bottom: 2px solid #ffffff;
+    outline: none;
+    background: transparent;
+    padding: 5px;
+    font-size: 14px;
+    color: white; /* Define a cor do texto selecionado */
+    max-width: 150px;
+}
+
+.input-group13 select option {
+    background-color: #1a1a1a; /* Fundo escuro nas opções */
+    color: white;              /* Letras brancas nas opções */
+}
+
+.input-group13 i {
+    order: 1;
+    margin-left: 5px;
+    color: azure;
+}
+.input-group14 {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre os elementos */
+    margin-top: -30px;
+    margin-left: 900px;
+}
+
+.input-group14 label {
+    order: 2; /* Coloca primeiro a label */
+    white-space: nowrap;
+    color: azure;
+    font-weight: bold;
+}
+
+.input-group14 input {
+    order: 3; /* Coloca depois a label */
+    flex: 1; /* Faz o input crescer */
+    border: none;              /* Remove todas as bordas */
+    border-bottom: 2px solid #ffffff; /* Apenas a borda inferior */
+    outline: none;             /* Remove o contorno azul ao focar */
+    background: transparent;   /* Deixa o fundo transparente (opcional) */
+    padding: 5px;
+    font-size: 14px;
+    max-width: 100px;
+    color: white;
+}
+.input-group14 i {
+    order: 1;
+    margin-left: 5px;
+    color: azure;
+}
+.input-group14 input::placeholder {
+    color: white;
+    opacity: 1; /* Garante que fique 100% branco */
+}
+.input-group15 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.input-group15 label {
+    order: 2;
+    white-space: nowrap;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.input-group15 textarea {
+    order: 3;
+    width: 500px;
+    height: 20px;              /* Altura fixa como você pediu */
+    border: 1px solid #ccc;    /* Borda visível */
+    outline: none;
+    background: white;         /* Fundo branco */
+    padding: 5px 10px;
+    font-size: 14px;
+    resize: none;              /* Impede redimensionamento */
+    color: #000;               /* Texto preto para contraste */
+    border-radius: 4px;        /* Cantos levemente arredondados (opcional) */
+}
+
+.input-group15 i {
+    order: 1;
+    margin-left: 5px;
+    color: #ffffff;
+}
+
+.input-group15 textarea::placeholder {
+    color: #666;
+    opacity: 1;
+}
+.input-group16 {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre os elementos */
+    margin-top: -30px;
+    margin-left: 600px;
+}
+
+.input-group16 label {
+    order: 2; /* Coloca primeiro a label */
+    white-space: nowrap;
+    color: azure;
+    font-weight: bold;
+}
+
+.input-group16 select {
+    order: 3;
+    flex: 1;
+    border: none;
+    border-bottom: 2px solid #ffffff;
+    outline: none;
+    background: transparent;
+    padding: 5px;
+    font-size: 14px;
+    color: white; /* Define a cor do texto selecionado */
+    max-width: 150px;
+}
+
+.input-group16 select option {
+    background-color: #1a1a1a; /* Fundo escuro nas opções */
+    color: white;              /* Letras brancas nas opções */
+}
+
+.input-group16 i {
+    order: 1;
+    margin-left: 5px;
+    color: azure;
+}
+/* Botões */
+.button-group {
+    display: flex;
+    gap: 20px; /* Espaço entre os botões */
+    margin-left: 700px; /* Ou centralize com justify-content */
+    margin-top: -30px;
+}
+
+.button-group button {
+    width: 150px;
+    height: 30px;
+    background-color: red;
+    border-radius: 8px;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+    transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+    border: none;
+}
+
+.button-group button:hover {
+    background-color: darkred;
+    transform: scale(1.05);
+}
+
+/* Responsividade */
+@media (max-width: 1024px) {
+    .input-group {
+        width: 100%; /* Em telas menores, coloca uma coluna */
+    }
+
+    .recebimento-container {
+        width: 95%;
+    }
+}
+.container-informacao {
+    background-color: #ffffff;
+    width: 100%;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    overflow-x: auto;
+}
+
+.button-group2 {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.button-group2 button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #007BFF;
+    color: white;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.button-group2 button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+#tabela-info-aguardando-analise,
+#tabela-info-em-analise {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+#tabela-info-aguardando-analise th,
+#tabela-info-em-analise th,
+#tabela-info-aguardando-analise td,
+#tabela-info-em-analise td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    font-size: 14px;
+    text-align: left;
+}
+
+#tabela-info-aguardando-analise tr:hover,
+#tabela-info-em-analise tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+}
+
+#tabela-info-aguardando-analise thead,
+#tabela-info-em-analise thead {
+    background-color: #f8f9fa;
+    color: #333;
+}
+.filtro-nf-input {
+    margin: 10px 0;
+    padding: 6px 12px;
+    width: 250px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+}

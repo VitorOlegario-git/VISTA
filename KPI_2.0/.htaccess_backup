@@ -1,0 +1,148 @@
+# =====================================================
+# Sistema VISTA - Configuração Apache
+# URL Rewriting e Segurança
+# =====================================================
+
+# Habilita o módulo de rewrite
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # =====================================================
+    # SEGURANÇA - Bloqueia acesso a arquivos sensíveis
+    # =====================================================
+    
+    # Bloqueia acesso ao .env
+    <FilesMatch "^\.env">
+        Order allow,deny
+        Deny from all
+    </FilesMatch>
+    
+    # Bloqueia acesso a arquivos de configuração
+    <FilesMatch "\.(md|log|sql|example)$">
+        Order allow,deny
+        Deny from all
+    </FilesMatch>
+    
+    # Protege diretório de logs
+    RedirectMatch 403 ^/logs/.*$
+    
+    # Protege arquivos do backend direto
+    RewriteRule ^BackEnd/(?!.*\.(css|js|png|jpg|jpeg|gif|ico|svg)).*$ - [F,L]
+
+    # =====================================================
+    # URL REWRITING - URLs Amigáveis
+    # =====================================================
+    
+    # Redireciona raiz para login
+    RewriteRule ^$ /login [R=301,L]
+    RewriteRule ^index\.php$ /login [R=301,L]
+    
+    # URLs principais do sistema
+    RewriteRule ^login$ FrontEnd/tela_login.php [L]
+    RewriteRule ^cadastro$ FrontEnd/CadastroUsuario.php [L]
+    RewriteRule ^recuperar-senha$ FrontEnd/RecuperarSenha.php [L]
+    RewriteRule ^nova-senha$ FrontEnd/NovaSenha.php [L]
+    RewriteRule ^confirmar-cadastro$ FrontEnd/confirmar_cadastro.php [L]
+    RewriteRule ^logout$ BackEnd/logout.php [L]
+    
+    # Dashboard / Página Principal
+    RewriteRule ^dashboard$ FrontEnd/html/PaginaPrincipal.php [L]
+    RewriteRule ^home$ FrontEnd/html/PaginaPrincipal.php [L]
+    
+    # Módulos principais
+    RewriteRule ^analise$ FrontEnd/html/analise.php [L]
+    RewriteRule ^recebimento$ FrontEnd/html/recebimento.php [L]
+    RewriteRule ^reparo$ FrontEnd/html/reparo.php [L]
+    RewriteRule ^qualidade$ FrontEnd/html/qualidade.php [L]
+    RewriteRule ^expedicao$ FrontEnd/html/expedicao.php [L]
+    RewriteRule ^consulta$ FrontEnd/html/consulta.php [L]
+    RewriteRule ^consulta/id$ FrontEnd/html/consulta_id.php [L]
+    
+    # Cadastros
+    RewriteRule ^cadastrar-cliente$ FrontEnd/html/cadastrar_cliente.php [L]
+    RewriteRule ^cadastro-entrada$ FrontEnd/html/cadastro_excel_entrada.php [L]
+    RewriteRule ^cadastro-pos-analise$ FrontEnd/html/cadastro_excel_pos_analise.php [L]
+    
+    # APIs Backend (mantém acesso mas não lista diretório)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^api/(.*)$ BackEnd/$1 [L]
+
+    # =====================================================
+    # REDIRECIONAMENTOS - URLs antigas para novas
+    # =====================================================
+    
+    # Redireciona URLs antigas permanentemente
+    RewriteRule ^FrontEnd/tela_login\.php$ /login [R=301,L]
+    RewriteRule ^FrontEnd/html/PaginaPrincipal\.php$ /dashboard [R=301,L]
+    RewriteRule ^FrontEnd/html/analise\.php$ /analise [R=301,L]
+    RewriteRule ^FrontEnd/html/recebimento\.php$ /recebimento [R=301,L]
+    RewriteRule ^FrontEnd/html/reparo\.php$ /reparo [R=301,L]
+    RewriteRule ^FrontEnd/html/qualidade\.php$ /qualidade [R=301,L]
+    RewriteRule ^FrontEnd/html/expedicao\.php$ /expedicao [R=301,L]
+    RewriteRule ^FrontEnd/html/consulta\.php$ /consulta [R=301,L]
+    RewriteRule ^FrontEnd/CadastroUsuario\.php$ /cadastro [R=301,L]
+    RewriteRule ^FrontEnd/RecuperarSenha\.php$ /recuperar-senha [R=301,L]
+
+</IfModule>
+
+# =====================================================
+# HEADERS DE SEGURANÇA
+# =====================================================
+
+<IfModule mod_headers.c>
+    # Previne clickjacking
+    Header always set X-Frame-Options "SAMEORIGIN"
+    
+    # Previne MIME sniffing
+    Header always set X-Content-Type-Options "nosniff"
+    
+    # XSS Protection
+    Header always set X-XSS-Protection "1; mode=block"
+    
+    # Referrer Policy
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # Remove informação do servidor
+    Header unset Server
+    Header unset X-Powered-By
+</IfModule>
+
+# =====================================================
+# CACHE E COMPRESSÃO
+# =====================================================
+
+# Compressão GZIP
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+</IfModule>
+
+# Cache para assets estáticos
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType application/pdf "access plus 1 month"
+</IfModule>
+
+# =====================================================
+# PROTEÇÃO ADICIONAL
+# =====================================================
+
+# Desabilita listagem de diretórios
+Options -Indexes
+
+# Desabilita execução de PHP em diretórios de upload (se tiver)
+<Directory "uploads">
+    php_flag engine off
+</Directory>
+
+# Limite de tamanho de upload (ajuste conforme necessário)
+php_value upload_max_filesize 10M
+php_value post_max_size 10M

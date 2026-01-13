@@ -1,0 +1,38 @@
+# Arquivo de ambiente com credenciais sensíveis
+.env
+
+# Arquivos de debug
+debug_*.txt
+*.log
+
+# Logs
+logs/
+*.log
+
+# Arquivos temporários
+tmp/
+temp/
+
+# Cache
+cache/
+
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Dependências (se usar Composer futuramente)
+/vendor/
+composer.lock
+
+# Backups
+*.bak
+*.backup
+*.sql.gz

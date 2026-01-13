@@ -1,0 +1,35 @@
+# =====================================================
+# Sistema VISTA - Roteamento PHP
+# Funciona SEM precisar de acesso ao servidor
+# =====================================================
+
+# Bloqueia acesso a arquivos sensíveis
+<FilesMatch "^\.env">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+<FilesMatch "\.(md|log|sql|example)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Desabilita listagem de diretórios
+Options -Indexes
+
+# Redireciona tudo para router.php (se mod_rewrite estiver disponível)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Se o arquivo/diretório existe, serve diretamente
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    
+    # Caso contrário, envia para o roteador PHP
+    RewriteRule ^(.*)$ router_public.php [QSA,L]
+</IfModule>
+
+# Se mod_rewrite não estiver disponível, use ErrorDocument
+<IfModule !mod_rewrite.c>
+    ErrorDocument 404 /router_public.php
+</IfModule>

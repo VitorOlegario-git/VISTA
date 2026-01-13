@@ -1,0 +1,147 @@
+/* ======== ESTILO GERAL ======== */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #0691ee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden; /* Evita rolagem na página inteira */
+}
+
+/* ======== CONTAINER PRINCIPAL ======== */
+.excel-container {
+    background: #64bdf8;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 1100px;
+    height: 80vh;
+    margin-left: 50px;
+    display: block;
+    overflow: auto; /* Rolagem apenas interna */
+}
+
+/* ======== TÍTULOS ======== */
+h3 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* ======== CAMPOS DE INPUT ======== */
+input[type="text"],
+input[type="file"],
+input[type="input"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    display: block;
+}
+
+input[type="text"]:focus,
+input[type="file"]:focus,
+input[type="input"]:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* ======== BOTÃO PADRÃO ======== */
+button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* ======== BOTÃO PERSONALIZADO EXCEL (LABEL) ======== */
+.btn-excel {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-bottom: 10px;
+}
+
+.btn-excel:hover {
+    background-color: #0056b3;
+    transform: scale(1.02);
+}
+
+.btn-excel:active {
+    transform: scale(0.97);
+}
+
+/* ======== ÁREA DE RESULTADOS ======== */
+#imei-list {
+    margin-top: 20px;
+}
+
+/* ======== TABELA ======== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table, th, td {
+    border: 1px solid #ccc;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+/* ======== SCROLLBAR CUSTOMIZADA ======== */
+.excel-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.excel-container::-webkit-scrollbar-thumb {
+    background-color: #007BFF;
+    border-radius: 4px;
+}
+
+/* ======== RESPONSIVIDADE ======== */
+@media (max-width: 768px) {
+    .excel-container {
+        width: 95%;
+        margin-left: 0;
+        height: 90vh;
+    }
+
+    .btn-excel,
+    button {
+        width: 100%;
+        font-size: 14px;
+    }
+
+    th, td {
+        padding: 8px;
+        font-size: 14px;
+    }
+}

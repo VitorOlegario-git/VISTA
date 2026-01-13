@@ -1,0 +1,200 @@
+.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background-image: url("../CSS/imagens/FundoDashBoard.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    font-family: Arial, sans-serif;
+    color: white;
+    display: flex;
+    justify-content: center;
+}
+
+.top-container {
+    width: 95%;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: rgba(70, 142, 179, 0.95);
+    border-radius: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.top-container h1 {
+    width: 100%;
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.input-group,
+.input-group2 {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1 1 150px;
+    min-width: 150px;
+}
+
+.input-group label,
+.input-group2 label {
+    font-weight: bold;
+    color: azure;
+}
+
+.input-group input,
+.input-group2 select {
+    border: none;
+    border-bottom: 2px solid white;
+    background: transparent;
+    color: white;
+    padding: 6px;
+    font-size: 13px;
+    outline: none;
+}
+
+.input-group input::placeholder {
+    color: white;
+    opacity: 1;
+    font-size: 11px;
+}
+
+.input-group2 i {
+    margin-left: 5px;
+    color: azure;
+}
+
+.input-group2 select {
+    appearance: none;
+}
+
+.input-group2 select option {
+    background-color: #1d3557;
+    color: white;
+    font-size: 12px;
+}
+
+button {
+    background-color: #1d3557;
+    color: white;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #457b9d;
+}
+.resultado-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 30px auto 0;
+    padding: 20px;
+    background-color: rgba(253, 248, 248, 0.95);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    overflow-x: auto;
+    color: black;
+}
+
+/* Estilo para a tabela */
+.resultado-container table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.resultado-container th,
+.resultado-container td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: center;
+    color: black;
+}
+
+.resultado-container th {
+    background-color: #1d3557;
+    color: rgb(2, 2, 2);
+}
+
+#botoes-exportar {
+    text-align: center;
+    margin-top: 20px;
+    display: none;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+#botoes-exportar button {
+    background-color: #1d3557;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    margin: 5px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+#botoes-exportar button:hover {
+    background-color: #457b9d;
+    transform: scale(1.05);
+}
+
+#botoes-exportar button:active {
+    transform: scale(0.97);
+    background-color: #27496d;
+}
+button i {
+    margin-right: 6px;
+    font-size: 14px;
+    vertical-align: middle;
+}
+#grafico-status{
+    max-width: 200px;
+    height: 300px;
+}
+
+/* Responsivo para telas pequenas */
+@media (max-width: 768px) {
+    .top-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .top-container h1 {
+        font-size: 20px;
+    }
+
+    .input-group,
+    .input-group2 {
+        width: 100%;
+    }
+
+    button {
+        width: 100%;
+    }
+}

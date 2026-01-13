@@ -1,0 +1,391 @@
+/* ===============================================================
+   VISTA UI – Tema Futurista Azul Neon (Compatível com seu HTML)
+   =============================================================== */
+
+/* ---------- VARIÁVEIS GLOBAIS ---------- */
+:root {
+    --fundo: #031017;
+    --painel: rgba(255,255,255,0.03);
+    --borda-glass: rgba(0, 200, 255, 0.18);
+    --glass-strong: rgba(17,207,255,0.12);
+    --texto: #d6f3ff;
+    --texto-claro: #a7d8ff;
+    --neon: #11cfff;
+    --neon-weak: rgba(17,207,255,0.5);
+    --radius: 14px;
+    --blur: blur(12px);
+    --tempo: 0.25s;
+}
+
+/* ===============================================================
+   FUNDO GERAL
+   =============================================================== */
+
+body {
+    background: #031017 url('../../../FrontEnd/CSS/imagens/FundoDashBoard.jpg') no-repeat center/cover fixed;
+    color: var(--texto);
+    overflow-y: auto;
+    font-family: 'Arial', sans-serif;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(circle at 80% 20%, rgba(0,150,255,0.05), transparent 60%),
+        radial-gradient(circle at 10% 90%, rgba(0,150,255,0.04), transparent 65%);
+    pointer-events: none;
+}
+
+/* ===============================================================
+   TOPBAR FUTURISTA
+   =============================================================== */
+
+.top-container {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 78px;
+    background: var(--painel);
+    border-bottom: 1px solid var(--glass-strong);
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 22px;
+    z-index: 20;
+}
+
+/* Botões da topbar */
+.top-container button,
+.buttons-container button {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--borda-glass);
+    padding: 10px 22px;
+    border-radius: 10px;
+    color: var(--texto);
+    cursor: pointer;
+    transition: var(--tempo);
+    letter-spacing: .5px;
+    font-weight: bold;
+}
+
+.buttons-container button:hover {
+    background: var(--glass-strong);
+    color: var(--neon);
+    box-shadow: 0 0 12px var(--neon-weak);
+}
+
+/* Botão FILTRAR (igual à imagem) */
+#btnFiltrar {
+    background: linear-gradient(90deg, var(--neon), #0aa4d4);
+    color: #00222f;
+    border: none;
+    font-weight: bold;
+    box-shadow: 0 0 18px var(--neon-weak);
+}
+
+#btnFiltrar:hover {
+    box-shadow: 0 0 24px rgba(17,207,255,0.8);
+}
+
+/* ===============================================================
+   TOPBAR – Filtros Adaptáveis e Responsivos
+   =============================================================== */
+
+.data-container {
+    position: fixed;
+    top: 0px; /* logo abaixo da topbar */
+    left: 700px; /* espaço para a sidebar recolhida */
+    right: 20px; /* margem direita */
+    height: 70px;
+
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--glass-strong);
+    border-radius: 14px;
+    backdrop-filter: blur(12px);
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 18px;
+
+    padding: 12px 20px;
+    z-index: 13;
+
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+/* Inputs e Selects */
+.data-container input,
+.data-container select {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--glass-strong);
+    padding: 8px 10px;
+    border-radius: 8px;
+    color: var(--texto);
+    font-size: 13px;
+    min-width: 100px; /* REDUZIDO para caber melhor */
+    max-width: 110px;
+    transition: .2s;
+}
+
+.data-container label {
+    color: var(--texto-claro);
+    font-weight: bold;
+    font-size: 12px;
+    margin-right: -10px; /* reduz espaço horizontal */
+}
+
+.data-container button {
+    margin-left: auto;
+}
+
+/* Botão FILTRAR */
+#btnFiltrar {
+    background: linear-gradient(90deg, var(--neon), #0aa4d4);
+    color: #001219;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 18px rgba(17,207,255,0.4);
+    transition: .2s;
+}
+
+#btnFiltrar:hover {
+    box-shadow: 0 0 28px rgba(17,207,255,0.7);
+}
+
+/* ADMIN */
+#admin {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--glass-strong);
+    color: var(--neon);
+    padding: 9px 14px;
+    border-radius: 10px;
+    margin-right: 5px;
+}
+
+/* ===============================================================
+   MODO COMPACTO AUTOMÁTICO (quando não cabe)
+   =============================================================== */
+
+@media (max-width: 1450px) {
+    .data-container {
+        gap: 10px;
+    }
+
+    .data-container input,
+    .data-container select {
+        min-width: 110px;
+    }
+}
+
+@media (max-width: 1280px) {
+    .data-container {
+        flex-wrap: wrap;     /* permite quebrar linha */
+        height: auto;
+        padding-bottom: 18px;
+        white-space: normal;
+    }
+
+    .data-container button {
+        margin-left: 0; /* botão volta a fluir normalmente */
+    }
+}
+
+@media (max-width: 900px) {
+    .data-container {
+        left: 20px;           /* sidebar some nesse tamanho */
+        right: 20px;
+        width: auto;
+    }
+}
+
+
+/* ===============================================================
+   ÍCONES SVG FUTURISTAS
+   =============================================================== */
+
+.left-container a i,
+.left-container-analise a i,
+.left-container-reparo a i,
+.left-container-qualidade a i,
+.left-container-financeiro a i {
+    width: 22px;
+    height: 22px;
+    background: var(--neon);
+    margin-right: 12px;
+    mask-size: contain;
+    mask-repeat: no-repeat;
+}
+
+/* DEFINIÇÕES SVG INLINE */
+.icon-dashboard   { mask: url('data:image/svg+xml;utf8,<svg fill="white" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>'); }
+.icon-clock       { mask: url('data:image/svg+xml;utf8,<svg fill="white" viewBox="0 0 24 24"><path d="M12 1a11 11 0 1 0 11 11A11 11 0 0 0 12 1Zm1 17h-2v-6h5v2h-3Z"/></svg>'); }
+.icon-analytics   { mask: url('data:image/svg+xml;utf8,<svg fill="white" viewBox="0 0 24 24"><path d="M3 3h2v18H3zm5 6h2v12H8zm5-4h2v16h-2zm5 8h2v8h-2z"/></svg>'); }
+.icon-operacoes   { mask: url('data:image/svg+xml;utf8,<svg fill="white" viewBox="0 0 24 24"><path d="M12 2 1 21h22ZM12 6.5l7.53 13H4.47Z"/></svg>'); }
+.icon-star        { mask: url('data:image/svg+xml;utf8,<svg fill="white" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568L24 9.748l-6 5.848L19.335 24 12 19.897 4.665 24 6 15.596 0 9.748l8.332-1.593z"/></svg>'); }
+.icon-chart       { mask: url('data:image/svg+xml;utf8,<svg fill="white" viewBox="0 0 24 24"><path d="M3 3v18h18v-2H5V3H3zm16 5h-3v10h3V8zm-5 4h-3v6h3v-6zm-5 2H6v4h3v-4z"/></svg>'); }
+
+/* ===============================================================
+   SIDEBAR ANIMADA FUTURISTA
+   =============================================================== */
+
+.left-container,
+.left-container-analise,
+.left-container-reparo,
+.left-container-qualidade,
+.left-container-financeiro {
+    position: fixed;
+    top: 78px;
+    left: 0;
+    height: calc(100vh - 78px);
+    width: 85px;
+    background: var(--painel);
+    border-right: 1px solid var(--glass-strong);
+    backdrop-filter: blur(12px);
+    padding: 30px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: width var(--tempo), background var(--tempo);
+    overflow: hidden;
+    z-index: 10;
+}
+
+.left-container:hover,
+.left-container-analise:hover,
+.left-container-reparo:hover,
+.left-container-qualidade:hover,
+.left-container-financeiro:hover {
+    width: 240px;
+    background: rgba(255,255,255,0.05);
+}
+
+/* BOTÕES DO MENU LATERAL */
+.left-container a,
+.left-container-analise a,
+.left-container-reparo a,
+.left-container-qualidade a,
+.left-container-financeiro a {
+    display: flex;
+    align-items: center;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--borda-glass);
+    background: rgba(255,255,255,0.03);
+    color: var(--texto-claro);
+    font-size: 14px;
+    text-decoration: none;
+    transition: var(--tempo);
+}
+
+.left-container a:hover ,
+.left-container-analise a:hover ,
+.left-container-reparo a:hover ,
+.left-container-qualidade a:hover ,
+.left-container-financeiro a:hover {
+    background: rgba(17,207,255,0.08);
+    border-color: rgba(17,207,255,0.35);
+    transform: translateX(6px);
+    box-shadow: 0 0 16px var(--neon-weak);
+    color: var(--neon);
+}
+
+.left-container a span,
+.left-container-analise a span,
+.left-container-reparo a span,
+.left-container-qualidade a span,
+.left-container-financeiro a span {
+    opacity: 0;
+    white-space: nowrap;
+    transition: opacity var(--tempo);
+}
+
+.left-container:hover a span ,
+.left-container-analise:hover a span ,
+.left-container-reparo:hover a span ,
+.left-container-qualidade:hover a span ,
+.left-container-financeiro:hover a span {
+    opacity: 1;
+}
+
+/* ===============================================================
+   CONTEÚDO (CONTAINERS DOS GRÁFICOS)
+   =============================================================== */
+
+.dados-container,
+.dados-container-analise,
+.dados-container-reparo,
+.dados-container-qualidade,
+.dados-container-financeiro {
+    background: var(--painel);
+    border: 1px solid var(--glass-strong);
+    border-radius: var(--radius);
+    backdrop-filter: blur(12px);
+    margin-left: 120px;
+    margin-top: 110px;
+    padding: 25px 30px;
+    color: var(--texto);
+    height: calc(100vh - 160px);
+    overflow-y: auto;
+    transition: margin-left var(--tempo);
+}
+
+.left-container:hover ~ .dados-container,
+.left-container-analise:hover ~ .dados-container-analise {
+    margin-left: 260px;
+}
+
+/* ===============================================================
+   CONTÊINER DOS GRÁFICOS – GLASS FUTURISTA OTIMIZADO
+   =============================================================== */
+.grafico-container {
+    background: rgba(139, 192, 241, 0.05); /* MAIS CLARO */
+    border: 1px solid rgba(17, 207, 255, 0.20); /* NEON SUAVE */
+    border-radius: 14px;
+    padding: 22px 26px;
+    margin: 25px 0;
+
+    color: var(--texto);
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    box-shadow:
+        0 0 22px rgba(122, 194, 243, 0.35),
+        inset 0 0 12px rgba(17, 207, 255, 0.08);
+}
+
+/* Canvas */
+canvas {
+    width: 100%;
+    height: 420px !important;
+}
+
+/* Gráfico ativo (menu lateral) */
+.grafico-ativo {
+    background: rgba(17, 207, 255, 0.15);
+    color: var(--neon);
+    padding: 6px 14px;
+    border-radius: 8px;
+    box-shadow: 0 0 18px rgba(17, 207, 255, 0.6);
+    font-weight: bold;
+}
+
+/* ===============================================================
+   RESPONSIVIDADE
+   =============================================================== */
+
+@media (max-width: 900px) {
+    .left-container { width: 60px; }
+    .dados-container { margin-left: 80px; }
+}
+
+@media (max-width: 600px) {
+    .left-container { display: none; }
+    .dados-container { margin-left: 20px; width: calc(100% - 40px); }
+}
