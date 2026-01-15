@@ -694,6 +694,107 @@ function montarKpiRefinado(
     ];
 }
 
+/**
+ * 📝 SISTEMA DE LOG PADRONIZADO PARA KPIs (NOVA - 15/01/2026)
+ * 
+ * Registra execuções de KPIs em arquivo de log estruturado.
+ * Performance otimizada com escrita atômica e baixo overhead.
+ * 
+ * @param string $kpiName Nome do KPI (ex: 'kpi-backlog-atual')
+ * @param array $periodo Array com 'inicio' e 'fim' (formato Y-m-d ou dd/mm/yyyy)
+ * @param int $executionTimeMs Tempo de execução em milissegundos
+ * @param string $status Status da execução ('success' | 'error')
+ * @param string|null $operador Nome do operador filtrado (opcional)
+ * @param string|null $errorMessage Mensagem de erro (apenas se status='error')
+ * @return bool True se log foi gravado com sucesso, false caso contrário
+ * 
+ * Formato do log:
+ * [2026-01-15 10:30:45] [kpi-backlog-atual] [SUCCESS] periodo=07/01/2026-14/01/2026 operador=Todos executionTimeMs=245
+ * [2026-01-15 10:31:02] [kpi-tempo-medio] [ERROR] periodo=01/01/2026-31/01/2026 operador=Todos executionTimeMs=0 message="Database connection failed"
+ * 
+ * Exemplo de uso:
+ * logKpiExecution('kpi-backlog-atual', ['inicio' => '2026-01-07', 'fim' => '2026-01-14'], 245, 'success', 'João Silva');
+ */
+function logKpiExecution(
+    string $kpiName,
+    array $periodo,
+    int $executionTimeMs,
+    string $status,
+    ?string $operador = null,
+    ?string $errorMessage = null
+): bool {
+    try {
+        // 🔹 CAMINHO DO ARQUIVO DE LOG
+        // Define diretório base como 2 níveis acima (raiz do projeto)
+        $logDir = dirname(__DIR__, 1) . DIRECTORY_SEPARATOR . 'logs';
+        $logFile = $logDir . DIRECTORY_SEPARATOR . 'kpi.log';
+        
+        // 🔹 GARANTIR EXISTÊNCIA DO DIRETÓRIO
+        if (!is_dir($logDir)) {
+            if (!mkdir($logDir, 0755, true)) {
+                error_log("AVISO: Não foi possível criar diretório de logs: {$logDir}");
+                return false;
+            }
+        }
+        
+        // 🔹 FORMATAR PERÍODO
+        // Aceita tanto Y-m-d quanto dd/mm/yyyy
+        $inicioFormatted = $periodo['inicio'] ?? 'N/A';
+        $fimFormatted = $periodo['fim'] ?? 'N/A';
+        
+        // Converter Y-m-d para dd/mm/yyyy se necessário (para legibilidade)
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $inicioFormatted)) {
+            $inicioFormatted = DateTime::createFromFormat('Y-m-d', $inicioFormatted)->format('d/m/Y');
+        }
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $fimFormatted)) {
+            $fimFormatted = DateTime::createFromFormat('Y-m-d', $fimFormatted)->format('d/m/Y');
+        }
+        
+        $periodoStr = "{$inicioFormatted}-{$fimFormatted}";
+        
+        // 🔹 FORMATAR OPERADOR
+        $operadorStr = $operador ?? 'Todos';
+        
+        // 🔹 FORMATAR STATUS
+        $statusUpper = strtoupper($status);
+        
+        // 🔹 TIMESTAMP
+        $timestamp = date('Y-m-d H:i:s');
+        
+        // 🔹 MONTAR LINHA DE LOG
+        $logLine = sprintf(
+            "[%s] [%s] [%s] periodo=%s operador=%s executionTimeMs=%d",
+            $timestamp,
+            $kpiName,
+            $statusUpper,
+            $periodoStr,
+            $operadorStr,
+            $executionTimeMs
+        );
+        
+        // 🔹 ADICIONAR MENSAGEM DE ERRO (se houver)
+        if ($status === 'error' && $errorMessage !== null) {
+            // Escapar aspas na mensagem
+            $errorMessageEscaped = str_replace('"', '\"', $errorMessage);
+            $logLine .= sprintf(' message="%s"', $errorMessageEscaped);
+        }
+        
+        $logLine .= PHP_EOL;
+        
+        // 🔹 ESCREVER NO ARQUIVO (atômico + lock)
+        // FILE_APPEND: adiciona ao final
+        // LOCK_EX: lock exclusivo durante escrita (thread-safe)
+        $result = file_put_contents($logFile, $logLine, FILE_APPEND | LOCK_EX);
+        
+        return $result !== false;
+        
+    } catch (Exception $e) {
+        // Falha silenciosa: log não deve interromper execução do KPI
+        error_log("ERRO ao gravar log de KPI: " . $e->getMessage());
+        return false;
+    }
+}
+
 // 🔹 INICIALIZAÇÃO AUTOMÁTICA
 // Define header JSON padrão quando arquivo é incluído
 if (!headers_sent()) {

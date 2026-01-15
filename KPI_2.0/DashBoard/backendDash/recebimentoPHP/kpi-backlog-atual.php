@@ -181,6 +181,17 @@ try {
     $period = "$dataInicioSQL / $dataFimSQL";
 
     // ============================================
+    // REGISTRA LOG DE EXECUÇÃO
+    // ============================================
+    logKpiExecution(
+        'kpi-backlog-atual',
+        ['inicio' => $dataInicioSQL, 'fim' => $dataFimSQL],
+        (int)round($executionTime),
+        'success',
+        $operador ?? 'Todos'
+    );
+
+    // ============================================
     // RETORNA RESPOSTA PADRONIZADA
     // ============================================
     kpiResponse(
@@ -193,6 +204,22 @@ try {
 } catch (Exception $e) {
     error_log("Erro em kpi-backlog-atual.php: " . $e->getMessage());
     error_log("Stack trace: " . $e->getTraceAsString());
+    
+    // ============================================
+    // REGISTRA LOG DE ERRO
+    // ============================================
+    $executionTime = (microtime(true) - $startTime) * 1000;
+    logKpiExecution(
+        'kpi-backlog-atual',
+        [
+            'inicio' => $dataInicioSQL ?? 'N/A',
+            'fim' => $dataFimSQL ?? 'N/A'
+        ],
+        (int)round($executionTime),
+        'error',
+        $operador ?? 'Todos',
+        $e->getMessage()
+    );
     
     kpiError(
         'backlog-recebimento',

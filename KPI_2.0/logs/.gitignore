@@ -1,0 +1,6 @@
+# Ignorar todos os arquivos de log
+*.log
+
+# Mas manter este diretório no repositório
+!.gitignore
+!README.md
