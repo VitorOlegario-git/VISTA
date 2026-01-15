@@ -15,6 +15,7 @@
  * - dataInicio (Y-m-d ou null)
  * - dataFim (Y-m-d ou null)
  * - operador (string ou null)
+ * - setor (string ou null)
  * 
  * Se houver erro, envia resposta 400 e encerra execução.
  */
@@ -22,6 +23,7 @@ function validarParametrosPadrao(): array {
     $dataInicio = $_GET['inicio'] ?? null;
     $dataFim    = $_GET['fim'] ?? null;
     $operador   = $_GET['operador'] ?? null;
+    $setor      = $_GET['setor'] ?? null;
 
     try {
         if ($dataInicio && $dataFim) {
@@ -47,7 +49,8 @@ function validarParametrosPadrao(): array {
     return [
         'dataInicio' => $dataInicio,
         'dataFim' => $dataFim,
-        'operador' => $operador
+        'operador' => $operador,
+        'setor' => $setor
     ];
 }
 
@@ -61,6 +64,8 @@ function validarParametrosPadrao(): array {
  * @param string $operador Nome do operador ou null
  * @param string $campoData Nome do campo de data na tabela (default: 'data_evento')
  * @param string $campoOperador Nome do campo operador na tabela (default: 'operador')
+ * @param string $setor Nome do setor ou null
+ * @param string $campoSetor Nome do campo setor na tabela (default: 'setor')
  * @return array ['where' => string SQL, 'params' => array, 'types' => string]
  */
 function construirWherePadrao(
@@ -68,7 +73,9 @@ function construirWherePadrao(
     ?string $dataFim,
     ?string $operador,
     string $campoData = 'data_evento',
-    string $campoOperador = 'operador'
+    ?string $campoOperador = 'operador',
+    ?string $setor = null,
+    ?string $campoSetor = 'setor'
 ): array {
     $where = [];
     $params = [];
@@ -81,9 +88,15 @@ function construirWherePadrao(
         $types .= 'ss';
     }
 
-    if ($operador && $operador !== 'Todos') {
+    if ($operador && $operador !== 'Todos' && $campoOperador) {
         $where[] = "$campoOperador = ?";
         $params[] = $operador;
+        $types .= 's';
+    }
+
+    if ($setor && $setor !== 'Todos' && $campoSetor) {
+        $where[] = "$campoSetor = ?";
+        $params[] = $setor;
         $types .= 's';
     }
 
@@ -105,6 +118,7 @@ function construirWherePadrao(
  * @param string $dataInicio Data início para meta
  * @param string $dataFim Data fim para meta
  * @param string $operador Operador para meta
+ * @param string $setor Setor para meta
  * @param int $httpCode Código HTTP (default: 200)
  */
 function enviarSucesso(
@@ -112,6 +126,7 @@ function enviarSucesso(
     ?string $dataInicio = null,
     ?string $dataFim = null,
     ?string $operador = null,
+    ?string $setor = null,
     int $httpCode = 200
 ): void {
     http_response_code($httpCode);
@@ -122,6 +137,7 @@ function enviarSucesso(
             'inicio' => $dataInicio,
             'fim' => $dataFim,
             'operador' => $operador ?? 'Todos',
+            'setor' => $setor ?? 'Todos',
             'timestamp' => date('Y-m-d H:i:s')
         ],
         'data' => $data

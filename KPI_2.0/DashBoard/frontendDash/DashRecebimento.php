@@ -137,7 +137,11 @@ $_SESSION['last_activity'] = time();
     </header>
 
     <!-- 🎯 PAINEL LATERAL - SELETOR DE MÓDULOS -->
-    <aside class="module-sidebar">
+    <aside class="module-sidebar" id="moduleSidebar">
+        <button class="sidebar-toggle" id="sidebarToggle" title="Ocultar sidebar">
+            <i class="fas fa-angle-left"></i>
+        </button>
+        
         <div class="sidebar-title">
             <i class="fas fa-layer-group"></i>
             <span>Módulos</span>
@@ -249,8 +253,11 @@ $_SESSION['last_activity'] = time();
         </div>
     </aside>
 
+    <!-- Overlay para fechar sidebar em mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <!-- 🎯 ÁREA CENTRAL - CANVAS DE DADOS -->
-    <main class="intelligence-canvas">
+    <main class="intelligence-canvas" id="mainCanvas">
         
         <!-- ============================================
              RESUMO EXECUTIVO - VISÍVEL AO CARREGAR
@@ -824,6 +831,87 @@ $_SESSION['last_activity'] = time();
 
 </div>
 <script>
+
+// 🎯 TOGGLE SIDEBAR
+document.addEventListener("DOMContentLoaded", function () {
+    const sidebar = document.getElementById("moduleSidebar");
+    const toggleBtn = document.getElementById("sidebarToggle");
+    const mainContent = document.getElementById("mainCanvas");
+    const overlay = document.getElementById("sidebarOverlay");
+    
+    if (toggleBtn && sidebar && mainContent) {
+        // Toggle sidebar
+        toggleBtn.addEventListener("click", function(e) {
+            e.stopPropagation();
+            const isHidden = sidebar.classList.contains("hidden");
+            
+            if (isHidden) {
+                // Mostrar sidebar
+                sidebar.classList.remove("hidden");
+                mainContent.classList.remove("sidebar-hidden");
+                
+                // Ativar overlay em mobile
+                if (window.innerWidth <= 768) {
+                    overlay.classList.add("active");
+                    sidebar.classList.add("mobile-open");
+                }
+            } else {
+                // Ocultar sidebar
+                sidebar.classList.add("hidden");
+                mainContent.classList.add("sidebar-hidden");
+                overlay.classList.remove("active");
+                sidebar.classList.remove("mobile-open");
+            }
+            
+            // Salvar estado no localStorage
+            localStorage.setItem("sidebarHidden", !isHidden);
+        });
+        
+        // Fechar sidebar ao clicar no overlay
+        if (overlay) {
+            overlay.addEventListener("click", function() {
+                sidebar.classList.add("hidden");
+                mainContent.classList.add("sidebar-hidden");
+                overlay.classList.remove("active");
+                sidebar.classList.remove("mobile-open");
+                localStorage.setItem("sidebarHidden", true);
+            });
+        }
+        
+        // Restaurar estado salvo (apenas em desktop)
+        if (window.innerWidth > 768) {
+            const savedState = localStorage.getItem("sidebarHidden");
+            if (savedState === "true") {
+                sidebar.classList.add("hidden");
+                mainContent.classList.add("sidebar-hidden");
+            }
+        } else {
+            // Em mobile, sempre iniciar com sidebar oculta
+            sidebar.classList.add("hidden");
+            mainContent.classList.add("sidebar-hidden");
+        }
+        
+        // Ajustar comportamento ao redimensionar
+        window.addEventListener("resize", function() {
+            if (window.innerWidth <= 768) {
+                // Mobile: remover margem e fechar overlay se estiver aberto
+                mainContent.classList.add("sidebar-hidden");
+                if (!sidebar.classList.contains("hidden")) {
+                    overlay.classList.add("active");
+                    sidebar.classList.add("mobile-open");
+                }
+            } else {
+                // Desktop: restaurar margem e fechar overlay
+                overlay.classList.remove("active");
+                sidebar.classList.remove("mobile-open");
+                const savedState = localStorage.getItem("sidebarHidden");
+                if (savedState !== "true") {
+                    mainContent.classList.remove("sidebar-hidden");
+                }
+            }
+        });
+    }
+});
 
     
 document.addEventListener("DOMContentLoaded", function () {
@@ -1786,12 +1874,13 @@ function gerarInsightsAPartirDosKPIs(kpis) {
     
     // 1. Total Processado
     const totalProc = kpis.totalProcessado.data;
+    const variacaoTotal = totalProc.referencia?.variacao || 0;
     if (totalProc.estado === 'critical') {
         insights.push({
             tipo: 'critical',
             categoria: 'operacional',
-            titulo: `Volume ${totalProc.variacao.direcao === 'up' ? 'acima' : 'abaixo'} da capacidade`,
-            mensagem: `${totalProc.variacao.percentual > 0 ? '+' : ''}${totalProc.variacao.percentual}% vs ${totalProc.referencia.tipo === 'media_30d' ? 'média 30 dias' : 'período anterior'}. Verificar recursos disponíveis.`,
+            titulo: `Volume ${variacaoTotal > 0 ? 'acima' : 'abaixo'} da capacidade`,
+            mensagem: `${variacaoTotal > 0 ? '+' : ''}${variacaoTotal.toFixed(1)}% vs ${totalProc.referencia.tipo === 'media_30d' ? 'média 30 dias' : 'período anterior'}. Verificar recursos disponíveis.`,
             icone: 'exclamation-triangle'
         });
     } else if (totalProc.estado === 'warning') {
@@ -1799,19 +1888,20 @@ function gerarInsightsAPartirDosKPIs(kpis) {
             tipo: 'warning',
             categoria: 'operacional',
             titulo: `Variação no volume de processamento`,
-            mensagem: `${totalProc.variacao.percentual > 0 ? '+' : ''}${totalProc.variacao.percentual}% vs ${totalProc.referencia.tipo === 'media_30d' ? 'média' : 'anterior'}. Monitorar tendência.`,
+            mensagem: `${variacaoTotal > 0 ? '+' : ''}${variacaoTotal.toFixed(1)}% vs ${totalProc.referencia.tipo === 'media_30d' ? 'média' : 'anterior'}. Monitorar tendência.`,
             icone: 'chart-line'
         });
     }
     
     // 2. Tempo Médio
     const tempo = kpis.tempoMedio.data;
+    const variacaoTempo = tempo.referencia?.variacao || 0;
     if (tempo.estado === 'critical') {
         insights.push({
             tipo: 'critical',
             categoria: 'desempenho',
             titulo: 'SLA ultrapassado',
-            mensagem: `Tempo médio de ${tempo.valor} ${tempo.unidade} está acima do limite. ${tempo.variacao.percentual > 0 ? 'Aumentou' : 'Reduziu'} ${Math.abs(tempo.variacao.percentual)}% vs período anterior.`,
+            mensagem: `Tempo médio de ${tempo.valor} ${tempo.unidade} está acima do limite. ${variacaoTempo > 0 ? 'Aumentou' : 'Reduziu'} ${Math.abs(variacaoTempo).toFixed(1)}% vs período anterior.`,
             icone: 'clock'
         });
     } else if (tempo.estado === 'warning') {
@@ -1819,27 +1909,28 @@ function gerarInsightsAPartirDosKPIs(kpis) {
             tipo: 'warning',
             categoria: 'desempenho',
             titulo: 'Atenção ao tempo de processamento',
-            mensagem: `Tempo médio próximo do limite: ${tempo.valor} ${tempo.unidade}. ${tempo.variacao.percentual > 0 ? 'Aumento' : 'Redução'} de ${Math.abs(tempo.variacao.percentual)}%.`,
+            mensagem: `Tempo médio próximo do limite: ${tempo.valor} ${tempo.unidade}. ${variacaoTempo > 0 ? 'Aumento' : 'Redução'} de ${Math.abs(variacaoTempo).toFixed(1)}%.`,
             icone: 'hourglass-half'
         });
-    } else if (tempo.variacao.direcao === 'down' && Math.abs(tempo.variacao.percentual) > 10) {
+    } else if (variacaoTempo < 0 && Math.abs(variacaoTempo) > 10) {
         insights.push({
             tipo: 'success',
             categoria: 'desempenho',
             titulo: 'Melhoria no tempo de processamento',
-            mensagem: `Tempo médio reduziu ${Math.abs(tempo.variacao.percentual)}% para ${tempo.valor} ${tempo.unidade}. Ótimo desempenho!`,
+            mensagem: `Tempo médio reduziu ${Math.abs(variacaoTempo).toFixed(1)}% para ${tempo.valor} ${tempo.unidade}. Ótimo desempenho!`,
             icone: 'check-circle'
         });
     }
     
     // 3. Taxa de Sucesso
     const taxa = kpis.taxaSucesso.data;
+    const variacaoTaxa = taxa.referencia?.variacao || 0;
     if (taxa.estado === 'critical') {
         insights.push({
             tipo: 'critical',
             categoria: 'qualidade',
             titulo: 'Taxa de sucesso crítica',
-            mensagem: `Apenas ${taxa.valor}% de sucesso (meta: 85%). ${taxa.variacao.percentual < 0 ? 'Queda' : 'Variação'} de ${Math.abs(taxa.variacao.percentual)}% vs anterior.`,
+            mensagem: `Apenas ${taxa.valor}% de sucesso (meta: 85%). ${variacaoTaxa < 0 ? 'Queda' : 'Variação'} de ${Math.abs(variacaoTaxa).toFixed(1)}% vs anterior.`,
             icone: 'times-circle'
         });
     } else if (taxa.estado === 'warning') {
@@ -1847,7 +1938,7 @@ function gerarInsightsAPartirDosKPIs(kpis) {
             tipo: 'warning',
             categoria: 'qualidade',
             titulo: 'Taxa de sucesso abaixo da meta',
-            mensagem: `${taxa.valor}% de sucesso. Meta: 85%. ${taxa.variacao.percentual < 0 ? 'Caiu' : 'Variou'} ${Math.abs(taxa.variacao.percentual)}%.`,
+            mensagem: `${taxa.valor}% de sucesso. Meta: 85%. ${variacaoTaxa < 0 ? 'Caiu' : 'Variou'} ${Math.abs(variacaoTaxa).toFixed(1)}%.`,
             icone: 'exclamation-circle'
         });
     } else if (taxa.valor >= 90) {
@@ -1862,12 +1953,13 @@ function gerarInsightsAPartirDosKPIs(kpis) {
     
     // 4. Sem Conserto
     const semConserto = kpis.semConserto.data;
+    const variacaoSC = semConserto.referencia?.variacao || 0;
     if (semConserto.estado === 'critical') {
         insights.push({
             tipo: 'critical',
             categoria: 'qualidade',
             titulo: 'Alto índice sem conserto',
-            mensagem: `${semConserto.valor} equipamentos sem conserto. Aumento de ${semConserto.variacao.percentual}% vs período anterior.`,
+            mensagem: `${semConserto.valor} equipamentos sem conserto. Aumento de ${variacaoSC.toFixed(1)}% vs período anterior.`,
             icone: 'tools'
         });
     } else if (semConserto.estado === 'warning') {
@@ -1875,19 +1967,20 @@ function gerarInsightsAPartirDosKPIs(kpis) {
             tipo: 'warning',
             categoria: 'qualidade',
             titulo: 'Aumento em equipamentos sem conserto',
-            mensagem: `${semConserto.valor} equipamentos sem conserto (+${semConserto.variacao.percentual}%).`,
+            mensagem: `${semConserto.valor} equipamentos sem conserto (+${variacaoSC.toFixed(1)}%).`,
             icone: 'wrench'
         });
     }
     
     // 5. Valor Orçado
     const valor = kpis.valorOrcado.data;
+    const variacaoValor = valor.referencia?.variacao || 0;
     if (valor.estado === 'critical') {
         insights.push({
             tipo: 'critical',
             categoria: 'financeiro',
             titulo: 'Queda significativa em orçamentos',
-            mensagem: `R$ ${valor.valor} orçado. Queda de ${Math.abs(valor.variacao.percentual)}% vs período anterior.`,
+            mensagem: `R$ ${valor.valor} orçado. Queda de ${Math.abs(variacaoValor).toFixed(1)}% vs período anterior.`,
             icone: 'dollar-sign'
         });
     } else if (valor.estado === 'warning') {
@@ -1895,15 +1988,15 @@ function gerarInsightsAPartirDosKPIs(kpis) {
             tipo: 'warning',
             categoria: 'financeiro',
             titulo: 'Redução no valor orçado',
-            mensagem: `R$ ${valor.valor} orçado. ${Math.abs(valor.variacao.percentual)}% abaixo do período anterior.`,
+            mensagem: `R$ ${valor.valor} orçado. ${Math.abs(variacaoValor).toFixed(1)}% abaixo do período anterior.`,
             icone: 'chart-line'
         });
-    } else if (valor.variacao.direcao === 'up' && valor.variacao.percentual > 15) {
+    } else if (variacaoValor > 15) {
         insights.push({
             tipo: 'success',
             categoria: 'financeiro',
             titulo: 'Crescimento em orçamentos',
-            mensagem: `R$ ${valor.valor} orçado. Crescimento de ${valor.variacao.percentual}%!`,
+            mensagem: `R$ ${valor.valor} orçado. Crescimento de ${variacaoValor.toFixed(1)}%!`,
             icone: 'arrow-up'
         });
     }

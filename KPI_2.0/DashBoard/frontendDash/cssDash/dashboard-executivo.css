@@ -45,6 +45,36 @@
 }
 
 /* ===============================================================
+   SCROLLBAR CUSTOMIZADA
+   =============================================================== */
+
+/* Scrollbar para Webkit (Chrome, Safari, Edge) */
+.executive-canvas::-webkit-scrollbar {
+    width: 8px;
+}
+
+.executive-canvas::-webkit-scrollbar-track {
+    background: var(--glass-light);
+    border-radius: 4px;
+}
+
+.executive-canvas::-webkit-scrollbar-thumb {
+    background: var(--border-medium);
+    border-radius: 4px;
+    transition: var(--transition);
+}
+
+.executive-canvas::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-blue);
+}
+
+/* Scrollbar para Firefox */
+.executive-canvas {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-medium) var(--glass-light);
+}
+
+/* ===============================================================
    RESET & BASE
    =============================================================== */
 
@@ -59,8 +89,8 @@ body {
     background: var(--bg-primary);
     color: var(--text-primary);
     line-height: 1.6;
-    overflow-x: hidden;
-    min-height: 100vh;
+    overflow: hidden; /* Body não deve rolar */
+    height: 100vh;
 }
 
 body::before {
@@ -252,9 +282,11 @@ body::before {
 .executive-canvas {
     margin-top: var(--header-height);
     padding: 40px;
-    min-height: calc(100vh - var(--header-height));
+    height: calc(100vh - var(--header-height));
     position: relative;
     z-index: 1;
+    overflow-y: auto; /* Scroll independente para conteúdo */
+    overflow-x: hidden;
 }
 
 /* Headers de Seção */
@@ -580,6 +612,63 @@ body::before {
     margin-bottom: 14px;
 }
 
+.insight-content .insight-message {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 12px;
+}
+
+.insight-content .insight-causa {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 10px;
+    padding-left: 12px;
+    border-left: 2px solid var(--border-subtle);
+}
+
+.insight-content .insight-causa strong {
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.insight-content .insight-acao {
+    font-size: 13px;
+    color: var(--accent-blue);
+    line-height: 1.5;
+    margin-bottom: 12px;
+    padding: 10px 12px;
+    background: rgba(56, 139, 253, 0.08);
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--accent-blue);
+}
+
+.insight-content .insight-acao strong {
+    color: var(--accent-blue);
+    font-weight: 600;
+}
+
+.insight-critical .insight-acao {
+    color: var(--accent-red);
+    background: rgba(239, 68, 68, 0.08);
+    border-left-color: var(--accent-red);
+}
+
+.insight-critical .insight-acao strong {
+    color: var(--accent-red);
+}
+
+.insight-warning .insight-acao {
+    color: var(--accent-orange);
+    background: rgba(245, 158, 11, 0.08);
+    border-left-color: var(--accent-orange);
+}
+
+.insight-warning .insight-acao strong {
+    color: var(--accent-orange);
+}
+
 .insight-action {
     display: inline-flex;
     align-items: center;
@@ -792,6 +881,145 @@ body::before {
     background: var(--accent-blue);
     color: #fff;
     border-color: var(--accent-blue);
+}
+
+/* ===============================================================
+   CAMADA 2.5 - KPIs POR ÁREA
+   =============================================================== */
+
+.area-kpis-section {
+    margin-bottom: 48px;
+}
+
+.area-kpis-container {
+    background: var(--glass-medium);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.area-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--border-subtle);
+}
+
+.area-header h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.area-header h3 i {
+    color: var(--accent-blue);
+    font-size: 22px;
+}
+
+.btn-area-expand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: var(--glass-strong);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-area-expand:hover {
+    background: var(--accent-blue);
+    border-color: var(--accent-blue);
+    color: #fff;
+    transform: translateX(3px);
+}
+
+.area-kpis-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.kpi-area-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px;
+    background: var(--glass-light);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.kpi-area-card:hover {
+    background: var(--glass-strong);
+    border-color: var(--accent-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.kpi-area-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, rgba(56, 139, 253, 0.15), rgba(17, 207, 255, 0.15));
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+}
+
+.kpi-area-icon i {
+    font-size: 22px;
+    color: var(--accent-blue);
+}
+
+.kpi-area-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.kpi-area-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.kpi-area-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.kpi-area-value .kpi-currency {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-right: 2px;
+}
+
+.kpi-area-comparison {
+    font-size: 12px;
+    font-weight: 600;
 }
 
 /* ===============================================================

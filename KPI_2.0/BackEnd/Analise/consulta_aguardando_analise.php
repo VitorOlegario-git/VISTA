@@ -8,7 +8,7 @@ require_once dirname(__DIR__) . '/conexao.php';
  
 
 $sql = "SELECT setor, cnpj, razao_social, nota_fiscal, DATE_FORMAT(data_atualizacao, '%d/%m/%Y %H:%i:%s') as data_atualizacao
-, quantidade_total, status
+, quantidade_total, quantidade_analisada, status
         FROM analise_resumo
         WHERE status = 'envio_analise'";
 

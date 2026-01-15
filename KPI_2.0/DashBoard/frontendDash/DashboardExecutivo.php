@@ -101,95 +101,95 @@ $_SESSION['last_activity'] = time();
             </div>
             
             <div class="kpi-global-grid">
-                <!-- KPI 1: Volume Processado -->
-                <div class="kpi-global-card" data-navigate="volume">
+                <!-- KPI 1: Remessas Recebidas -->
+                <div class="kpi-global-card" data-navigate="remessas">
                     <div class="kpi-header">
                         <div class="kpi-icon" style="--icon-color: #388bfd;">
-                            <i class="fas fa-box"></i>
+                            <i class="fas fa-inbox"></i>
                         </div>
                         <div class="kpi-title">
-                            <span class="kpi-label">Volume Processado</span>
-                            <span class="kpi-period" id="volumePeriod">Últimos 7 dias</span>
+                            <span class="kpi-label">Remessas Recebidas</span>
+                            <span class="kpi-period" id="remessasPeriod">Últimos 7 dias</span>
                         </div>
                     </div>
-                    <div class="kpi-value" id="volumeTotal">--</div>
+                    <div class="kpi-value" id="remessasTotal">--</div>
                     <div class="kpi-comparison">
-                        <span class="comparison-badge" id="volumeComparison">
-                            <i class="fas fa-minus"></i> --
-                        </span>
-                        <span class="comparison-text">vs. média histórica</span>
-                    </div>
-                    <div class="kpi-footer">
-                        <span class="kpi-detail" id="volumeDetail">Carregando...</span>
-                    </div>
-                </div>
-
-                <!-- KPI 2: Tempo Médio Total -->
-                <div class="kpi-global-card" data-navigate="tempo">
-                    <div class="kpi-header">
-                        <div class="kpi-icon" style="--icon-color: #11cfff;">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="kpi-title">
-                            <span class="kpi-label">Tempo Médio Total</span>
-                            <span class="kpi-period">Ciclo completo</span>
-                        </div>
-                    </div>
-                    <div class="kpi-value" id="tempoMedioTotal">--</div>
-                    <div class="kpi-comparison">
-                        <span class="comparison-badge" id="tempoComparison">
+                        <span class="comparison-badge" id="remessasComparison">
                             <i class="fas fa-minus"></i> --
                         </span>
                         <span class="comparison-text">vs. período anterior</span>
                     </div>
                     <div class="kpi-footer">
-                        <span class="kpi-detail" id="tempoDetail">Carregando...</span>
+                        <span class="kpi-detail" id="remessasDetail">Carregando...</span>
                     </div>
                 </div>
 
-                <!-- KPI 3: Taxa de Sucesso -->
-                <div class="kpi-global-card" data-navigate="sucesso">
+                <!-- KPI 2: Equipamentos Recebidos -->
+                <div class="kpi-global-card" data-navigate="equipamentos-rec">
+                    <div class="kpi-header">
+                        <div class="kpi-icon" style="--icon-color: #11cfff;">
+                            <i class="fas fa-box-open"></i>
+                        </div>
+                        <div class="kpi-title">
+                            <span class="kpi-label">Equipamentos Recebidos</span>
+                            <span class="kpi-period" id="equipRecPeriod">Últimos 7 dias</span>
+                        </div>
+                    </div>
+                    <div class="kpi-value" id="equipRecTotal">--</div>
+                    <div class="kpi-comparison">
+                        <span class="comparison-badge" id="equipRecComparison">
+                            <i class="fas fa-minus"></i> --
+                        </span>
+                        <span class="comparison-text">vs. período anterior</span>
+                    </div>
+                    <div class="kpi-footer">
+                        <span class="kpi-detail" id="equipRecDetail">Carregando...</span>
+                    </div>
+                </div>
+
+                <!-- KPI 3: Equipamentos Expedidos -->
+                <div class="kpi-global-card" data-navigate="equipamentos-exp">
                     <div class="kpi-header">
                         <div class="kpi-icon" style="--icon-color: #10b981;">
-                            <i class="fas fa-check-circle"></i>
+                            <i class="fas fa-shipping-fast"></i>
                         </div>
                         <div class="kpi-title">
-                            <span class="kpi-label">Taxa de Sucesso</span>
-                            <span class="kpi-period">Reparos finalizados</span>
+                            <span class="kpi-label">Equipamentos Expedidos</span>
+                            <span class="kpi-period" id="equipExpPeriod">Últimos 7 dias</span>
                         </div>
                     </div>
-                    <div class="kpi-value" id="taxaSucesso">--</div>
+                    <div class="kpi-value" id="equipExpTotal">--</div>
                     <div class="kpi-comparison">
-                        <span class="comparison-badge" id="sucessoComparison">
+                        <span class="comparison-badge" id="equipExpComparison">
                             <i class="fas fa-minus"></i> --
                         </span>
-                        <span class="comparison-text">vs. meta 85%</span>
+                        <span class="comparison-text">vs. período anterior</span>
                     </div>
                     <div class="kpi-footer">
-                        <span class="kpi-detail" id="sucessoDetail">Carregando...</span>
+                        <span class="kpi-detail" id="equipExpDetail">Carregando...</span>
                     </div>
                 </div>
 
-                <!-- KPI 4: Taxa Sem Conserto -->
-                <div class="kpi-global-card" data-navigate="semconserto">
+                <!-- KPI 4: Taxa de Conclusão Técnica -->
+                <div class="kpi-global-card" data-navigate="conclusao">
                     <div class="kpi-header">
                         <div class="kpi-icon" style="--icon-color: #f59e0b;">
-                            <i class="fas fa-exclamation-triangle"></i>
+                            <i class="fas fa-percentage"></i>
                         </div>
                         <div class="kpi-title">
-                            <span class="kpi-label">Taxa Sem Conserto</span>
-                            <span class="kpi-period">% global</span>
+                            <span class="kpi-label">Taxa de Conclusão</span>
+                            <span class="kpi-period" id="conclusaoPeriod">Expedidos/Recebidos</span>
                         </div>
                     </div>
-                    <div class="kpi-value" id="taxaSemConserto">--</div>
+                    <div class="kpi-value" id="taxaConclusao">--</div>
                     <div class="kpi-comparison">
-                        <span class="comparison-badge" id="semConsertoComparison">
+                        <span class="comparison-badge" id="conclusaoComparison">
                             <i class="fas fa-minus"></i> --
                         </span>
-                        <span class="comparison-text">vs. média histórica</span>
+                        <span class="comparison-text">vs. período anterior</span>
                     </div>
                     <div class="kpi-footer">
-                        <span class="kpi-detail" id="semConsertoDetail">Carregando...</span>
+                        <span class="kpi-detail" id="conclusaoDetail">Carregando...</span>
                     </div>
                 </div>
 
@@ -235,6 +235,300 @@ $_SESSION['last_activity'] = time();
             
             <div class="insights-grid" id="insightsGrid">
                 <!-- Insights gerados automaticamente pelo motor de análise -->
+            </div>
+        </section>
+
+        <!-- ============================================
+             CAMADA 2.5 - KPIs POR ÁREA
+             ============================================ -->
+        <section class="area-kpis-section">
+            <div class="section-header">
+                <h2><i class="fas fa-th-large"></i> KPIs por Área</h2>
+                <span class="section-subtitle">Indicadores específicos por setor operacional</span>
+            </div>
+            
+            <!-- Área: RECEBIMENTO -->
+            <div class="area-kpis-container">
+                <div class="area-header">
+                    <h3><i class="fas fa-box-open"></i> Recebimento</h3>
+                    <button class="btn-area-expand" onclick="navigateTo('recebimento')">
+                        <i class="fas fa-external-link-alt"></i> Ver Detalhes
+                    </button>
+                </div>
+                <div class="area-kpis-grid">
+                    <!-- KPI 1: Backlog Atual -->
+                    <div class="kpi-area-card" id="cardRecebimentoBacklog" onclick="navigateTo('recebimento')" style="cursor: pointer;">
+                        <div class="kpi-area-icon">
+                            <i class="fas fa-inbox"></i>
+                        </div>
+                        <div class="kpi-area-content">
+                            <span class="kpi-area-label">Backlog Atual</span>
+                            <div class="kpi-area-value" id="recebimentoBacklog">---</div>
+                            <div class="kpi-area-comparison" id="recebimentoBacklogVariacao"></div>
+                        </div>
+                    </div>
+
+                    <!-- KPI 2: Equipamentos Recebidos -->
+                    <div class="kpi-area-card" id="cardRecebimentoRecebidos" onclick="navigateTo('recebimento')" style="cursor: pointer;">
+                        <div class="kpi-area-icon">
+                            <i class="fas fa-truck-loading"></i>
+                        </div>
+                        <div class="kpi-area-content">
+                            <span class="kpi-area-label">Equipamentos Recebidos</span>
+                            <div class="kpi-area-value" id="recebimentoRecebidos">---</div>
+                            <div class="kpi-area-comparison" id="recebimentoRecebidosVariacao"></div>
+                        </div>
+                    </div>
+
+                    <!-- KPI 3: Remessas Recebidas -->
+                    <div class="kpi-area-card" id="cardRecebimentoRemessas" onclick="navigateTo('recebimento')" style="cursor: pointer;">
+                        <div class="kpi-area-icon">
+                            <i class="fas fa-dolly"></i>
+                        </div>
+                        <div class="kpi-area-content">
+                            <span class="kpi-area-label">Remessas Recebidas</span>
+                            <div class="kpi-area-value" id="recebimentoRemessas">---</div>
+                            <div class="kpi-area-comparison" id="recebimentoRemessasVariacao"></div>
+                        </div>
+                    </div>
+
+                    <!-- KPI 4: Taxa de Envio para Análise -->
+                    <div class="kpi-area-card" id="cardRecebimentoTaxa" onclick="navigateTo('recebimento')" style="cursor: pointer;">
+                        <div class="kpi-area-icon">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                        <div class="kpi-area-content">
+                            <span class="kpi-area-label">Taxa de Envio</span>
+                            <div class="kpi-area-value" id="recebimentoTaxa">---</div>
+                            <div class="kpi-area-comparison" id="recebimentoTaxaVariacao"></div>
+                        </div>
+                    </div>
+
+                    <!-- KPI 5: Tempo Até Análise -->
+                    <div class="kpi-area-card" id="cardRecebimentoTempo" onclick="navigateTo('recebimento')" style="cursor: pointer;">
+                        <div class="kpi-area-icon">
+                            <i class="fas fa-stopwatch"></i>
+                        </div>
+                        <div class="kpi-area-content">
+                            <span class="kpi-area-label">Tempo Até Análise</span>
+                            <div class="kpi-area-value" id="recebimentoTempo">---</div>
+                            <div class="kpi-area-comparison" id="recebimentoTempoVariacao"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Área: ANÁLISE -->
+            <div class="area-kpis-container">
+                <div class="area-header">
+                    <h3><i class="fas fa-search"></i> Análise</h3>
+                    <button class="btn-area-expand" onclick="navigateTo('analise')">
+                        <i class="fas fa-external-link-alt"></i> Ver Detalhes
+                    </button>
+                </div>
+                <div class="area-kpis-grid">
+                    <!-- KPI 1: Equipamentos em Análise -->
+                    <div class="kpi-area-card" id="cardAnaliseBacklog" onclick="navigateTo('analise')" style="cursor: pointer;">
+                        <div class="kpi-area-icon">
+                            <i class="fas fa-hourglass-half"></i>
+                        </div>
+                        <div class="kpi-area-content">
+                            <span class="kpi-area-label">Em Análise (Backlog)</span>
+                            <div class="kpi-area-value" id="analiseBacklog">---</div>
+                            <div class="kpi-area-comparison" id="analiseBacklogVariacao"></div>
+                        </div>
+                    </div>
+
+                    <!-- KPI 2: Equipamentos Analisados -->
+                    <div class="kpi-area-card" id="cardAnaliseAnalisados" onclick="navigateTo('analise')" style="cursor: pointer;">
+                        <div class="kpi-area-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="kpi-area-content">
+                            <span class="kpi-area-label">Equipamentos Analisados</span>
+                            <div class="kpi-area-value" id="analiseAnalisados">---</div>
+                            <div class="kpi-area-comparison" id="analiseAnalisadosVariacao"></div>
+                        </div>
+                    </div>
+
+                    <!-- KPI 3: Taxa de Conversão -->
+                    <div class="kpi-area-card" id="cardAnaliseTaxaConversao" onclick="navigateTo('analise')" style="cursor: pointer;">
+                        <div class="kpi-area-icon">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="kpi-area-content">
+                            <span class="kpi-area-label">Taxa de Conversão</span>
+                            <div class="kpi-area-value" id="analiseTaxaConversao">---</div>
+                            <div class="kpi-area-comparison" id="analiseTaxaConversaoVariacao"></div>
+                        </div>
+                    </div>
+
+                    <!-- KPI 4: Tempo Médio -->
+                    <div class="kpi-area-card" id="cardAnaliseTempoMedio" onclick="navigateTo('analise')" style="cursor: pointer;">
+                        <div class="kpi-area-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="kpi-area-content">
+                            <span class="kpi-area-label">Tempo Médio</span>
+                            <div class="kpi-area-value" id="analiseTempoMedio">---</div>
+                            <div class="kpi-area-comparison" id="analiseTempoMedioVariacao"></div>
+                        </div>
+                    </div>
+
+                    <!-- KPI 5: Valor Orçado -->
+                    <div class="kpi-area-card" id="cardAnaliseValorOrcado" onclick="navigateTo('analise')" style="cursor: pointer;">
+                        <div class="kpi-area-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="kpi-area-content">
+                            <span class="kpi-area-label">Valor Orçado</span>
+                            <div class="kpi-area-value" id="analiseValorOrcado">---</div>
+                            <div class="kpi-area-comparison" id="analiseValorOrcadoVariacao"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Área: REPARO -->
+            <div class="area-kpis-container">
+                <div class="area-header">
+                    <h3><i class="fas fa-tools"></i> Reparo</h3>
+                    <button class="btn-area-expand" onclick="navigateTo('reparo')">
+                        <i class="fas fa-external-link-alt"></i> Ver Detalhes
+                    </button>
+                </div>
+                <div class="area-kpis-grid">
+                    <!-- KPI 1: Equipamentos em Reparo -->
+                    <div class="kpi-area-card" id="cardReparoBacklog" onclick="navigateTo('reparo')" style="cursor: pointer;">
+                        <div class="kpi-area-icon">
+                            <i class="fas fa-wrench"></i>
+                        </div>
+                        <div class="kpi-area-content">
+                            <span class="kpi-area-label">Em Reparo (Backlog)</span>
+                            <div class="kpi-area-value" id="reparoBacklog">---</div>
+                            <div class="kpi-area-comparison" id="reparoBacklogVariacao"></div>
+                        </div>
+                    </div>
+
+                    <!-- KPI 2: Equipamentos Reparados -->
+                    <div class="kpi-area-card" id="cardReparoReparados" onclick="navigateTo('reparo')" style="cursor: pointer;">
+                        <div class="kpi-area-icon">
+                            <i class="fas fa-check-double"></i>
+                        </div>
+                        <div class="kpi-area-content">
+                            <span class="kpi-area-label">Equipamentos Reparados</span>
+                            <div class="kpi-area-value" id="reparoReparados">---</div>
+                            <div class="kpi-area-comparison" id="reparoReparadosVariacao"></div>
+                        </div>
+                    </div>
+
+                    <!-- KPI 3: Taxa de Conversão -->
+                    <div class="kpi-area-card" id="cardReparoTaxaConversao" onclick="navigateTo('reparo')" style="cursor: pointer;">
+                        <div class="kpi-area-icon">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="kpi-area-content">
+                            <span class="kpi-area-label">Taxa de Conversão</span>
+                            <div class="kpi-area-value" id="reparoTaxaConversao">---</div>
+                            <div class="kpi-area-comparison" id="reparoTaxaConversaoVariacao"></div>
+                        </div>
+                    </div>
+
+                    <!-- KPI 4: Tempo Médio -->
+                    <div class="kpi-area-card" id="cardReparoTempoMedio" onclick="navigateTo('reparo')" style="cursor: pointer;">
+                        <div class="kpi-area-icon">
+                            <i class="fas fa-hourglass-half"></i>
+                        </div>
+                        <div class="kpi-area-content">
+                            <span class="kpi-area-label">Tempo Médio</span>
+                            <div class="kpi-area-value" id="reparoTempoMedio">---</div>
+                            <div class="kpi-area-comparison" id="reparoTempoMedioVariacao"></div>
+                        </div>
+                    </div>
+
+                    <!-- KPI 5: Valor Orçado -->
+                    <div class="kpi-area-card" id="cardReparoValorOrcado" onclick="navigateTo('reparo')" style="cursor: pointer;">
+                        <div class="kpi-area-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="kpi-area-content">
+                            <span class="kpi-area-label">Valor Orçado</span>
+                            <div class="kpi-area-value" id="reparoValorOrcado">---</div>
+                            <div class="kpi-area-comparison" id="reparoValorOrcadoVariacao"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Área: QUALIDADE -->
+            <div class="area-kpis-container">
+                <div class="area-header">
+                    <h3><i class="fas fa-check-circle"></i> Qualidade</h3>
+                    <button class="btn-area-expand" onclick="navigateTo('qualidade')">
+                        <i class="fas fa-external-link-alt"></i> Ver Detalhes
+                    </button>
+                </div>
+                <div class="area-kpis-grid">
+                    <!-- KPI 1: Equipamentos Avaliados -->
+                    <div class="kpi-area-card" id="cardQualidadeAvaliados" onclick="navigateTo('qualidade')" style="cursor: pointer;">
+                        <div class="kpi-area-icon">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                        <div class="kpi-area-content">
+                            <span class="kpi-area-label">Equipamentos Avaliados</span>
+                            <div class="kpi-area-value" id="qualidadeAvaliados">---</div>
+                            <div class="kpi-area-comparison" id="qualidadeAvaliadosVariacao"></div>
+                        </div>
+                    </div>
+
+                    <!-- KPI 2: Equipamentos Sem Conserto -->
+                    <div class="kpi-area-card" id="cardQualidadeSemConserto" onclick="navigateTo('qualidade')" style="cursor: pointer;">
+                        <div class="kpi-area-icon">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div class="kpi-area-content">
+                            <span class="kpi-area-label">Sem Conserto</span>
+                            <div class="kpi-area-value" id="qualidadeSemConserto">---</div>
+                            <div class="kpi-area-comparison" id="qualidadeSemConsertoVariacao"></div>
+                        </div>
+                    </div>
+
+                    <!-- KPI 3: Taxa de Qualidade -->
+                    <div class="kpi-area-card" id="cardQualidadeTaxa" onclick="navigateTo('qualidade')" style="cursor: pointer;">
+                        <div class="kpi-area-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="kpi-area-content">
+                            <span class="kpi-area-label">Taxa de Aprovação</span>
+                            <div class="kpi-area-value" id="qualidadeTaxa">---</div>
+                            <div class="kpi-area-comparison" id="qualidadeTaxaVariacao"></div>
+                        </div>
+                    </div>
+
+                    <!-- KPI 4: Principais Causas -->
+                    <div class="kpi-area-card" id="cardQualidadeCausas" onclick="navigateTo('qualidade')" style="cursor: pointer;">
+                        <div class="kpi-area-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="kpi-area-content">
+                            <span class="kpi-area-label">Principal Causa</span>
+                            <div class="kpi-area-value" id="qualidadeCausas" style="font-size: 0.85rem;">---</div>
+                            <div class="kpi-area-comparison" id="qualidadeCausasVariacao"></div>
+                        </div>
+                    </div>
+
+                    <!-- KPI 5: Modelos Reprovados -->
+                    <div class="kpi-area-card" id="cardQualidadeModelos" onclick="navigateTo('qualidade')" style="cursor: pointer;">
+                        <div class="kpi-area-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <div class="kpi-area-content">
+                            <span class="kpi-area-label">Modelo Mais Reprovado</span>
+                            <div class="kpi-area-value" id="qualidadeModelos" style="font-size: 0.85rem;">---</div>
+                            <div class="kpi-area-comparison" id="qualidadeModelosVariacao"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -452,7 +746,7 @@ $_SESSION['last_activity'] = time();
 
             // Atualizar textos de período
             document.querySelectorAll('.kpi-period').forEach(el => {
-                if (el.id === 'volumePeriod') {
+                if (el.id === 'remessasPeriod' || el.id === 'equipRecPeriod' || el.id === 'equipExpPeriod') {
                     el.textContent = `Últimos ${dias} dias`;
                 }
             });
@@ -460,6 +754,10 @@ $_SESSION['last_activity'] = time();
             // Carregar dados em paralelo
             await Promise.all([
                 carregarKPIsGlobais(dataInicioStr, dataFimStr, dias),
+                carregarKPIsRecebimento(dataInicioStr, dataFimStr),
+                carregarKPIsAnalise(dataInicioStr, dataFimStr),
+                carregarKPIsReparo(dataInicioStr, dataFimStr),
+                carregarKPIsQualidade(dataInicioStr, dataFimStr),
                 carregarFluxoOperacional(dataInicioStr, dataFimStr),
                 carregarDadosQualidade(dataInicioStr, dataFimStr),
                 carregarDadosFinanceiros(dataInicioStr, dataFimStr)
@@ -476,65 +774,85 @@ $_SESSION['last_activity'] = time();
 
     // 🎯 CAMADA 1 - KPIs GLOBAIS
     async function carregarKPIsGlobais(dataInicio, dataFim, dias) {
-        // Este exemplo usa os endpoints existentes
-        // Você deve ajustar conforme seus endpoints reais
-        
-        // Volume Processado (soma de todas as etapas)
-        // Aqui você chamaria seus endpoints PHP existentes
-        
-        // EXEMPLO - DADOS SIMULADOS (substitua por chamadas reais)
-        const volumeTotal = await obterVolumeTotalProcessado(dataInicio, dataFim);
-        const tempoMedio = await obterTempoMedioCiclo(dataInicio, dataFim);
-        const taxaSucesso = await obterTaxaSucesso(dataInicio, dataFim);
-        const taxaSemConserto = await obterTaxaSemConserto(dataInicio, dataFim);
-        const valorOrcado = await obterValorTotalOrcado(dataInicio, dataFim);
+        try {
+            // Chamar os 5 KPIs do Catálogo Oficial v1.0
+            const [remessas, equipRec, equipExp, taxaConclusao, valorOrcado] = await Promise.all([
+                obterRemessasRecebidas(dataInicio, dataFim),
+                obterEquipamentosRecebidos(dataInicio, dataFim),
+                obterEquipamentosExpedidos(dataInicio, dataFim),
+                obterTaxaConclusao(dataInicio, dataFim),
+                obterValorTotalOrcado(dataInicio, dataFim)
+            ]);
 
-        // Atualizar KPIs na tela
-        atualizarKPI('volume', volumeTotal);
-        atualizarKPI('tempo', tempoMedio);
-        atualizarKPI('sucesso', taxaSucesso);
-        atualizarKPI('semconserto', taxaSemConserto);
-        atualizarKPI('valor', valorOrcado);
+            // Armazenar KPIs globalmente para motor de insights
+            window.kpisGlobais = {
+                remessas: remessas,
+                equipRec: equipRec,
+                equipExp: equipExp,
+                conclusao: taxaConclusao,
+                valor: valorOrcado
+            };
+
+            // Atualizar KPIs na tela
+            atualizarKPI('remessas', remessas);
+            atualizarKPI('equipRec', equipRec);
+            atualizarKPI('equipExp', equipExp);
+            atualizarKPI('conclusao', taxaConclusao);
+            atualizarKPI('valor', valorOrcado);
+        } catch (error) {
+            console.error('Erro ao carregar KPIs:', error);
+        }
     }
 
     function atualizarKPI(tipo, dados) {
+        if (!dados) return;
+        
         switch(tipo) {
-            case 'volume':
-                document.getElementById('volumeTotal').textContent = dados.total.toLocaleString('pt-BR');
-                atualizarComparacao('volumeComparison', dados.variacao);
-                document.getElementById('volumeDetail').textContent = `Média: ${dados.media.toLocaleString('pt-BR')} equip/dia`;
+            case 'remessas':
+                document.getElementById('remessasTotal').textContent = dados.valor.toLocaleString('pt-BR');
+                atualizarComparacao('remessasComparison', dados.referencia?.variacao || 0);
+                const mediaRemessas = dados.detalhes?.media_dia || 0;
+                document.getElementById('remessasDetail').textContent = `Média: ${mediaRemessas.toFixed(1)} remessas/dia`;
                 break;
             
-            case 'tempo':
-                document.getElementById('tempoMedioTotal').textContent = formatarTempo(dados.total);
-                atualizarComparacao('tempoComparison', dados.variacao);
-                document.getElementById('tempoDetail').textContent = `Recebimento → Expedição`;
+            case 'equipRec':
+                document.getElementById('equipRecTotal').textContent = dados.valor.toLocaleString('pt-BR');
+                atualizarComparacao('equipRecComparison', dados.referencia?.variacao || 0);
+                const mediaEquipRec = dados.detalhes?.media_dia || 0;
+                document.getElementById('equipRecDetail').textContent = `Média: ${mediaEquipRec.toFixed(1)} equipamentos/dia`;
                 break;
             
-            case 'sucesso':
-                document.getElementById('taxaSucesso').textContent = `${dados.percentual.toFixed(1)}%`;
-                atualizarComparacao('sucessoComparison', dados.variacao);
-                document.getElementById('sucessoDetail').textContent = `${dados.reparados} de ${dados.total} finalizados`;
+            case 'equipExp':
+                document.getElementById('equipExpTotal').textContent = dados.valor.toLocaleString('pt-BR');
+                atualizarComparacao('equipExpComparison', dados.referencia?.variacao || 0);
+                const mediaEquipExp = dados.detalhes?.media_dia || 0;
+                document.getElementById('equipExpDetail').textContent = `Média: ${mediaEquipExp.toFixed(1)} equipamentos/dia`;
                 break;
             
-            case 'semconserto':
-                document.getElementById('taxaSemConserto').textContent = `${dados.percentual.toFixed(1)}%`;
-                atualizarComparacao('semConsertoComparison', dados.variacao);
-                document.getElementById('semConsertoDetail').textContent = `${dados.quantidade} equipamentos`;
+            case 'conclusao':
+                document.getElementById('taxaConclusao').textContent = `${dados.valor}%`;
+                const variacaoPP = dados.referencia?.variacao || 0;
+                atualizarComparacaoPP('conclusaoComparison', variacaoPP);
+                const recebidos = dados.detalhes?.recebidos || 0;
+                const expedidos = dados.detalhes?.expedidos || 0;
+                document.getElementById('conclusaoDetail').textContent = `${expedidos} expedidos de ${recebidos} recebidos`;
                 break;
             
             case 'valor':
-                document.getElementById('valorOrcado').textContent = formatarMoeda(dados.total);
-                atualizarComparacao('valorComparison', dados.variacao);
-                document.getElementById('valorDetail').textContent = `Análise: ${formatarMoeda(dados.analise)} | Reparo: ${formatarMoeda(dados.reparo)}`;
+                document.getElementById('valorOrcado').textContent = `R$ ${dados.valor}`;
+                atualizarComparacao('valorComparison', dados.referencia?.variacao || 0);
+                const analise = dados.detalhes?.analise || '0,00';
+                const reparo = dados.detalhes?.reparo || '0,00';
+                document.getElementById('valorDetail').textContent = `Análise: R$ ${analise} | Reparo: R$ ${reparo}`;
                 break;
         }
     }
 
     function atualizarComparacao(elementId, variacao) {
         const badge = document.getElementById(elementId);
-        const icon = badge.querySelector('i');
+        if (!badge) return;
         
+        const icon = badge.querySelector('i');
         badge.className = 'comparison-badge';
         
         if (variacao > 0) {
@@ -552,63 +870,45 @@ $_SESSION['last_activity'] = time();
         }
     }
 
-    // 🎯 CAMADA 2 - INSIGHTS AUTOMATIZADOS
+    function atualizarComparacaoPP(elementId, variacaoPP) {
+        const badge = document.getElementById(elementId);
+        if (!badge) return;
+        
+        const icon = badge.querySelector('i');
+        badge.className = 'comparison-badge';
+        
+        if (variacaoPP > 0) {
+            badge.classList.add('positive');
+            icon.className = 'fas fa-arrow-up';
+            badge.innerHTML = `<i class="fas fa-arrow-up"></i> +${variacaoPP.toFixed(1)}pp`;
+        } else if (variacaoPP < 0) {
+            badge.classList.add('negative');
+            icon.className = 'fas fa-arrow-down';
+            badge.innerHTML = `<i class="fas fa-arrow-down"></i> ${variacaoPP.toFixed(1)}pp`;
+        } else {
+            badge.classList.add('neutral');
+            icon.className = 'fas fa-minus';
+            badge.innerHTML = `<i class="fas fa-minus"></i> 0pp`;
+        }
+    }
+
+    // 🎯 CAMADA 2 - INSIGHTS AUTOMATIZADOS v2.0
     async function gerarInsightsAutomatizados() {
         try {
-            // Coletar dados de todas as camadas
-            const dadosInsights = {
-                volume: {
-                    total: await obterVolumeTotalProcessado(),
-                    media: 850, // Deve vir do histórico localStorage
-                    variacao: 0 // calculado pela engine
-                },
-                tempo: {
-                    etapas: {
-                        recebimento: 2.5,
-                        analise: 5.8,
-                        reparo: 12.3,
-                        qualidade: 3.2,
-                        expedicao: 1.8
-                    },
-                    total: 25.6
-                },
-                qualidade: {
-                    taxaSemConserto: 13.5,
-                    totalSemConserto: 115,
-                    laudosPorTipo: {
-                        "Sem Defeito": 420,
-                        "Sem Conserto": 115,
-                        "Com Conserto": 315,
-                        "Em Análise": 48
-                    }
-                },
-                financeiro: {
-                    custoMedio: 182,
-                    valorOrcadoTotal: 195000,
-                    variacaoCusto: 10.3,
-                    variacaoReceita: -5.2
-                },
-                clienteProduto: {
-                    topClientes: [
-                        { nome: "TechCorp", volume: 340, taxaProblema: 18.2 },
-                        { nome: "GlobalTech", volume: 280, taxaProblema: 12.1 },
-                        { nome: "MegaStore", volume: 210, taxaProblema: 15.8 }
-                    ],
-                    topProdutos: [
-                        { nome: "iPhone 12", volume: 185, taxaSemConserto: 21.6 },
-                        { nome: "Samsung Galaxy S21", volume: 142, taxaSemConserto: 14.8 },
-                        { nome: "Notebook Dell", volume: 128, taxaSemConserto: 16.4 }
-                    ]
-                }
-            };
+            // Aguardar carregamento dos KPIs globais
+            if (!window.kpisGlobais) {
+                console.warn('KPIs globais ainda não carregados');
+                document.getElementById('insightsSection').style.display = 'none';
+                return;
+            }
 
-            // Gerar insights usando o motor
-            const insights = gerarInsights(dadosInsights);
+            // Passar dados dos KPIs oficiais para o motor
+            const insights = insightsEngine.analisar(window.kpisGlobais);
 
             // Armazenar TODOS os insights globalmente
             todosInsights = insights || [];
 
-            // Renderizar insights (top 3)
+            // Renderizar insights (máximo 3)
             renderizarInsights(insights);
 
         } catch (error) {
@@ -641,18 +941,20 @@ $_SESSION['last_activity'] = time();
         const card = document.createElement('div');
         card.className = `insight-card insight-${insight.type}`;
         
+        // Mapeamento de ícones por tipo de insight v2.0
         const iconMap = {
-            'volume': 'chart-bar',
-            'tempo': 'clock',
             'gargalo': 'hourglass-half',
-            'qualidade': 'shield-alt',
-            'financeiro': 'dollar-sign',
-            'cliente': 'user-tie',
-            'produto': 'box'
+            'eficiencia': 'tachometer-alt',
+            'crescimento': 'chart-line',
+            'operacao': 'check-circle',
+            'critical': 'exclamation-triangle',
+            'warning': 'exclamation-circle',
+            'info': 'info-circle'
         };
 
-        const icon = iconMap[insight.category] || 'lightbulb';
+        const icon = iconMap[insight.tipo] || iconMap[insight.type] || 'lightbulb';
 
+        // Estrutura de card v2.0 com causa e ação
         card.innerHTML = `
             <div class="insight-icon">
                 <i class="fas fa-${icon}"></i>
@@ -660,12 +962,22 @@ $_SESSION['last_activity'] = time();
             <div class="insight-content">
                 <div class="insight-header">
                     <span class="insight-category">
-                        <i class="fas fa-tag"></i> ${insight.category.toUpperCase()}
+                        <i class="fas fa-tag"></i> ${insight.tipo?.toUpperCase() || insight.type?.toUpperCase() || 'INSIGHT'}
                     </span>
                 </div>
                 <h4>${insight.title}</h4>
-                <p>${insight.message}</p>
-                ${insight.action ? `
+                <p class="insight-message">${insight.message}</p>
+                ${insight.causa ? `
+                    <p class="insight-causa">
+                        <strong><i class="fas fa-search"></i> Causa Provável:</strong> ${insight.causa}
+                    </p>
+                ` : ''}
+                ${insight.acao ? `
+                    <p class="insight-acao">
+                        <strong><i class="fas fa-wrench"></i> Ação Sugerida:</strong> ${insight.acao}
+                    </p>
+                ` : ''}
+                ${insight.action?.link ? `
                     <div class="insight-action" onclick="navigateTo('${insight.action.link}')">
                         ${insight.action.label} <i class="fas fa-arrow-right"></i>
                     </div>
@@ -715,6 +1027,358 @@ $_SESSION['last_activity'] = time();
 
         modal.style.display = 'none';
         document.body.style.overflow = ''; // Restaurar scroll da página
+    }
+
+    // 🎯 CAMADA 2.5 - KPIs POR ÁREA: RECEBIMENTO
+    async function carregarKPIsRecebimento(dataInicio, dataFim) {
+        try {
+            const baseUrl = '/DashBoard/backendDash/recebimentoPHP';
+            const params = `inicio=${dataInicio.split('-').reverse().join('/')}&fim=${dataFim.split('-').reverse().join('/')}`;
+            
+            // Buscar todos os KPIs de recebimento em paralelo
+            const [backlog, recebidos, remessas, taxa, tempo] = await Promise.all([
+                fetch(`${baseUrl}/kpi-backlog-atual.php?${params}`).then(r => r.json()),
+                fetch(`${baseUrl}/kpi-equipamentos-recebidos.php?${params}`).then(r => r.json()),
+                fetch(`${baseUrl}/kpi-remessas-recebidas.php?${params}`).then(r => r.json()),
+                fetch(`${baseUrl}/kpi-taxa-envio-analise.php?${params}`).then(r => r.json()),
+                fetch(`${baseUrl}/kpi-tempo-ate-analise.php?${params}`).then(r => r.json())
+            ]);
+
+            // Renderizar KPIs
+            atualizarKPIArea('recebimentoBacklog', backlog.data, 'equipamentos', 'recebimentoBacklogVariacao');
+            atualizarKPIArea('recebimentoRecebidos', recebidos.data, 'equipamentos', 'recebimentoRecebidosVariacao');
+            atualizarKPIArea('recebimentoRemessas', remessas.data, 'remessas', 'recebimentoRemessasVariacao');
+            atualizarKPIArea('recebimentoTaxa', taxa.data, '%', 'recebimentoTaxaVariacao');
+            atualizarKPIArea('recebimentoTempo', tempo.data, 'dias', 'recebimentoTempoVariacao');
+
+        } catch (error) {
+            console.error('Erro ao carregar KPIs de Recebimento:', error);
+        }
+    }
+
+    // 🎯 CAMADA 2.5 - KPIs POR ÁREA: ANÁLISE
+    async function carregarKPIsAnalise(dataInicio, dataFim) {
+        try {
+            const baseUrl = '/DashBoard/backendDash/analisePHP';
+            const params = `inicio=${dataInicio.split('-').reverse().join('/')}&fim=${dataFim.split('-').reverse().join('/')}`;
+            
+            // Buscar todos os KPIs de análise em paralelo
+            const [backlog, analisados, taxaConversao, tempoMedio, valorOrcado] = await Promise.all([
+                fetch(`${baseUrl}/kpi-equipamentos-em-analise.php?${params}`).then(r => r.json()),
+                fetch(`${baseUrl}/kpi-equipamentos-analisados.php?${params}`).then(r => r.json()),
+                fetch(`${baseUrl}/kpi-taxa-conversao-analise.php?${params}`).then(r => r.json()),
+                fetch(`${baseUrl}/kpi-tempo-medio-analise.php?${params}`).then(r => r.json()),
+                fetch(`${baseUrl}/kpi-valor-orcado-analise.php?${params}`).then(r => r.json())
+            ]);
+
+            // Renderizar KPIs
+            atualizarKPIArea('analiseBacklog', backlog.data, 'equipamentos', 'analiseBacklogVariacao');
+            atualizarKPIArea('analiseAnalisados', analisados.data, 'equipamentos', 'analiseAnalisadosVariacao');
+            atualizarKPIArea('analiseTaxaConversao', taxaConversao.data, '%', 'analiseTaxaConversaoVariacao');
+            atualizarKPIArea('analiseTempoMedio', tempoMedio.data, 'dias', 'analiseTempoMedioVariacao');
+            atualizarKPIArea('analiseValorOrcado', valorOrcado.data, 'R$', 'analiseValorOrcadoVariacao');
+
+            // Gerar insights específicos da análise
+            gerarInsightsAnalise({backlog, analisados, taxaConversao, tempoMedio, valorOrcado});
+
+        } catch (error) {
+            console.error('Erro ao carregar KPIs de Análise:', error);
+        }
+    }
+
+    function atualizarKPIArea(elementoId, dados, unidade, variacaoId) {
+        const elemento = document.getElementById(elementoId);
+        const variacaoEl = document.getElementById(variacaoId);
+        
+        if (!elemento || !dados) return;
+
+        // Atualizar valor
+        let valorFormatado = dados.valor;
+        if (unidade === 'R$') {
+            elemento.innerHTML = `<span class="kpi-currency">R$</span> ${valorFormatado}`;
+        } else {
+            elemento.textContent = `${valorFormatado} ${unidade}`;
+        }
+
+        // Atualizar comparação
+        if (variacaoEl && dados.referencia) {
+            const variacao = dados.referencia.variacao || 0;
+            const estado = dados.referencia.estado || 'neutral';
+            
+            const icone = variacao > 0 ? '↑' : variacao < 0 ? '↓' : '→';
+            const cor = estado === 'success' ? '#10b981' : estado === 'warning' ? '#f59e0b' : estado === 'critical' ? '#ef4444' : '#6b7280';
+            const sinal = variacao > 0 ? '+' : '';
+            
+            variacaoEl.innerHTML = `<span style="color: ${cor};">${icone} ${sinal}${variacao.toFixed(1)}%</span>`;
+        }
+    }
+
+    function gerarInsightsAnalise(kpis) {
+        const insightsAnalise = [];
+
+        // Insight 1: Backlog crescente
+        const backlog = kpis.backlog.data;
+        if (backlog.referencia?.estado === 'critical') {
+            insightsAnalise.push({
+                type: 'critical',
+                tipo: 'gargalo',
+                title: 'Backlog de análise crescendo',
+                message: `${backlog.valor} equipamentos aguardando análise. Aumento de ${backlog.referencia.variacao.toFixed(1)}%.`,
+                causa: 'Volume de recebimentos superando capacidade de análise',
+                acao: 'Escalar equipe ou priorizar remessas críticas'
+            });
+        }
+
+        // Insight 2: Baixa conversão
+        const taxa = kpis.taxaConversao.data;
+        if (taxa.valor < 70) {
+            insightsAnalise.push({
+                type: 'critical',
+                tipo: 'eficiencia',
+                title: 'Taxa de conversão baixa na análise',
+                message: `Apenas ${taxa.valor}% dos equipamentos recebidos foram analisados.`,
+                causa: 'Gargalo na análise ou backlog histórico acumulado',
+                acao: 'Revisar processos e aumentar produtividade da análise'
+            });
+        } else if (taxa.valor < 85) {
+            insightsAnalise.push({
+                type: 'warning',
+                tipo: 'eficiencia',
+                title: 'Taxa de conversão abaixo da meta',
+                message: `${taxa.valor}% de conversão (meta: 85%).`,
+                causa: 'Capacidade de análise próxima do limite',
+                acao: 'Monitorar tendência e avaliar necessidade de recursos'
+            });
+        }
+
+        // Insight 3: Análise saudável
+        if (taxa.valor >= 85 && backlog.referencia?.estado !== 'critical') {
+            insightsAnalise.push({
+                type: 'info',
+                tipo: 'operacao',
+                title: 'Análise operando dentro da meta',
+                message: `${taxa.valor}% de conversão e backlog controlado.`,
+                causa: 'Capacidade adequada ao volume de recebimentos',
+                acao: 'Manter padrões operacionais e monitorar qualidade'
+            });
+        }
+
+        // Adicionar insights de análise aos insights globais
+        if (window.todosInsights) {
+            window.todosInsights.push(...insightsAnalise);
+        }
+
+        console.log('✅ Insights de Análise gerados:', insightsAnalise);
+    }
+
+    // 🎯 CAMADA 2.5 - KPIs POR ÁREA: REPARO
+    async function carregarKPIsReparo(dataInicio, dataFim) {
+        try {
+            const baseUrl = '/DashBoard/backendDash/reparoPHP';
+            const params = `inicio=${dataInicio.split('-').reverse().join('/')}&fim=${dataFim.split('-').reverse().join('/')}`;
+            
+            // Buscar todos os KPIs de reparo em paralelo
+            const [backlog, reparados, taxaConversao, tempoMedio, valorOrcado] = await Promise.all([
+                fetch(`${baseUrl}/kpi-equipamentos-em-reparo.php?${params}`).then(r => r.json()),
+                fetch(`${baseUrl}/kpi-equipamentos-reparados.php?${params}`).then(r => r.json()),
+                fetch(`${baseUrl}/kpi-taxa-conversao-reparo.php?${params}`).then(r => r.json()),
+                fetch(`${baseUrl}/kpi-tempo-medio-reparo.php?${params}`).then(r => r.json()),
+                fetch(`${baseUrl}/kpi-valor-orcado-reparo.php?${params}`).then(r => r.json())
+            ]);
+
+            // Renderizar KPIs
+            atualizarKPIArea('reparoBacklog', backlog.data, 'equipamentos', 'reparoBacklogVariacao');
+            atualizarKPIArea('reparoReparados', reparados.data, 'equipamentos', 'reparoReparadosVariacao');
+            atualizarKPIArea('reparoTaxaConversao', taxaConversao.data, '%', 'reparoTaxaConversaoVariacao');
+            atualizarKPIArea('reparoTempoMedio', tempoMedio.data, 'dias', 'reparoTempoMedioVariacao');
+            atualizarKPIArea('reparoValorOrcado', valorOrcado.data, 'R$', 'reparoValorOrcadoVariacao');
+
+            // Gerar insights específicos do reparo
+            gerarInsightsReparo({backlog, reparados, taxaConversao, tempoMedio, valorOrcado});
+
+        } catch (error) {
+            console.error('Erro ao carregar KPIs de Reparo:', error);
+        }
+    }
+
+    function gerarInsightsReparo(kpis) {
+        const insightsReparo = [];
+
+        // Insight 1: Gargalo técnico (backlog crescente)
+        const backlog = kpis.backlog.data;
+        if (backlog.referencia?.estado === 'critical') {
+            insightsReparo.push({
+                type: 'critical',
+                tipo: 'gargalo',
+                title: 'Gargalo técnico no reparo',
+                message: `${backlog.valor} equipamentos aguardando reparo. Aumento de ${backlog.referencia.variacao.toFixed(1)}%.`,
+                causa: 'Capacidade técnica insuficiente ou complexidade acima do esperado',
+                acao: 'Reforçar equipe técnica ou escalar para fornecedor externo'
+            });
+        }
+
+        // Insight 2: Taxa de conversão baixa
+        const taxa = kpis.taxaConversao.data;
+        if (taxa.valor < 60) {
+            insightsReparo.push({
+                type: 'critical',
+                tipo: 'eficiencia',
+                title: 'Taxa de conversão crítica no reparo',
+                message: `Apenas ${taxa.valor}% dos equipamentos analisados foram reparados.`,
+                causa: 'Peças indisponíveis, reparos inviáveis ou priorização incorreta',
+                acao: 'Revisar viabilidade de reparos e gestão de estoque de peças'
+            });
+        } else if (taxa.valor < 75) {
+            insightsReparo.push({
+                type: 'warning',
+                tipo: 'eficiencia',
+                title: 'Taxa de conversão abaixo da meta',
+                message: `${taxa.valor}% de conversão no reparo (meta: 75%).`,
+                causa: 'Limitações técnicas ou logísticas impactando a conclusão',
+                acao: 'Identificar principais motivos de não-reparo e mitigar'
+            });
+        }
+
+        // Insight 3: Reparo operando bem
+        if (taxa.valor >= 80 && backlog.referencia?.variacao < 0) {
+            insightsReparo.push({
+                type: 'info',
+                tipo: 'operacao',
+                title: 'Reparo operando com excelência',
+                message: `${taxa.valor}% de conversão e backlog em redução.`,
+                causa: 'Capacidade técnica adequada e boa gestão de recursos',
+                acao: 'Manter padrões e documentar boas práticas'
+            });
+        }
+
+        // Adicionar insights de reparo aos insights globais
+        if (window.todosInsights) {
+            window.todosInsights.push(...insightsReparo);
+        }
+
+        console.log('✅ Insights de Reparo gerados:', insightsReparo);
+    }
+
+    // 🎯 CAMADA 2.5 - KPIs POR ÁREA: QUALIDADE
+    async function carregarKPIsQualidade(dataInicio, dataFim) {
+        try {
+            const baseUrl = '/DashBoard/backendDash/qualidadePHP';
+            const params = `inicio=${dataInicio.split('-').reverse().join('/')}&fim=${dataFim.split('-').reverse().join('/')}`;
+            
+            // Buscar todos os KPIs de qualidade em paralelo
+            const [avaliados, semConserto, taxaQualidade, causas, modelos] = await Promise.all([
+                fetch(`${baseUrl}/kpi-equipamentos-avaliados.php?${params}`).then(r => r.json()),
+                fetch(`${baseUrl}/kpi-equipamentos-sem-conserto.php?${params}`).then(r => r.json()),
+                fetch(`${baseUrl}/kpi-taxa-qualidade.php?${params}`).then(r => r.json()),
+                fetch(`${baseUrl}/kpi-principais-causas.php?${params}`).then(r => r.json()),
+                fetch(`${baseUrl}/kpi-modelos-reprovados.php?${params}`).then(r => r.json())
+            ]);
+
+            // Renderizar KPIs
+            atualizarKPIArea('qualidadeAvaliados', avaliados.data, 'equipamentos', 'qualidadeAvaliadosVariacao');
+            atualizarKPIArea('qualidadeSemConserto', semConserto.data, 'equipamentos', 'qualidadeSemConsertoVariacao');
+            atualizarKPIArea('qualidadeTaxa', taxaQualidade.data, '%', 'qualidadeTaxaVariacao');
+            
+            // KPIs especiais (texto sem unidade)
+            const elementoCausas = document.getElementById('qualidadeCausas');
+            const elementoModelos = document.getElementById('qualidadeModelos');
+            
+            if (elementoCausas && causas.data) {
+                elementoCausas.textContent = causas.data.valor || 'N/A';
+                const variacaoCausas = document.getElementById('qualidadeCausasVariacao');
+                if (variacaoCausas && causas.data.detalhes) {
+                    const concentracao = causas.data.detalhes.concentracao_causa_1 || 0;
+                    const estado = causas.data.referencia?.estado || 'neutral';
+                    const cor = estado === 'success' ? '#10b981' : estado === 'warning' ? '#f59e0b' : estado === 'critical' ? '#ef4444' : '#6b7280';
+                    variacaoCausas.innerHTML = `<span style="color: ${cor};">Concentração: ${concentracao.toFixed(1)}%</span>`;
+                }
+            }
+            
+            if (elementoModelos && modelos.data) {
+                elementoModelos.textContent = modelos.data.valor || 'N/A';
+                const variacaoModelos = document.getElementById('qualidadeModelosVariacao');
+                if (variacaoModelos && modelos.data.detalhes) {
+                    const concentracao = modelos.data.detalhes.concentracao_modelo_1 || 0;
+                    const estado = modelos.data.referencia?.estado || 'neutral';
+                    const cor = estado === 'success' ? '#10b981' : estado === 'warning' ? '#f59e0b' : estado === 'critical' ? '#ef4444' : '#6b7280';
+                    variacaoModelos.innerHTML = `<span style="color: ${cor};">Concentração: ${concentracao.toFixed(1)}%</span>`;
+                }
+            }
+
+            // Gerar insights específicos da qualidade
+            gerarInsightsQualidade({avaliados, semConserto, taxaQualidade, causas, modelos});
+
+        } catch (error) {
+            console.error('Erro ao carregar KPIs de Qualidade:', error);
+        }
+    }
+
+    function gerarInsightsQualidade(kpis) {
+        const insightsQualidade = [];
+
+        // Insight 1: Alta taxa de reprovação
+        const taxa = kpis.taxaQualidade.data;
+        if (taxa.valor < 70) {
+            insightsQualidade.push({
+                type: 'critical',
+                tipo: 'eficiencia',
+                title: 'Taxa de aprovação crítica',
+                message: `Apenas ${taxa.valor}% dos equipamentos aprovados na qualidade.`,
+                causa: 'Alto índice de equipamentos sem conserto ou com problemas de qualidade',
+                acao: 'Revisar padrões de reparo e critérios de aprovação na qualidade'
+            });
+        } else if (taxa.valor < 85) {
+            insightsQualidade.push({
+                type: 'warning',
+                tipo: 'eficiencia',
+                title: 'Taxa de aprovação abaixo da meta',
+                message: `${taxa.valor}% de aprovação (meta: 85%).`,
+                causa: 'Reprovações acima do esperado na inspeção final',
+                acao: 'Investigar causas de reprovação e melhorar processo de reparo'
+            });
+        }
+
+        // Insight 2: Concentração de causa (problema sistêmico)
+        const causas = kpis.causas.data;
+        const concentracaoCausa = causas.detalhes?.concentracao_causa_1 || 0;
+        if (concentracaoCausa > 60) {
+            insightsQualidade.push({
+                type: 'critical',
+                tipo: 'gargalo',
+                title: 'Concentração crítica em uma causa',
+                message: `${concentracaoCausa.toFixed(1)}% das reprovações: "${causas.valor}".`,
+                causa: 'Problema sistêmico afetando grande parte dos equipamentos',
+                acao: 'Criar plano de ação específico para mitigar esta causa raiz'
+            });
+        } else if (concentracaoCausa > 40) {
+            insightsQualidade.push({
+                type: 'warning',
+                tipo: 'gargalo',
+                title: 'Causa de reprovação dominante',
+                message: `${concentracaoCausa.toFixed(1)}% concentrados em "${causas.valor}".`,
+                causa: 'Uma causa específica responsável por parte significativa das falhas',
+                acao: 'Priorizar solução desta causa para melhorar aprovação geral'
+            });
+        }
+
+        // Insight 3: Qualidade saudável
+        if (taxa.valor >= 85 && concentracaoCausa <= 40) {
+            insightsQualidade.push({
+                type: 'info',
+                tipo: 'operacao',
+                title: 'Qualidade operando dentro da meta',
+                message: `${taxa.valor}% de aprovação com causas distribuídas.`,
+                causa: 'Processos de reparo e inspeção bem calibrados',
+                acao: 'Manter padrões e monitorar tendências de novos problemas'
+            });
+        }
+
+        // Adicionar insights de qualidade aos insights globais
+        if (window.todosInsights) {
+            window.todosInsights.push(...insightsQualidade);
+        }
+
+        console.log('✅ Insights de Qualidade gerados:', insightsQualidade);
     }
 
     // 🎯 CAMADA 3 - FLUXO OPERACIONAL
@@ -1127,8 +1791,37 @@ $_SESSION['last_activity'] = time();
         // Navegar para relatórios detalhados
         console.log('Navegar para:', destino);
         
-        // Exemplo de navegação
+        // Obter filtros atuais
+        const filtroInicio = document.getElementById('filtroInicio')?.value || '';
+        const filtroFim = document.getElementById('filtroFim')?.value || '';
+        const filtroSetor = document.getElementById('filtroSetor')?.value || '';
+        const filtroOperador = document.getElementById('filtroOperador')?.value || '';
+        
+        // Construir parâmetros de URL
+        let params = new URLSearchParams();
+        if (filtroInicio) params.append('inicio', filtroInicio);
+        if (filtroFim) params.append('fim', filtroFim);
+        if (filtroSetor) params.append('setor', filtroSetor);
+        if (filtroOperador) params.append('operador', filtroOperador);
+        
+        const queryString = params.toString() ? '&' + params.toString() : '';
+        
+        // Navegação por área (novo sistema de detalhamento)
         switch(destino) {
+            case 'recebimento':
+                window.location.href = `AreaDetalhada.php?area=recebimento${queryString}`;
+                break;
+            case 'analise':
+                window.location.href = `AreaDetalhada.php?area=analise${queryString}`;
+                break;
+            case 'reparo':
+                window.location.href = `AreaDetalhada.php?area=reparo${queryString}`;
+                break;
+            case 'qualidade':
+                window.location.href = `AreaDetalhada.php?area=qualidade${queryString}`;
+                break;
+            
+            // Navegação legada (compatibilidade com sistema antigo)
             case 'volume':
             case 'tempo':
             case 'tempo-detalhado':
@@ -1154,49 +1847,106 @@ $_SESSION['last_activity'] = time();
         // Implementar UI de erro se necessário
     }
 
-    // 🎯 FUNÇÕES DE INTEGRAÇÃO COM BACKEND (PLACEHOLDER)
-    // Substitua estas funções por chamadas reais aos seus endpoints PHP
-
-    async function obterVolumeTotalProcessado(dataInicio, dataFim) {
-        // Simular dados - substituir por fetch real
-        return {
-            total: 1250,
-            media: 178,
-            variacao: 12.5
-        };
+    // 🎯 FUNÇÕES DE INTEGRAÇÃO COM BACKEND - CATÁLOGO OFICIAL v1.0
+    
+    async function obterRemessasRecebidas(dataInicio, dataFim) {
+        try {
+            const params = new URLSearchParams({
+                inicio: dataInicio,
+                fim: dataFim
+            });
+            
+            const response = await fetch(`../backendDash/kpis/kpi-remessas-recebidas.php?${params}`);
+            const data = await response.json();
+            
+            if (data.meta?.success) {
+                return data.data;
+            }
+            throw new Error(data.meta?.message || 'Erro ao buscar remessas recebidas');
+        } catch (error) {
+            console.error('Erro em obterRemessasRecebidas:', error);
+            return { valor: 0, unidade: 'remessas', referencia: { variacao: 0 }, detalhes: { media_dia: 0 } };
+        }
     }
 
-    async function obterTempoMedioCiclo(dataInicio, dataFim) {
-        return {
-            total: 600, // horas
-            variacao: -5.2
-        };
+    async function obterEquipamentosRecebidos(dataInicio, dataFim) {
+        try {
+            const params = new URLSearchParams({
+                inicio: dataInicio,
+                fim: dataFim
+            });
+            
+            const response = await fetch(`../backendDash/kpis/kpi-equipamentos-recebidos.php?${params}`);
+            const data = await response.json();
+            
+            if (data.meta?.success) {
+                return data.data;
+            }
+            throw new Error(data.meta?.message || 'Erro ao buscar equipamentos recebidos');
+        } catch (error) {
+            console.error('Erro em obterEquipamentosRecebidos:', error);
+            return { valor: 0, unidade: 'equipamentos', referencia: { variacao: 0 }, detalhes: { media_dia: 0 } };
+        }
     }
 
-    async function obterTaxaSucesso(dataInicio, dataFim) {
-        return {
-            percentual: 87.5,
-            reparados: 1094,
-            total: 1250,
-            variacao: 2.8
-        };
+    async function obterEquipamentosExpedidos(dataInicio, dataFim) {
+        try {
+            const params = new URLSearchParams({
+                inicio: dataInicio,
+                fim: dataFim
+            });
+            
+            const response = await fetch(`../backendDash/kpis/kpi-equipamentos-expedidos.php?${params}`);
+            const data = await response.json();
+            
+            if (data.meta?.success) {
+                return data.data;
+            }
+            throw new Error(data.meta?.message || 'Erro ao buscar equipamentos expedidos');
+        } catch (error) {
+            console.error('Erro em obterEquipamentosExpedidos:', error);
+            return { valor: 0, unidade: 'equipamentos', referencia: { variacao: 0 }, detalhes: { media_dia: 0 } };
+        }
     }
 
-    async function obterTaxaSemConserto(dataInicio, dataFim) {
-        return {
-            percentual: 12.5,
-            quantidade: 156,
-            variacao: -2.8
-        };
+    async function obterTaxaConclusao(dataInicio, dataFim) {
+        try {
+            const params = new URLSearchParams({
+                inicio: dataInicio,
+                fim: dataFim
+            });
+            
+            const response = await fetch(`../backendDash/kpis/kpi-taxa-conclusao.php?${params}`);
+            const data = await response.json();
+            
+            if (data.meta?.success) {
+                return data.data;
+            }
+            throw new Error(data.meta?.message || 'Erro ao buscar taxa de conclusão');
+        } catch (error) {
+            console.error('Erro em obterTaxaConclusao:', error);
+            return { valor: 0, unidade: '%', referencia: { variacao: 0 }, detalhes: { recebidos: 0, expedidos: 0 } };
+        }
     }
 
     async function obterValorTotalOrcado(dataInicio, dataFim) {
-        return {
-            total: 213000,
-            analise: 125400,
-            reparo: 87600,
-            variacao: 8.3
-        };
+        try {
+            const params = new URLSearchParams({
+                inicio: dataInicio,
+                fim: dataFim
+            });
+            
+            const response = await fetch(`../backendDash/kpis/kpi-valor-orcado.php?${params}`);
+            const data = await response.json();
+            
+            if (data.meta?.success) {
+                return data.data;
+            }
+            throw new Error(data.meta?.message || 'Erro ao buscar valor orçado');
+        } catch (error) {
+            console.error('Erro em obterValorTotalOrcado:', error);
+            return { valor: '0,00', unidade: 'R$', referencia: { variacao: 0 }, detalhes: { analise: '0,00', reparo: '0,00' } };
+        }
     }
     </script>
 

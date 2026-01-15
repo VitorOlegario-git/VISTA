@@ -467,6 +467,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const acao = acaoSelect.value;
     const origem = operacaoOrigem.value;
 
+    if (!operacaoDestino) {
+        console.warn("Elemento operacaoDestino não encontrado");
+        return;
+    }
+
     // Limpa o destino e adiciona o "Selecione"
     operacaoDestino.innerHTML = '<option value="">Selecione</option>';
 
@@ -503,6 +508,41 @@ document.addEventListener("DOMContentLoaded", function () {
 acaoSelect.addEventListener("change", atualizarOperacaoDestino);
 operacaoOrigem.addEventListener("change", atualizarOperacaoDestino);
 
+// Validação preventiva de análise parcial
+const simNaoSelect = document.getElementById("sim_nao");
+const quantidadeParcialInput = document.getElementById("quantidade_parcial");
+let quantidadeJaAnalisada = 0; // Será preenchido quando selecionar uma linha da tabela
+
+simNaoSelect.addEventListener("change", function() {
+    const mensagemErro = document.getElementById("mensagemErro");
+    
+    if (!mensagemErro) {
+        console.warn("Elemento mensagemErro não encontrado");
+        return;
+    }
+    
+    if (this.value === "nao" && quantidadeJaAnalisada > 0) {
+        mensagemErro.innerHTML = `<p style='color: #f59e0b; background: rgba(245, 158, 11, 0.1); padding: 12px; border-radius: 6px; border-left: 3px solid #f59e0b;'>
+            <strong>⚠️ Atenção:</strong> Esta remessa já possui ${quantidadeJaAnalisada} equipamento(s) analisado(s).<br>
+            Para continuar, selecione <strong>"Sim"</strong> em Análise Parcial e informe a quantidade restante.
+        </p>`;
+        this.value = ""; // Reseta o campo
+        quantidadeParcialInput.focus();
+    } else {
+        mensagemErro.innerHTML = "";
+    }
+    
+    // Controla visibilidade do campo quantidade parcial
+    if (this.value === "sim") {
+        quantidadeParcialInput.disabled = false;
+        quantidadeParcialInput.required = true;
+    } else {
+        quantidadeParcialInput.disabled = true;
+        quantidadeParcialInput.required = false;
+        quantidadeParcialInput.value = "";
+    }
+});
+
 
     form.addEventListener("submit", async function (e) {
     e.preventDefault();
@@ -514,7 +554,8 @@ operacaoOrigem.addEventListener("change", atualizarOperacaoDestino);
 
     form.classList.add("bloqueado"); // Evita múltiplos envios
     const formData = new FormData(form);
-    mensagemErro.innerHTML = ""; // Limpa mensagens antigas
+    const mensagemErro = document.getElementById("mensagemErro");
+    if (mensagemErro) mensagemErro.innerHTML = ""; // Limpa mensagens antigas
 
     try {
         const res = await fetch("https://kpi.stbextrema.com.br/BackEnd/Analise/Analise.php", {
@@ -523,8 +564,7 @@ operacaoOrigem.addEventListener("change", atualizarOperacaoDestino);
         });
 
         const text = await res.text();
-        console.log("Resposta bruta do servidor:", text);
-
+        
         let data;
         try {
             data = JSON.parse(text);
@@ -547,14 +587,15 @@ operacaoOrigem.addEventListener("change", atualizarOperacaoDestino);
            }, 200);
 
         } else if (data.error) {
-            mensagemErro.innerHTML = `<p style='color:red;'>${data.error}</p>`;
+            if (mensagemErro) mensagemErro.innerHTML = `<p style='color:red;'>${data.error}</p>`;
         } else {
             throw new Error("Resposta inesperada do servidor.");
         }
 
     } catch (error) {
         console.error("Erro na submissão:", error);
-        mensagemErro.innerHTML = `<p style='color:red;'>Erro: ${error.message}</p>`;
+        const mensagemErro = document.getElementById("mensagemErro");
+        if (mensagemErro) mensagemErro.innerHTML = `<p style='color:red;'>Erro: ${error.message}</p>`;
     } finally {
         form.classList.remove("bloqueado");
     }
@@ -565,8 +606,13 @@ operacaoOrigem.addEventListener("change", atualizarOperacaoDestino);
     function mostrarTabela(tabela) {
         tabelaAguardando.style.display = 'none';
         tabelaEmAnalise.style.display = 'none';
-        tabelaAguardando.querySelector('tbody').innerHTML = "";
-        tabelaEmAnalise.querySelector('tbody').innerHTML = "";
+        
+        const tbodyAguardando = tabelaAguardando.querySelector('tbody');
+        const tbodyEmAnalise = tabelaEmAnalise.querySelector('tbody');
+        
+        if (tbodyAguardando) tbodyAguardando.innerHTML = "";
+        if (tbodyEmAnalise) tbodyEmAnalise.innerHTML = "";
+        
         tabela.style.display = 'table';
     }
 
@@ -580,6 +626,9 @@ operacaoOrigem.addEventListener("change", atualizarOperacaoDestino);
         document.querySelector('#nota_fiscal').value = item.nota_fiscal || '';
         document.querySelector("#setor").value = item.setor || '';
         document.querySelector('#quantidade_parcial').value = item.quantidade_parcial || '';
+        
+        // Atualiza a quantidade já analisada para validação
+        quantidadeJaAnalisada = parseInt(item.quantidade_analisada) || 0;
 
         if (tipo === "aguardando") {
             document.querySelector('#quantidade').value = item.quantidade_total || '';

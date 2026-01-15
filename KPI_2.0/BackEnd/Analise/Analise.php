@@ -96,7 +96,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Controle de parcialidade
     if ($op_parcial === 'nao') {
         if ($quantidade_analisada > 0) {
-            echo json_encode(["error" => "Não é possível marcar como 'não parcial' pois já existe análise registrada."]);
+            echo json_encode([
+                "error" => "Esta remessa já possui {$quantidade_analisada} equipamento(s) analisado(s). Para analisar o restante, use 'Análise Parcial' e informe a quantidade."
+            ]);
             exit();
         }
         $quantidade_parcial = $quantidade;

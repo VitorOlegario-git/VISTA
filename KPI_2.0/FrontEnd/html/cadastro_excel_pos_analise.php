@@ -32,7 +32,7 @@ $_SESSION['last_activity'] = time();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Assistência Técnica - Cadastro de Apontamentos Pós-Análise</title>
-    <link rel="stylesheet" href="../CSS/cadastro_excel_pos_analise.css">
+    <link rel="stylesheet" href="https://kpi.stbextrema.com.br/FrontEnd/CSS/cadastro_excel_pos_analise.css">
     <link rel="icon" href="https://kpi.stbextrema.com.br/FrontEnd/CSS/imagens/VISTA.png">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -42,26 +42,82 @@ $_SESSION['last_activity'] = time();
 </head>
 <body>
 <div class="excel-container">
-    <h3>Importar IMEIs e Laudos</h3>
+    <!-- Cabeçalho Contextual -->
+    <header class="import-header">
+        <h1 class="import-title">Importação de Apontamentos Pós-Análise</h1>
+        <p class="import-subtitle">Registre os laudos técnicos após análise detalhada dos equipamentos</p>
+    </header>
 
-    <input type="text" id="nf_entrada" name="nf_entrada" placeholder="Digite a NF de entrada" required 
-        value="<?php echo isset($_GET['nf_entrada']) ? htmlspecialchars($_GET['nf_entrada']) : ''; ?>">
+    <!-- Etapa 1: Identificação da Remessa -->
+    <section class="import-section">
+        <h2 class="section-title">
+            <span class="section-number">1</span>
+            Identificação da Remessa
+        </h2>
+        <div class="form-group">
+            <label for="nf_entrada" class="input-label">NF de Entrada</label>
+            <input type="text" id="nf_entrada" name="nf_entrada" placeholder="Digite a NF de entrada" required 
+                value="<?php echo isset($_GET['nf_entrada']) ? htmlspecialchars($_GET['nf_entrada']) : ''; ?>">
+        </div>
 
-    <input class="input" type="text" id="cnpj" name="cnpj" maxlength="18" 
-        oninput="applyCNPJMask(this);" 
-        onkeyup="if (event.key === 'Enter') getIdApontamentos(this.value)" 
-        placeholder="Digite o CNPJ" required 
-        value="<?php echo isset($_GET['cnpj']) ? htmlspecialchars($_GET['cnpj']) : ''; ?>">
+        <div class="form-group">
+            <label for="cnpj" class="input-label">CNPJ do Cliente</label>
+            <input class="input" type="text" id="cnpj" name="cnpj" maxlength="18" 
+                oninput="applyCNPJMask(this);" 
+                onkeyup="if (event.key === 'Enter') getIdApontamentos(this.value)" 
+                placeholder="00.000.000/0000-00" required 
+                value="<?php echo isset($_GET['cnpj']) ? htmlspecialchars($_GET['cnpj']) : ''; ?>">
+        </div>
 
-    <input type="text" id="entrada_id" name="entrada_id" readonly placeholder="ID será preenchido automaticamente">
+        <div class="form-group">
+            <label for="entrada_id" class="input-label">ID da Entrada</label>
+            <input type="text" id="entrada_id" name="entrada_id" readonly placeholder="ID será preenchido automaticamente">
+        </div>
+    </section>
 
-    <label for="excel-file" class="btn-excel">📁 Selecionar arquivo Excel</label>
-    <input type="file" id="excel-file" accept=".xlsx,.xls" style="display: none;">
-    <button id="import-excel">Importar Excel</button>
-    <button id="save-to-database">Cadastrar</button>
+    <!-- Etapa 2: Seleção do Arquivo -->
+    <section class="import-section">
+        <h2 class="section-title">
+            <span class="section-number">2</span>
+            Seleção do Arquivo Excel
+        </h2>
+        <div class="upload-area">
+            <div class="upload-icon">📁</div>
+            <label for="excel-file" class="btn-excel">Escolher Arquivo</label>
+            <input type="file" id="excel-file" accept=".xlsx,.xls" style="display: none;">
+            <span class="file-name" id="file-name-display">Nenhum arquivo selecionado</span>
+            <p class="upload-hint">Formato aceito: .xlsx, .xls</p>
+        </div>
+        <button id="import-excel" class="btn-import">
+            <span class="btn-icon">⬆️</span>
+            Importar Excel
+        </button>
+    </section>
 
-    <div id="imei-list"></div>
-    <table id="excel-data-table" border="1"></table>
+    <!-- Etapa 3: Pré-visualização -->
+    <section class="import-section preview-section" id="preview-section" style="display: none;">
+        <h2 class="section-title">
+            <span class="section-number">3</span>
+            Pré-visualização dos Dados
+        </h2>
+        <div class="preview-info">
+            <span class="preview-count" id="row-count">0 registros carregados</span>
+        </div>
+        <div id="imei-list"></div>
+        <table id="excel-data-table" border="1"></table>
+    </section>
+
+    <!-- Etapa 4: Confirmação -->
+    <section class="import-section action-section" id="action-section" style="display: none;">
+        <button id="save-to-database" class="btn-save">
+            <span class="btn-icon">💾</span>
+            <span class="btn-text">Cadastrar no Sistema</span>
+            <span class="btn-loading" style="display: none;">
+                <span class="spinner"></span>
+                Processando...
+            </span>
+        </button>
+    </section>
 </div>
 <script>
     function getIdApontamentos(cnpj) {

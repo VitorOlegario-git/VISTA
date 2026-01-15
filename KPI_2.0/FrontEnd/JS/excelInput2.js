@@ -1,6 +1,24 @@
 document.addEventListener("DOMContentLoaded", function () {
     let jsonData = [];
 
+    // ======== FEEDBACK VISUAL: Monitorar seleção de arquivo ========
+    const fileInput = document.getElementById("excel-file");
+    const fileNameDisplay = document.getElementById("file-name-display");
+    
+    if (fileInput && fileNameDisplay) {
+        fileInput.addEventListener("change", function() {
+            if (this.files && this.files.length > 0) {
+                fileNameDisplay.textContent = this.files[0].name;
+                fileNameDisplay.style.color = "#28a745";
+                fileNameDisplay.style.fontWeight = "600";
+            } else {
+                fileNameDisplay.textContent = "Nenhum arquivo selecionado";
+                fileNameDisplay.style.color = "#666";
+                fileNameDisplay.style.fontWeight = "normal";
+            }
+        });
+    }
+
     // Importar dados do Excel com validação de colunas
     function importExcel() {
         const fileInput = document.getElementById("excel-file");
@@ -43,6 +61,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
                 updateFieldsFromJSON(jsonData);
+                
+                // ======== FEEDBACK VISUAL: Mostrar seções de preview e ação ========
+                const previewSection = document.getElementById("preview-section");
+                const actionSection = document.getElementById("action-section");
+                const rowCount = document.getElementById("row-count");
+                
+                if (previewSection) previewSection.style.display = "block";
+                if (actionSection) actionSection.style.display = "block";
+                if (rowCount) rowCount.textContent = `${jsonData.length} registros carregados`;
+                
             } catch (err) {
                 console.error("Erro ao ler o arquivo Excel:", err);
                 alert("Erro ao processar o arquivo Excel.");
@@ -110,8 +138,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         const btn = document.getElementById("save-to-database");
+        const btnText = btn.querySelector(".btn-text");
+        const btnLoading = btn.querySelector(".btn-loading");
+        
+        // ======== FEEDBACK VISUAL: Ativar loading ========
         btn.disabled = true;
-        btn.textContent = "Salvando...";
+        if (btnText) btnText.style.display = "none";
+        if (btnLoading) btnLoading.style.display = "flex";
 
         fetch("https://kpi.stbextrema.com.br/BackEnd/Reparo/salvar_dados_no_banco_2.php", {
             method: "POST",
@@ -137,22 +170,28 @@ document.addEventListener("DOMContentLoaded", function () {
                     }, 1000);
                 } else {
                     alert("Erro ao salvar: " + (response.error || "Erro desconhecido."));
+                    // ======== FEEDBACK VISUAL: Restaurar botão ========
                     btn.disabled = false;
-                    btn.textContent = "Cadastrar";
+                    if (btnText) btnText.style.display = "inline";
+                    if (btnLoading) btnLoading.style.display = "none";
                 }
             } catch (e) {
                 console.error("Erro ao interpretar JSON:", e);
                 console.warn("Resposta bruta do servidor:", text);
                 alert("O servidor retornou uma resposta inválida:\n\n" + text);
+                // ======== FEEDBACK VISUAL: Restaurar botão ========
                 btn.disabled = false;
-                btn.textContent = "Cadastrar";
+                if (btnText) btnText.style.display = "inline";
+                if (btnLoading) btnLoading.style.display = "none";
             }
         })
         .catch(err => {
             console.error("Erro de rede ou fetch():", err);
             alert("Erro de rede. Verifique sua conexão ou se o servidor está online.");
+            // ======== FEEDBACK VISUAL: Restaurar botão ========
             btn.disabled = false;
-            btn.textContent = "Cadastrar";
+            if (btnText) btnText.style.display = "inline";
+            if (btnLoading) btnLoading.style.display = "none";
         });
     }
 

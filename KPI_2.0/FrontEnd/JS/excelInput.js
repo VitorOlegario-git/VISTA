@@ -1,6 +1,24 @@
 document.addEventListener("DOMContentLoaded", function () {
     let jsonData = [];
 
+    // ======== FEEDBACK VISUAL: Monitorar seleção de arquivo ========
+    const fileInput = document.getElementById("excel-file");
+    const fileNameDisplay = document.getElementById("file-name-display");
+    
+    if (fileInput && fileNameDisplay) {
+        fileInput.addEventListener("change", function() {
+            if (this.files && this.files.length > 0) {
+                fileNameDisplay.textContent = this.files[0].name;
+                fileNameDisplay.style.color = "#28a745";
+                fileNameDisplay.style.fontWeight = "600";
+            } else {
+                fileNameDisplay.textContent = "Nenhum arquivo selecionado";
+                fileNameDisplay.style.color = "#666";
+                fileNameDisplay.style.fontWeight = "normal";
+            }
+        });
+    }
+
     // Função para normalizar texto (remove acentos, espaços e padroniza para maiúsculas)
     function normalizar(texto) {
         return texto
@@ -51,6 +69,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
                 updateFieldsFromJSON(jsonData);
+                
+                // ======== FEEDBACK VISUAL: Mostrar seções de preview e ação ========
+                const previewSection = document.getElementById("preview-section");
+                const actionSection = document.getElementById("action-section");
+                const rowCount = document.getElementById("row-count");
+                
+                if (previewSection) previewSection.style.display = "block";
+                if (actionSection) actionSection.style.display = "block";
+                if (rowCount) rowCount.textContent = `${jsonData.length} registros carregados`;
+                
             } catch (err) {
                 console.error("Erro ao ler o arquivo Excel:", err);
                 alert("Erro ao processar o arquivo Excel.");
@@ -105,8 +133,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         const btn = document.getElementById("save-to-database");
+        const btnText = btn.querySelector(".btn-text");
+        const btnLoading = btn.querySelector(".btn-loading");
+        
+        // ======== FEEDBACK VISUAL: Ativar loading ========
         btn.disabled = true;
-        btn.textContent = "Salvando...";
+        if (btnText) btnText.style.display = "none";
+        if (btnLoading) btnLoading.style.display = "flex";
 
         const formData = new FormData();
         formData.append("jsonData", JSON.stringify(jsonData));
@@ -127,15 +160,19 @@ document.addEventListener("DOMContentLoaded", function () {
                 }, 1000);
             } else {
                 alert("Erro ao salvar: " + (response.error || "Erro desconhecido."));
+                // ======== FEEDBACK VISUAL: Restaurar botão ========
                 btn.disabled = false;
-                btn.textContent = "Cadastrar";
+                if (btnText) btnText.style.display = "inline";
+                if (btnLoading) btnLoading.style.display = "none";
             }
         })
         .catch(err => {
             console.error("Erro de requisição:", err);
             alert("Erro ao comunicar com o servidor.");
+            // ======== FEEDBACK VISUAL: Restaurar botão ========
             btn.disabled = false;
-            btn.textContent = "Cadastrar";
+            if (btnText) btnText.style.display = "inline";
+            if (btnLoading) btnLoading.style.display = "none";
         });
     }
 

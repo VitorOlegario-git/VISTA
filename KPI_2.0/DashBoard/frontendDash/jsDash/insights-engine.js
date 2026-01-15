@@ -1,152 +1,219 @@
 /* ===============================================================
-   SUNLAB - MOTOR DE INSIGHTS AUTOMATIZADOS
-   Versão: 1.0
+   SUNLAB - MOTOR DE INSIGHTS AUTOMATIZADOS v2.0
+   Versão: 2.0 - Catálogo Oficial de KPIs
    Objetivo: Detectar exceções e gerar insights acionáveis
    =============================================================== */
 
 /**
- * MOTOR DE INSIGHTS
- * Analisa dados operacionais e gera insights baseados em exceções
+ * MOTOR DE INSIGHTS v2.0
+ * Baseado exclusivamente nos 5 KPIs globais oficiais:
+ * 1. Remessas Recebidas (COUNT)
+ * 2. Equipamentos Recebidos (SUM quantidade)
+ * 3. Equipamentos Expedidos (SUM quantidade)
+ * 4. Taxa de Conclusão Técnica (%)
+ * 5. Valor Total Orçado (R$)
  */
-class InsightsEngine {
+class InsightsEngineV2 {
     constructor() {
         this.insights = [];
-        this.historico = this.carregarHistorico();
         this.limiteInsights = 3;
     }
 
     /**
-     * Carrega histórico do localStorage (média dos últimos 30 dias)
+     * ANÁLISE PRINCIPAL - Gera insights baseados nos KPIs oficiais
+     * @param {Object} kpis - Dados dos 5 KPIs globais oficiais
+     * @returns {Array} Lista de insights priorizados (máximo 3)
      */
-    carregarHistorico() {
-        const historicoSalvo = localStorage.getItem('sunlab_historico');
-        if (historicoSalvo) {
-            return JSON.parse(historicoSalvo);
-        }
-        
-        // Valores padrão baseados em histórico típico
-        return {
-            volumeMedio: 850,
-            tempoMedioRecebimento: 2.3,
-            tempoMedioAnalise: 5.5,
-            tempoMedioReparo: 11.8,
-            tempoMedioQualidade: 3.0,
-            tempoMedioExpedicao: 1.7,
-            taxaSemConsertoMedia: 11.2,
-            custoMedio: 165,
-            valorOrcadoMedio: 185000,
-            ultimaAtualizacao: new Date().toISOString()
-        };
-    }
-
-    /**
-     * Salva histórico no localStorage
-     */
-    salvarHistorico(dados) {
-        const historicoAtual = this.carregarHistorico();
-        const novoHistorico = { ...historicoAtual, ...dados, ultimaAtualizacao: new Date().toISOString() };
-        localStorage.setItem('sunlab_historico', JSON.stringify(novoHistorico));
-        this.historico = novoHistorico;
-    }
-
-    /**
-     * ANÁLISE PRINCIPAL - Gera todos os insights
-     * @param {Object} dados - Dados do dashboard (KPIs, fluxo, qualidade, financeiro)
-     * @returns {Array} Lista de insights priorizados
-     */
-    analisar(dados) {
+    analisar(kpis) {
         this.insights = [];
 
+        // Validar entrada
+        if (!kpis || !kpis.remessas || !kpis.equipRec || !kpis.equipExp || !kpis.conclusao || !kpis.valor) {
+            console.warn('Dados incompletos para análise de insights');
+            return [];
+        }
+
         // Executar todas as análises
-        this.analisarVolume(dados.volume);
-        this.analisarTempo(dados.tempo);
-        this.analisarQualidade(dados.qualidade);
-        this.analisarFinanceiro(dados.financeiro);
-        this.analisarClienteProduto(dados.clienteProduto);
+        this.analisarGargaloOperacional(kpis);
+        this.analisarQuedaEficiencia(kpis);
+        this.analisarCrescimentoComRisco(kpis);
+        this.analisarOperacaoSaudavel(kpis);
 
         // Priorizar por gravidade e limitar quantidade
         return this.priorizarInsights();
     }
 
     /**
-     * 🔵 ANÁLISE DE VOLUME
-     * Detecta volume significativamente acima ou abaixo do normal
+     * 🔴 INSIGHT 1: GARGALO OPERACIONAL
+     * Detecta: Equipamentos recebidos ↑ e expedidos ↓
+     * Causa: Acúmulo de equipamentos em processo
      */
-    analisarVolume(volumeData) {
-        if (!volumeData || !volumeData.total) return;
+    analisarGargaloOperacional(kpis) {
+        const variacaoRecebidos = kpis.equipRec.referencia?.variacao || 0;
+        const variacaoExpedidos = kpis.equipExp.referencia?.variacao || 0;
+        const equipRecebidos = kpis.equipRec.valor || 0;
+        const equipExpedidos = kpis.equipExp.valor || 0;
 
-        const volumeAtual = volumeData.total;
-        const volumeMedio = this.historico.volumeMedio;
-        const variacao = ((volumeAtual - volumeMedio) / volumeMedio) * 100;
-
-        // Regra: Volume 20% acima do normal
-        if (variacao > 20) {
+        // Regra: Recebidos cresceram E expedidos caíram
+        if (variacaoRecebidos > 10 && variacaoExpedidos < -5) {
+            const acumulo = equipRecebidos - equipExpedidos;
+            
             this.insights.push({
-                id: 'volume_alto',
-                type: 'warning',
-                category: 'volume',
-                priority: 2,
-                title: 'Volume acima do normal',
-                message: `O volume processado (${volumeAtual} equipamentos) está ${variacao.toFixed(0)}% acima da média histórica. Verifique capacidade operacional.`,
-                action: {
-                    label: 'Ver Recebimento',
-                    link: 'DashRecebimento.php#recebimento'
-                },
-                metadata: {
-                    volumeAtual,
-                    volumeMedio,
-                    variacao
-                }
-            });
-        }
-
-        // Regra: Volume 30% abaixo do normal (crítico para negócio)
-        if (variacao < -30) {
-            this.insights.push({
-                id: 'volume_baixo',
+                id: 'gargalo_operacional',
                 type: 'critical',
-                category: 'volume',
+                category: 'operacional',
                 priority: 1,
-                title: 'Queda crítica no volume',
-                message: `Volume processado está ${Math.abs(variacao).toFixed(0)}% abaixo da média. Requer atenção imediata.`,
+                title: '🚨 Gargalo Operacional Detectado',
+                message: `Entrada cresceu ${variacaoRecebidos.toFixed(1)}% mas saída caiu ${Math.abs(variacaoExpedidos).toFixed(1)}%. Acúmulo de ${acumulo.toLocaleString('pt-BR')} equipamentos em processo.`,
+                causa: 'Possíveis causas: falta de recursos, análise lenta, peças em falta ou gargalo na qualidade.',
+                acao: 'Priorize expedição de equipamentos finalizados e revise capacidade das etapas intermediárias.',
                 action: {
-                    label: 'Investigar',
-                    link: 'DashRecebimento.php#recebimento'
+                    label: 'Analisar Fluxo',
+                    link: 'DashRecebimento.php#fluxo'
                 },
                 metadata: {
-                    volumeAtual,
-                    volumeMedio,
-                    variacao
+                    variacaoRecebidos,
+                    variacaoExpedidos,
+                    acumulo,
+                    equipRecebidos,
+                    equipExpedidos
                 }
             });
         }
     }
 
     /**
-     * 🟠 ANÁLISE DE TEMPO / GARGALO
-     * Detecta etapas com tempo acima do esperado
+     * 🟠 INSIGHT 2: QUEDA DE EFICIÊNCIA TÉCNICA
+     * Detecta: Taxa de conclusão ↓ mais de 10pp
+     * Causa: Equipamentos não estão sendo finalizados
      */
-    analisarTempo(tempoData) {
-        if (!tempoData || !tempoData.etapas) return;
+    analisarQuedaEficiencia(kpis) {
+        const taxaAtual = kpis.conclusao.valor || 0;
+        const variacaoPP = kpis.conclusao.referencia?.variacao || 0;
+        const equipRecebidos = kpis.conclusao.detalhes?.recebidos || 0;
+        const equipExpedidos = kpis.conclusao.detalhes?.expedidos || 0;
 
-        const etapas = tempoData.etapas;
-        const limiarAumento = 15; // 15% de aumento é significativo
-
-        // Mapear nomes amigáveis e histórico
-        const etapasConfig = {
-            recebimento: { nome: 'Recebimento', historico: this.historico.tempoMedioRecebimento },
-            analise: { nome: 'Análise', historico: this.historico.tempoMedioAnalise },
-            reparo: { nome: 'Reparo', historico: this.historico.tempoMedioReparo },
-            qualidade: { nome: 'Qualidade', historico: this.historico.tempoMedioQualidade },
-            expedicao: { nome: 'Expedição', historico: this.historico.tempoMedioExpedicao }
-        };
-
-        // Analisar cada etapa
-        Object.keys(etapas).forEach(etapa => {
-            const tempoAtual = etapas[etapa];
-            const config = etapasConfig[etapa];
+        // Regra: Taxa caiu mais de 10 pontos percentuais
+        if (variacaoPP < -10) {
+            const deficit = equipRecebidos - equipExpedidos;
             
-            if (!config) return;
+            this.insights.push({
+                id: 'queda_eficiencia',
+                type: 'warning',
+                category: 'eficiencia',
+                priority: 2,
+                title: '⚠️ Queda de Eficiência Técnica',
+                message: `Taxa de conclusão caiu ${Math.abs(variacaoPP).toFixed(1)}pp para ${taxaAtual}%. Apenas ${equipExpedidos} de ${equipRecebidos} equipamentos foram finalizados.`,
+                causa: 'Possíveis causas: aumento de laudos sem conserto, lentidão no reparo ou análises incompletas.',
+                acao: 'Revise laudos "Sem Conserto", priorize reparos simples e agilize aprovações de orçamento.',
+                action: {
+                    label: 'Ver Qualidade',
+                    link: 'DashRecebimento.php#qualidade'
+                },
+                metadata: {
+                    taxaAtual,
+                    variacaoPP,
+                    deficit,
+                    equipRecebidos,
+                    equipExpedidos
+                }
+            });
+        }
+    }
+
+    /**
+     * 🟡 INSIGHT 3: CRESCIMENTO FINANCEIRO COM RISCO
+     * Detecta: Valor orçado ↑ mas taxa de conclusão ↓
+     * Causa: Aumentaram orçamentos mas não finalizaram equipamentos
+     */
+    analisarCrescimentoComRisco(kpis) {
+        const variacaoValor = kpis.valor.referencia?.variacao || 0;
+        const variacaoConclusao = kpis.conclusao.referencia?.variacao || 0;
+        const taxaAtual = kpis.conclusao.valor || 0;
+        const valorAtual = kpis.valor.valor || '0,00';
+
+        // Regra: Valor cresceu E taxa caiu
+        if (variacaoValor > 15 && variacaoConclusao < -5) {
+            this.insights.push({
+                id: 'crescimento_com_risco',
+                type: 'warning',
+                category: 'financeiro',
+                priority: 3,
+                title: '💰 Crescimento com Risco Operacional',
+                message: `Valor orçado subiu ${variacaoValor.toFixed(1)}% (R$ ${valorAtual}), mas taxa de conclusão caiu ${Math.abs(variacaoConclusao).toFixed(1)}pp para ${taxaAtual}%.`,
+                causa: 'Possíveis causas: orçamentos aprovados mas reparos não iniciados, ou aumento de equipamentos complexos.',
+                acao: 'Priorize conclusão de reparos aprovados para evitar acúmulo. Revise prazo médio de finalização.',
+                action: {
+                    label: 'Ver Financeiro',
+                    link: 'DashRecebimento.php#financeiro'
+                },
+                metadata: {
+                    variacaoValor,
+                    variacaoConclusao,
+                    taxaAtual,
+                    valorAtual
+                }
+            });
+        }
+    }
+
+    /**
+     * ✅ INSIGHT 4: OPERAÇÃO SAUDÁVEL
+     * Detecta: Taxa ≥ 85% E expedidos ≥ recebidos
+     * Situação: Operação em equilíbrio
+     */
+    analisarOperacaoSaudavel(kpis) {
+        const taxaAtual = kpis.conclusao.valor || 0;
+        const equipRecebidos = kpis.equipRec.valor || 0;
+        const equipExpedidos = kpis.equipExp.valor || 0;
+        const variacaoValor = kpis.valor.referencia?.variacao || 0;
+
+        // Regra: Taxa alta E expedidos >= recebidos
+        if (taxaAtual >= 85 && equipExpedidos >= equipRecebidos) {
+            // Se já houver insights críticos ou de warning, não exibir "saudável"
+            const temProblemas = this.insights.some(i => i.type === 'critical' || i.type === 'warning');
+            
+            if (!temProblemas) {
+                this.insights.push({
+                    id: 'operacao_saudavel',
+                    type: 'info',
+                    category: 'status',
+                    priority: 4,
+                    title: '✅ Operação em Equilíbrio',
+                    message: `Taxa de conclusão saudável (${taxaAtual}%) com ${equipExpedidos.toLocaleString('pt-BR')} equipamentos expedidos de ${equipRecebidos.toLocaleString('pt-BR')} recebidos.`,
+                    causa: 'Sistema operando dentro dos parâmetros esperados. Capacidade adequada para demanda atual.',
+                    acao: variacaoValor > 0 
+                        ? `Aproveite momentum: valor orçado cresceu ${variacaoValor.toFixed(1)}%. Mantenha ritmo de expedição.`
+                        : 'Continue monitorando indicadores para detectar desvios precocemente.',
+                    action: {
+                        label: 'Ver Dashboard',
+                        link: 'DashRecebimento.php'
+                    },
+                    metadata: {
+                        taxaAtual,
+                        equipRecebidos,
+                        equipExpedidos
+                    }
+                });
+            }
+        }
+    }
+
+    /**
+     * PRIORIZAÇÃO DE INSIGHTS
+     * Ordena por prioridade e limita a 3 insights
+     */
+    priorizarInsights() {
+        // Ordenar por prioridade (1 = mais urgente)
+        this.insights.sort((a, b) => a.priority - b.priority);
+
+        // Retornar no máximo 3 insights
+        return this.insights.slice(0, this.limiteInsights);
+    }
+}
+
+// Exportar instância global
+const insightsEngine = new InsightsEngineV2();
 
             const tempoMedio = config.historico;
             const variacao = ((tempoAtual - tempoMedio) / tempoMedio) * 100;

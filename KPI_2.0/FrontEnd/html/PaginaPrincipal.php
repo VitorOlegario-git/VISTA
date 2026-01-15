@@ -20,18 +20,22 @@ definirHeadersSeguranca();
 
 <body>
 
-    <header class="header" id="logoHeader">
-        <div class="header-content">
-            <div class="header-left">
-                <div class="header-brand">
-                    <span class="system-title">VISTA</span>
-                    <span class="system-subtitle">Sistema de Gestão Integrada</span>
+    <!-- APP HEADER CORPORATIVO -->
+    <header class="app-header" id="logoHeader">
+        <div class="app-header-content">
+            <div class="app-header-left">
+                <img src="<?php echo asset('FrontEnd/CSS/imagens/VISTA.png'); ?>" alt="VISTA Logo" class="app-logo">
+                <div class="app-brand">
+                    <span class="app-title">VISTA</span>
+                    <span class="app-subtitle">Sistema de Gestão Integrada</span>
                 </div>
             </div>
-            <div class="header-right">
-                <span class="user-greeting">Bem-vindo, <strong><?php echo htmlspecialchars($_SESSION['username']); ?></strong></span>
-                <div class="user-avatar" id="userAvatar"></div>
-                <button class="btn-logout" id="logoutBtn" title="Sair do sistema">
+            <div class="app-header-right">
+                <span class="app-user-greeting">Bem-vindo, <strong><?php echo htmlspecialchars($_SESSION['username']); ?></strong></span>
+                <div class="app-user-avatar" id="userAvatar">
+                    <?php echo strtoupper(substr($_SESSION['username'], 0, 2)); ?>
+                </div>
+                <button class="app-btn-logout" id="logoutBtn" title="Sair do sistema">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                         <polyline points="16 17 21 12 16 7"/>

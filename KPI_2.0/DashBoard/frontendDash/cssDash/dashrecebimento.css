@@ -45,6 +45,41 @@
 }
 
 /* ===============================================================
+   SCROLLBAR CUSTOMIZADA
+   =============================================================== */
+
+/* Scrollbar para Webkit (Chrome, Safari, Edge) */
+.module-sidebar::-webkit-scrollbar,
+.intelligence-canvas::-webkit-scrollbar {
+    width: 8px;
+}
+
+.module-sidebar::-webkit-scrollbar-track,
+.intelligence-canvas::-webkit-scrollbar-track {
+    background: var(--glass-light);
+    border-radius: 4px;
+}
+
+.module-sidebar::-webkit-scrollbar-thumb,
+.intelligence-canvas::-webkit-scrollbar-thumb {
+    background: var(--border-medium);
+    border-radius: 4px;
+    transition: var(--transition);
+}
+
+.module-sidebar::-webkit-scrollbar-thumb:hover,
+.intelligence-canvas::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-blue);
+}
+
+/* Scrollbar para Firefox */
+.module-sidebar,
+.intelligence-canvas {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-medium) var(--glass-light);
+}
+
+/* ===============================================================
    RESET & BASE
    =============================================================== */
 
@@ -59,8 +94,8 @@ body {
     background: var(--bg-primary);
     color: var(--text-primary);
     line-height: 1.6;
-    overflow-x: hidden;
-    min-height: 100vh;
+    overflow: hidden; /* Body não deve rolar */
+    height: 100vh;
 }
 
 body::before {
@@ -307,13 +342,73 @@ body::before {
     padding: 20px 12px;
     gap: 16px;
     
-    transition: width var(--transition);
-    overflow: hidden;
+    transition: width var(--transition), background var(--transition), left var(--transition), opacity var(--transition);
+    overflow-y: auto; /* Scroll vertical sempre disponível */
+    overflow-x: hidden;
+}
+
+.module-sidebar.hidden {
+    left: calc(var(--sidebar-width) * -1);
+    opacity: 0;
+    pointer-events: none;
 }
 
 .module-sidebar:hover {
     width: var(--sidebar-expanded);
     background: var(--glass-medium);
+}
+
+.sidebar-toggle {
+    position: absolute;
+    top: 16px;
+    right: -16px;
+    width: 32px;
+    height: 32px;
+    background: var(--glass-medium);
+    border: 1px solid var(--border-subtle);
+    border-radius: 50%;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: var(--transition);
+}
+
+.sidebar-toggle:hover {
+    background: var(--glass-strong);
+    color: var(--accent-cyan);
+    transform: scale(1.1);
+}
+
+.sidebar-toggle i {
+    font-size: 14px;
+    transition: transform var(--transition);
+}
+
+.module-sidebar.hidden .sidebar-toggle {
+    right: -48px;
+}
+
+.module-sidebar.hidden .sidebar-toggle i {
+    transform: rotate(180deg);
+}
+
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 899;
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    transition: opacity var(--transition);
+}
+
+.sidebar-overlay.active {
+    display: block;
+    opacity: 1;
 }
 
 .sidebar-title {
@@ -454,9 +549,16 @@ body::before {
     margin-left: var(--sidebar-width);
     margin-top: var(--header-height);
     padding: 32px;
-    min-height: calc(100vh - var(--header-height));
+    height: calc(100vh - var(--header-height));
     position: relative;
     z-index: 1;
+    transition: margin-left var(--transition);
+    overflow-y: auto; /* Scroll independente para conteúdo */
+    overflow-x: hidden;
+}
+
+.intelligence-canvas.sidebar-hidden {
+    margin-left: 0;
 }
 
 /* KPI Cards Rápidos */
@@ -782,7 +884,19 @@ canvas {
     }
     
     .module-sidebar {
-        transform: translateX(-100%);
+        left: -280px;
+    }
+    
+    .module-sidebar.mobile-open {
+        left: 0;
+    }
+    
+    .sidebar-toggle {
+        right: -48px;
+    }
+    
+    .module-sidebar:not(.hidden) .sidebar-toggle {
+        right: -16px;
     }
     
     .kpi-cards {
