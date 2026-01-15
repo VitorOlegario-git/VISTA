@@ -5,15 +5,28 @@
  * Equipamentos recebidos que ainda não foram enviados para análise.
  * Este endpoint utiliza o contrato padronizado VISTA (kpiResponse).
  * 
- * @version 2.1 - Protegido com middleware em 15/01/2026
+ * @version 3.0.0 - Versionamento implementado em 15/01/2026
+ * @owner Equipe Backend VISTA
  * @uses kpiResponse() - Contrato padronizado
  * @uses validarAutenticacao() - Middleware de segurança
+ * @uses logKpiExecution() - Sistema de log
+ * @uses getKpiMetadata() - Versionamento de KPI
  */
 
 require_once __DIR__ . '/../../../BackEnd/config.php';
 require_once __DIR__ . '/../../../BackEnd/Database.php';
 require_once __DIR__ . '/../../../BackEnd/endpoint-helpers.php';
 require_once __DIR__ . '/../../../BackEnd/auth-middleware.php';
+
+// ============================================
+// METADADOS DE VERSIONAMENTO
+// ============================================
+$kpiMetadata = getKpiMetadata(
+    'kpi-backlog-atual',           // Nome técnico do KPI
+    '3.0.0',                        // Versão semântica
+    'Equipe Backend VISTA',         // Responsável
+    '2026-01-15'                    // Data última atualização
+);
 
 // ============================================
 // VALIDAÇÃO DE AUTENTICAÇÃO
@@ -192,13 +205,15 @@ try {
     );
 
     // ============================================
-    // RETORNA RESPOSTA PADRONIZADA
+    // RETORNA RESPOSTA PADRONIZADA COM VERSIONAMENTO
     // ============================================
     kpiResponse(
         'backlog-recebimento',
         $period,
         $data,
-        $executionTime
+        $executionTime,
+        200,
+        $kpiMetadata  // ✅ Metadados de versionamento
     );
 
 } catch (Exception $e) {

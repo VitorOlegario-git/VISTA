@@ -200,6 +200,66 @@ function validarParametrosPadrao(): array {
 }
 
 /**
+ * 🔹 METADADOS DE VERSIONAMENTO DE KPI (NOVA - 15/01/2026)
+ * 
+ * Define informações de versionamento para cada KPI.
+ * Sistema centralizado que evita duplicação de código.
+ * 
+ * @param string $kpiName Nome técnico do KPI (ex: 'kpi-backlog-atual')
+ * @param string $version Versão semântica (ex: '1.0.0', '2.1.3')
+ * @param string $owner Responsável pelo KPI (ex: 'Equipe Backend', 'João Silva')
+ * @param string|null $lastUpdated Data da última atualização (Y-m-d). Se null, usa data do arquivo
+ * @return array Metadados estruturados
+ * 
+ * Formato de retorno:
+ * [
+ *   'kpi_version' => '1.0.0',
+ *   'kpi_owner' => 'Equipe Backend',
+ *   'last_updated' => '2026-01-15'
+ * ]
+ * 
+ * Exemplo de uso:
+ * $metadata = getKpiMetadata('kpi-backlog-atual', '2.1.0', 'Equipe Backend');
+ * // Metadados serão automaticamente incluídos na resposta via kpiResponse()
+ */
+function getKpiMetadata(
+    string $kpiName,
+    string $version = '1.0.0',
+    string $owner = 'Equipe VISTA',
+    ?string $lastUpdated = null
+): array {
+    // Se lastUpdated não for fornecido, tenta pegar do arquivo
+    if ($lastUpdated === null) {
+        // Tenta encontrar o arquivo do KPI baseado no nome
+        $possiblePaths = [
+            __DIR__ . '/../DashBoard/backendDash/kpis/' . $kpiName . '.php',
+            __DIR__ . '/../DashBoard/backendDash/recebimentoPHP/' . $kpiName . '.php',
+            __DIR__ . '/../DashBoard/backendDash/analisePHP/' . $kpiName . '.php',
+            __DIR__ . '/../DashBoard/backendDash/reparoPHP/' . $kpiName . '.php',
+            __DIR__ . '/../DashBoard/backendDash/qualidadePHP/' . $kpiName . '.php',
+        ];
+        
+        foreach ($possiblePaths as $path) {
+            if (file_exists($path)) {
+                $lastUpdated = date('Y-m-d', filemtime($path));
+                break;
+            }
+        }
+        
+        // Fallback: data atual
+        if ($lastUpdated === null) {
+            $lastUpdated = date('Y-m-d');
+        }
+    }
+    
+    return [
+        'kpi_version' => $version,
+        'kpi_owner' => $owner,
+        'last_updated' => $lastUpdated
+    ];
+}
+
+/**
  * 🔹 CONSTRUTOR DE WHERE CLAUSE PADRONIZADO
  * 
  * Gera WHERE clause e array de parâmetros para prepared statements.
@@ -265,6 +325,7 @@ function construirWherePadrao(
  * @param array $data Dados do KPI (estrutura livre conforme necessidade)
  * @param float $executionTimeMs Tempo de execução em milissegundos
  * @param int $httpCode Código HTTP (default: 200)
+ * @param array|null $metadata Metadados de versionamento (obtidos via getKpiMetadata())
  * 
  * Contrato de saída:
  * {
@@ -275,7 +336,10 @@ function construirWherePadrao(
  *   "meta": {
  *     "generatedAt": "ISO_DATE",
  *     "executionTimeMs": number,
- *     "source": "vista-kpi"
+ *     "source": "vista-kpi",
+ *     "kpi_version": "1.0.0",        // ✅ NOVO
+ *     "kpi_owner": "Equipe VISTA",   // ✅ NOVO
+ *     "last_updated": "2026-01-15"   // ✅ NOVO
  *   }
  * }
  */
@@ -284,23 +348,32 @@ function kpiResponse(
     string $period,
     array $data,
     float $executionTimeMs,
-    int $httpCode = 200
+    int $httpCode = 200,
+    ?array $metadata = null
 ): void {
     http_response_code($httpCode);
     header('Content-Type: application/json; charset=utf-8');
     header('X-Content-Type-Options: nosniff');
     header('X-Frame-Options: SAMEORIGIN');
     
+    // Meta base
+    $meta = [
+        'generatedAt' => date('c'), // ISO 8601 format
+        'executionTimeMs' => round($executionTimeMs, 2),
+        'source' => 'vista-kpi'
+    ];
+    
+    // ✅ ADICIONAR METADADOS DE VERSIONAMENTO (se fornecidos)
+    if ($metadata !== null) {
+        $meta = array_merge($meta, $metadata);
+    }
+    
     $response = [
         'status' => 'success',
         'kpi' => $kpi,
         'period' => $period,
         'data' => $data,
-        'meta' => [
-            'generatedAt' => date('c'), // ISO 8601 format
-            'executionTimeMs' => round($executionTimeMs, 2),
-            'source' => 'vista-kpi'
-        ]
+        'meta' => $meta
     ];
 
     echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
