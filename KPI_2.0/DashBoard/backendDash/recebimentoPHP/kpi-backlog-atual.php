@@ -1,39 +1,54 @@
 <?php
 /**
  * KPI: Backlog Atual
- * Equipamentos recebidos que ainda não foram enviados para análise
+ * 
+ * Equipamentos recebidos que ainda não foram enviados para análise.
+ * Este endpoint utiliza o contrato padronizado VISTA (kpiResponse).
+ * 
+ * @version 2.0 - Refatorado em 15/01/2026
+ * @uses kpiResponse() - Contrato padronizado
  */
 
-header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
+require_once __DIR__ . '/../../../BackEnd/config.php';
+require_once __DIR__ . '/../../../BackEnd/Database.php';
+require_once __DIR__ . '/../../../BackEnd/endpoint-helpers.php';
 
-require_once __DIR__ . '/../../config.php';
-require_once __DIR__ . '/../../Database.php';
-require_once __DIR__ . '/../../endpoint-helpers.php';
+// ============================================
+// MARCA TEMPO DE INÍCIO
+// ============================================
+$startTime = microtime(true);
 
 try {
+    // ============================================
+    // VALIDAÇÃO DE PARÂMETROS
+    // ============================================
     $dataInicio = $_GET['inicio'] ?? null;
     $dataFim = $_GET['fim'] ?? null;
     $setor = $_GET['setor'] ?? null;
     $operador = $_GET['operador'] ?? null;
 
     if (!$dataInicio || !$dataFim) {
-        sendError('Parâmetros inicio e fim são obrigatórios', 400);
+        kpiError('backlog-recebimento', 'Parâmetros inicio e fim são obrigatórios', 400);
     }
 
+    // Conversão de formato dd/mm/yyyy para yyyy-mm-dd
     $dataInicioSQL = date('Y-m-d', strtotime(str_replace('/', '-', $dataInicio)));
     $dataFimSQL = date('Y-m-d', strtotime(str_replace('/', '-', $dataFim)));
 
+    // Cálculo do período de referência (mesmo tamanho do período atual)
     $diasPeriodo = (strtotime($dataFimSQL) - strtotime($dataInicioSQL)) / 86400;
     $dataInicioRef = date('Y-m-d', strtotime("$dataInicioSQL -" . ($diasPeriodo + 1) . " days"));
     $dataFimRef = date('Y-m-d', strtotime("$dataInicioSQL -1 day"));
 
+    // ============================================
+    // CONEXÃO COM BANCO
+    // ============================================
     $db = Database::getInstance();
     $conn = $db->getConnection();
 
-    // ========================================
-    // BACKLOG ATUAL
-    // ========================================
+    // ============================================
+    // QUERY 1: BACKLOG ATUAL
+    // ============================================
     $sqlAtual = "
         SELECT SUM(r.quantidade) AS backlog
         FROM recebimentos r
@@ -58,9 +73,9 @@ try {
     $stmtAtual->execute($paramsAtual);
     $backlogAtual = (int)($stmtAtual->fetch(PDO::FETCH_ASSOC)['backlog'] ?? 0);
 
-    // ========================================
-    // BACKLOG ANTERIOR
-    // ========================================
+    // ============================================
+    // QUERY 2: BACKLOG PERÍODO ANTERIOR (REFERÊNCIA)
+    // ============================================
     $sqlAnterior = "
         SELECT SUM(r.quantidade) AS backlog
         FROM recebimentos r
@@ -85,36 +100,97 @@ try {
     $stmtAnterior->execute($paramsAnterior);
     $backlogAnterior = (int)($stmtAnterior->fetch(PDO::FETCH_ASSOC)['backlog'] ?? 0);
 
-    // Variação (invertida: redução de backlog é positiva)
+    // ============================================
+    // CÁLCULOS DE VARIAÇÃO E ESTADO
+    // ============================================
+    
+    // Variação percentual (invertida: redução de backlog é positiva)
     $variacao = 0;
+    $tendencia = 'estavel';
+    
     if ($backlogAnterior > 0) {
         $variacao = (($backlogAtual - $backlogAnterior) / $backlogAnterior) * 100;
+        
+        if ($variacao < -1) {
+            $tendencia = 'baixa'; // Backlog diminuiu (bom)
+        } elseif ($variacao > 1) {
+            $tendencia = 'alta'; // Backlog aumentou (ruim)
+        }
     }
 
     // Estado (invertido: menos backlog é melhor)
-    $estado = 'neutral';
-    if ($variacao <= -10) {
-        $estado = 'success'; // Backlog reduziu
+    $estado = 'success';
+    if ($variacao >= 30) {
+        $estado = 'critical'; // Backlog aumentou muito
     } elseif ($variacao >= 10) {
-        $estado = 'critical'; // Backlog aumentou
+        $estado = 'warning'; // Backlog aumentou moderadamente
+    } elseif ($variacao <= -10) {
+        $estado = 'success'; // Backlog reduziu significativamente
     }
 
-    sendSuccess([
+    // ============================================
+    // ESTRUTURA DE DADOS PADRONIZADA
+    // ============================================
+    $data = [
         'valor' => $backlogAtual,
+        'valor_formatado' => number_format($backlogAtual, 0, ',', '.'),
         'unidade' => 'equipamentos',
-        'periodo' => [
-            'inicio' => $dataInicioSQL,
-            'fim' => $dataFimSQL
+        'contexto' => 'Equipamentos aguardando envio para análise',
+        'detalhes' => [
+            'percentual_criticidade' => $backlogAtual > 100 ? 'alto' : ($backlogAtual > 50 ? 'medio' : 'baixo')
         ],
         'referencia' => [
+            'tipo' => 'periodo_anterior',
             'valor' => $backlogAnterior,
-            'variacao' => round($variacao, 1),
-            'estado' => $estado
+            'periodo' => "$dataInicioRef a $dataFimRef",
+            'descricao' => 'Backlog do período anterior (mesmo tamanho)'
+        ],
+        'variacao' => [
+            'percentual' => round($variacao, 2),
+            'tendencia' => $tendencia,
+            'estado' => $estado,
+            'interpretacao' => $variacao >= 10 
+                ? 'Backlog aumentou - atenção necessária' 
+                : ($variacao <= -10 
+                    ? 'Backlog diminuiu - melhoria operacional' 
+                    : 'Backlog estável')
+        ],
+        'filtros_aplicados' => [
+            'data_inicio' => $dataInicioSQL,
+            'data_fim' => $dataFimSQL,
+            'setor' => $setor ?? 'Todos',
+            'operador' => $operador ?? 'Todos'
         ]
-    ]);
+    ];
+
+    // ============================================
+    // CALCULA TEMPO DE EXECUÇÃO
+    // ============================================
+    $executionTime = (microtime(true) - $startTime) * 1000;
+
+    // ============================================
+    // FORMATA PERÍODO PARA RESPOSTA
+    // ============================================
+    $period = "$dataInicioSQL / $dataFimSQL";
+
+    // ============================================
+    // RETORNA RESPOSTA PADRONIZADA
+    // ============================================
+    kpiResponse(
+        'backlog-recebimento',
+        $period,
+        $data,
+        $executionTime
+    );
 
 } catch (Exception $e) {
     error_log("Erro em kpi-backlog-atual.php: " . $e->getMessage());
-    sendError('Erro ao calcular backlog: ' . $e->getMessage(), 500);
+    error_log("Stack trace: " . $e->getTraceAsString());
+    
+    kpiError(
+        'backlog-recebimento',
+        'Erro ao calcular backlog: ' . $e->getMessage(),
+        500
+    );
 }
 ?>
