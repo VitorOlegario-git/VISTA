@@ -4,7 +4,16 @@
  * Evita duplicação de código em múltiplos arquivos
  */
 
-require_once __DIR__ . '/config.php';
+// Inclui config.php apenas se existir
+$configPath = __DIR__ . '/config.php';
+if (file_exists($configPath)) {
+    require_once $configPath;
+}
+
+// Define SESSION_TIMEOUT padrão se não estiver definido
+if (!defined('SESSION_TIMEOUT')) {
+    define('SESSION_TIMEOUT', 1800); // 30 minutos
+}
 
 /**
  * Verifica se a sessão está ativa e se não expirou
@@ -224,5 +233,11 @@ function campoCSRF() {
 function metaCSRF() {
     $token = gerarTokenCSRF();
     return '<meta name="csrf-token" content="' . htmlspecialchars($token) . '">';
+}
+
+// Add your helper functions here.
+// Example:
+function exampleHelper() {
+    return "Helper function loaded.";
 }
 ?>

@@ -118,6 +118,8 @@ function createRouter() {
     $router->add('/expedicao', 'FrontEnd/html/expedicao.php');
     $router->add('/consulta', 'FrontEnd/html/consulta.php');
     $router->add('/consulta/id', 'FrontEnd/html/consulta_id.php');
+    // Inventário Status
+    $router->add('/inventario-status.php', 'FrontEnd/inventario/inventario-status.php');
     
     // Cadastros
     $router->add('/cadastrar-cliente', 'FrontEnd/html/cadastrar_cliente.php');

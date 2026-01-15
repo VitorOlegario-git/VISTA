@@ -10,20 +10,20 @@ $usuario = $_SESSION['username'] ?? 'Operador';
 $dataHora = date('d/m/Y H:i:s');
 $operacao = $_SESSION['ultima_operacao'] ?? 'Registro';
 $identificador = $_SESSION['ultimo_id'] ?? null;
-?>
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro Confirmado - KPI 2.0</title>
-    <link rel="icon" href="https://kpi.stbextrema.com.br/FrontEnd/CSS/imagens/VISTA.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        /* ===============================================================
+<?php
+require_once __DIR__ . '/helpers.php';
+
+// Verifica sessão e define headers de segurança
+verificarSessao();
            CONFIRMAÇÃO DE REGISTRO OPERACIONAL - KPI 2.0
+
+// Captura informações da sessão e contexto
+$usuario = $_SESSION['username'] ?? 'Operador';
+$dataHora = date('d/m/Y H:i:s');
+$operacao = $_SESSION['ultima_operacao'] ?? 'Registro';
+$identificador = $_SESSION['ultimo_id'] ?? null;
+?>
            =============================================================== */
 
         :root {
@@ -67,6 +67,18 @@ $identificador = $_SESSION['ultimo_id'] ?? null;
             justify-content: center;
             padding: 20px;
             overflow-x: hidden;
+        }
+        @media (max-width: 600px) {
+            .confirmation-container {
+                padding: 0 2vw;
+                max-width: 98vw;
+            }
+            .success-card, .summary-card, .flow-card, .actions-grid {
+                padding: 18px 6px !important;
+                font-size: 1rem;
+            }
+            .success-title { font-size: 1.2rem; }
+            .success-icon { width: 56px; height: 56px; font-size: 32px; }
         }
 
         body::before {
@@ -454,10 +466,14 @@ $identificador = $_SESSION['ultimo_id'] ?? null;
     </div>
 
     <script>
-        // Redireciona para o dashboard após 10 segundos
+        // Redireciona para o dashboard após 10 segundos (garante compatibilidade mobile)
         let autoRedirectTimer = setTimeout(() => {
             voltarDashboard();
         }, 10000);
+        // Fallback para garantir redirecionamento mesmo se o setTimeout falhar (mobile edge cases)
+        window.addEventListener('pageshow', function() {
+            setTimeout(() => { voltarDashboard(); }, 12000);
+        });
 
         function continuarEtapa() {
             clearTimeout(autoRedirectTimer);

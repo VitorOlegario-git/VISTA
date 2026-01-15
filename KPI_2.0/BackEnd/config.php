@@ -49,7 +49,8 @@ define('APP_ENV', getenv('APP_ENV') ?: 'production');
 define('APP_DEBUG', filter_var(getenv('APP_DEBUG'), FILTER_VALIDATE_BOOLEAN));
 define('APP_URL', getenv('APP_URL') ?: 'http://localhost');
 
-define('SESSION_TIMEOUT', getenv('SESSION_TIMEOUT') ?: 1200);
+// Timeout de sessão em segundos
+define('SESSION_TIMEOUT', 1800); // 30 minutos
 
 // Configurações de erro baseadas no ambiente
 if (APP_DEBUG && APP_ENV === 'development') {
@@ -80,6 +81,11 @@ define('MAIL_USERNAME', getenv('MAIL_USERNAME'));
 define('MAIL_PASSWORD', getenv('MAIL_PASSWORD'));
 define('MAIL_FROM_ADDRESS', getenv('MAIL_FROM_ADDRESS'));
 define('MAIL_FROM_NAME', getenv('MAIL_FROM_NAME') ?: 'Sistema VISTA');
+
+// Dados de conexão com o banco de dados (usando variáveis do .env)
+define('DB_DSN', 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8');
+define('DB_USER', DB_USERNAME);
+define('DB_PASS', DB_PASSWORD);
 
 /**
  * Função helper para gerar URLs

@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/helpers.php';
 
-// Destrói sessão de forma segura
+// Destroi sessão de forma segura
 destruirSessao();
 
 // Redireciona para login

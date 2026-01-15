@@ -51,6 +51,22 @@ definirHeadersSeguranca();
         <div class="content-wrapper">
             
             <div class="cards-grid">
+                <!-- CARD EXCLUSIVO: INVENTÁRIO DE STATUS DE REMESSAS -->
+                <?php if(isset($_SESSION['username']) && $_SESSION['username'] === 'Vitor Olegario'): ?>
+                <div class="module-card" id="inventario-status-remessas">
+                    <div class="card-content">
+                        <div class="card-header">
+                            <svg class="card-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                <path d="M8 9h8M8 13h6M8 17h4"/>
+                            </svg>
+                            <h3 class="card-title">Inventário de Status de Remessas</h3>
+                        </div>
+                        <p class="card-description">Ferramenta restrita para validação e correção manual de status operacionais.</p>
+                        <button class="card-action-btn" onclick="window.location.href='/inventario-status.php'">Acessar Inventário</button>
+                    </div>
+                </div>
+                <?php endif; ?>
                 <!-- 1. RECEBIMENTO -->
                 <div class="module-card" id="recebimento">
                     <div class="card-content">
