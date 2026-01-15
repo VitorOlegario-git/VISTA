@@ -9,7 +9,152 @@
  */
 
 /**
- * 🔹 VALIDAÇÃO E PARSING DE PARÂMETROS DE ENTRADA
+ * 🔹 RESOLUÇÃO INTELIGENTE DE PERÍODO (NOVA - 15/01/2026)
+ * 
+ * Resolve períodos de data de forma padronizada e flexível.
+ * Aceita múltiplos formatos de entrada e sempre retorna datas normalizadas.
+ * 
+ * @param array $params Array de parâmetros ($_GET tipicamente)
+ * @return array ['inicio' => 'Y-m-d', 'fim' => 'Y-m-d', 'tipo' => string, 'descricao' => string]
+ * @throws Exception Se o período for inválido
+ * 
+ * Formatos aceitos:
+ * 1. Período pré-definido: ?period=today|last_7_days|last_30_days|last_90_days
+ * 2. Datas customizadas: ?inicio=DD/MM/YYYY&fim=DD/MM/YYYY
+ * 3. Fallback: Últimos 7 dias se nenhum parâmetro fornecido
+ * 
+ * Exemplo de uso:
+ * $periodo = resolvePeriod($_GET);
+ * // Retorna: ['inicio' => '2026-01-08', 'fim' => '2026-01-15', 'tipo' => 'last_7_days', 'descricao' => 'Últimos 7 dias']
+ */
+function resolvePeriod(array $params = []): array {
+    $period = $params['period'] ?? null;
+    $inicio = $params['inicio'] ?? null;
+    $fim = $params['fim'] ?? null;
+    
+    // ============================================
+    // MODO 1: PERÍODO PRÉ-DEFINIDO
+    // ============================================
+    if ($period) {
+        $hoje = new DateTime();
+        $dataFim = $hoje->format('Y-m-d');
+        
+        switch ($period) {
+            case 'today':
+                $dataInicio = $dataFim;
+                $tipo = 'today';
+                $descricao = 'Hoje';
+                break;
+                
+            case 'yesterday':
+                $ontem = (clone $hoje)->modify('-1 day');
+                $dataInicio = $ontem->format('Y-m-d');
+                $dataFim = $ontem->format('Y-m-d');
+                $tipo = 'yesterday';
+                $descricao = 'Ontem';
+                break;
+                
+            case 'last_7_days':
+                $dataInicio = (clone $hoje)->modify('-7 days')->format('Y-m-d');
+                $tipo = 'last_7_days';
+                $descricao = 'Últimos 7 dias';
+                break;
+                
+            case 'last_30_days':
+                $dataInicio = (clone $hoje)->modify('-30 days')->format('Y-m-d');
+                $tipo = 'last_30_days';
+                $descricao = 'Últimos 30 dias';
+                break;
+                
+            case 'last_90_days':
+                $dataInicio = (clone $hoje)->modify('-90 days')->format('Y-m-d');
+                $tipo = 'last_90_days';
+                $descricao = 'Últimos 90 dias';
+                break;
+                
+            case 'current_week':
+                $dataInicio = (clone $hoje)->modify('monday this week')->format('Y-m-d');
+                $tipo = 'current_week';
+                $descricao = 'Semana atual';
+                break;
+                
+            case 'current_month':
+                $dataInicio = (clone $hoje)->modify('first day of this month')->format('Y-m-d');
+                $tipo = 'current_month';
+                $descricao = 'Mês atual';
+                break;
+                
+            case 'last_month':
+                $dataInicio = (clone $hoje)->modify('first day of last month')->format('Y-m-d');
+                $dataFim = (clone $hoje)->modify('last day of last month')->format('Y-m-d');
+                $tipo = 'last_month';
+                $descricao = 'Mês anterior';
+                break;
+                
+            default:
+                throw new Exception("Período inválido: '$period'. Valores aceitos: today, yesterday, last_7_days, last_30_days, last_90_days, current_week, current_month, last_month");
+        }
+        
+        return [
+            'inicio' => $dataInicio,
+            'fim' => $dataFim,
+            'tipo' => $tipo,
+            'descricao' => $descricao,
+            'dias' => (int)((strtotime($dataFim) - strtotime($dataInicio)) / 86400) + 1
+        ];
+    }
+    
+    // ============================================
+    // MODO 2: DATAS CUSTOMIZADAS (dd/mm/yyyy)
+    // ============================================
+    if ($inicio && $fim) {
+        // Converte dd/mm/yyyy para Y-m-d
+        $dataInicioObj = DateTime::createFromFormat('d/m/Y', $inicio);
+        $dataFimObj = DateTime::createFromFormat('d/m/Y', $fim);
+        
+        if (!$dataInicioObj || !$dataFimObj) {
+            throw new Exception('Formato de data inválido. Use dd/mm/yyyy ou utilize o parâmetro period');
+        }
+        
+        // Valida ordem das datas
+        if ($dataFimObj < $dataInicioObj) {
+            throw new Exception('Data final deve ser posterior ou igual à data inicial');
+        }
+        
+        $dataInicio = $dataInicioObj->format('Y-m-d');
+        $dataFim = $dataFimObj->format('Y-m-d');
+        
+        $dias = (int)((strtotime($dataFim) - strtotime($dataInicio)) / 86400) + 1;
+        
+        return [
+            'inicio' => $dataInicio,
+            'fim' => $dataFim,
+            'tipo' => 'custom',
+            'descricao' => $dataInicioObj->format('d/m/Y') . ' a ' . $dataFimObj->format('d/m/Y'),
+            'dias' => $dias
+        ];
+    }
+    
+    // ============================================
+    // MODO 3: FALLBACK - ÚLTIMOS 7 DIAS
+    // ============================================
+    $hoje = new DateTime();
+    $dataFim = $hoje->format('Y-m-d');
+    $dataInicio = (clone $hoje)->modify('-7 days')->format('Y-m-d');
+    
+    return [
+        'inicio' => $dataInicio,
+        'fim' => $dataFim,
+        'tipo' => 'default_7_days',
+        'descricao' => 'Últimos 7 dias (padrão)',
+        'dias' => 8
+    ];
+}
+
+/**
+ * 🔹 VALIDAÇÃO E PARSING DE PARÂMETROS DE ENTRADA (LEGACY - mantida para retrocompatibilidade)
+ * 
+ * @deprecated Use resolvePeriod() para novo código
  * 
  * Retorna array com parâmetros validados:
  * - dataInicio (Y-m-d ou null)

@@ -1,24 +1,17 @@
 <?php
 /**
- * KPI: Backlog Atual
+ * 📘 EXEMPLO DE USO - resolvePeriod()
  * 
- * Equipamentos recebidos que ainda não foram enviados para análise.
- * Este endpoint utiliza o contrato padronizado VISTA (kpiResponse).
+ * Demonstra como usar a função resolvePeriod() em um KPI real.
+ * Este arquivo mostra o KPI de Backlog refatorado usando a nova função.
  * 
- * @version 2.1 - Protegido com middleware em 15/01/2026
- * @uses kpiResponse() - Contrato padronizado
- * @uses validarAutenticacao() - Middleware de segurança
+ * IMPORTANTE: Este é um exemplo. O arquivo real está em:
+ * DashBoard/backendDash/recebimentoPHP/kpi-backlog-atual.php
  */
 
 require_once __DIR__ . '/../../../BackEnd/config.php';
 require_once __DIR__ . '/../../../BackEnd/Database.php';
 require_once __DIR__ . '/../../../BackEnd/endpoint-helpers.php';
-require_once __DIR__ . '/../../../BackEnd/auth-middleware.php';
-
-// ============================================
-// VALIDAÇÃO DE AUTENTICAÇÃO
-// ============================================
-validarAutenticacao();
 
 // ============================================
 // MARCA TEMPO DE INÍCIO
@@ -27,25 +20,38 @@ $startTime = microtime(true);
 
 try {
     // ============================================
-    // VALIDAÇÃO DE PARÂMETROS
+    // RESOLUÇÃO INTELIGENTE DE PERÍODO
     // ============================================
-    $dataInicio = $_GET['inicio'] ?? null;
-    $dataFim = $_GET['fim'] ?? null;
+    
+    // A função resolvePeriod() aceita múltiplos formatos:
+    // 1. ?period=today
+    // 2. ?period=last_7_days
+    // 3. ?period=last_30_days
+    // 4. ?inicio=14/01/2026&fim=15/01/2026
+    // 5. Nenhum parâmetro = últimos 7 dias (default)
+    
+    try {
+        $periodo = resolvePeriod($_GET);
+    } catch (Exception $e) {
+        kpiError('backlog-recebimento', $e->getMessage(), 400);
+    }
+    
+    $dataInicio = $periodo['inicio'];
+    $dataFim = $periodo['fim'];
+    $tipoPeriodo = $periodo['tipo'];
+    $descricaoPeriodo = $periodo['descricao'];
+    $diasPeriodo = $periodo['dias'];
+    
+    // Outros filtros opcionais
     $setor = $_GET['setor'] ?? null;
     $operador = $_GET['operador'] ?? null;
 
-    if (!$dataInicio || !$dataFim) {
-        kpiError('backlog-recebimento', 'Parâmetros inicio e fim são obrigatórios', 400);
-    }
-
-    // Conversão de formato dd/mm/yyyy para yyyy-mm-dd
-    $dataInicioSQL = date('Y-m-d', strtotime(str_replace('/', '-', $dataInicio)));
-    $dataFimSQL = date('Y-m-d', strtotime(str_replace('/', '-', $dataFim)));
-
-    // Cálculo do período de referência (mesmo tamanho do período atual)
-    $diasPeriodo = (strtotime($dataFimSQL) - strtotime($dataInicioSQL)) / 86400;
-    $dataInicioRef = date('Y-m-d', strtotime("$dataInicioSQL -" . ($diasPeriodo + 1) . " days"));
-    $dataFimRef = date('Y-m-d', strtotime("$dataInicioSQL -1 day"));
+    // ============================================
+    // CÁLCULO DO PERÍODO DE REFERÊNCIA
+    // ============================================
+    // Período anterior do mesmo tamanho para comparação
+    $dataInicioRef = date('Y-m-d', strtotime("$dataInicio -$diasPeriodo days"));
+    $dataFimRef = date('Y-m-d', strtotime("$dataInicio -1 day"));
 
     // ============================================
     // CONEXÃO COM BANCO
@@ -64,7 +70,7 @@ try {
         AND ar.id IS NULL
     ";
 
-    $paramsAtual = [$dataInicioSQL, $dataFimSQL];
+    $paramsAtual = [$dataInicio, $dataFim];
 
     if ($setor) {
         $sqlAtual .= " AND r.setor = ?";
@@ -81,7 +87,7 @@ try {
     $backlogAtual = (int)($stmtAtual->fetch(PDO::FETCH_ASSOC)['backlog'] ?? 0);
 
     // ============================================
-    // QUERY 2: BACKLOG PERÍODO ANTERIOR (REFERÊNCIA)
+    // QUERY 2: BACKLOG PERÍODO ANTERIOR
     // ============================================
     $sqlAnterior = "
         SELECT SUM(r.quantidade) AS backlog
@@ -110,8 +116,6 @@ try {
     // ============================================
     // CÁLCULOS DE VARIAÇÃO E ESTADO
     // ============================================
-    
-    // Variação percentual (invertida: redução de backlog é positiva)
     $variacao = 0;
     $tendencia = 'estavel';
     
@@ -119,20 +123,19 @@ try {
         $variacao = (($backlogAtual - $backlogAnterior) / $backlogAnterior) * 100;
         
         if ($variacao < -1) {
-            $tendencia = 'baixa'; // Backlog diminuiu (bom)
+            $tendencia = 'baixa';
         } elseif ($variacao > 1) {
-            $tendencia = 'alta'; // Backlog aumentou (ruim)
+            $tendencia = 'alta';
         }
     }
 
-    // Estado (invertido: menos backlog é melhor)
     $estado = 'success';
     if ($variacao >= 30) {
-        $estado = 'critical'; // Backlog aumentou muito
+        $estado = 'critical';
     } elseif ($variacao >= 10) {
-        $estado = 'warning'; // Backlog aumentou moderadamente
+        $estado = 'warning';
     } elseif ($variacao <= -10) {
-        $estado = 'success'; // Backlog reduziu significativamente
+        $estado = 'success';
     }
 
     // ============================================
@@ -145,6 +148,13 @@ try {
         'contexto' => 'Equipamentos aguardando envio para análise',
         'detalhes' => [
             'percentual_criticidade' => $backlogAtual > 100 ? 'alto' : ($backlogAtual > 50 ? 'medio' : 'baixo')
+        ],
+        'periodo_analise' => [
+            'tipo' => $tipoPeriodo,
+            'descricao' => $descricaoPeriodo,
+            'dias' => $diasPeriodo,
+            'inicio' => $dataInicio,
+            'fim' => $dataFim
         ],
         'referencia' => [
             'tipo' => 'periodo_anterior',
@@ -163,8 +173,8 @@ try {
                     : 'Backlog estável')
         ],
         'filtros_aplicados' => [
-            'data_inicio' => $dataInicioSQL,
-            'data_fim' => $dataFimSQL,
+            'data_inicio' => $dataInicio,
+            'data_fim' => $dataFim,
             'setor' => $setor ?? 'Todos',
             'operador' => $operador ?? 'Todos'
         ]
@@ -178,7 +188,7 @@ try {
     // ============================================
     // FORMATA PERÍODO PARA RESPOSTA
     // ============================================
-    $period = "$dataInicioSQL / $dataFimSQL";
+    $period = "$dataInicio / $dataFim";
 
     // ============================================
     // RETORNA RESPOSTA PADRONIZADA
@@ -200,4 +210,83 @@ try {
         500
     );
 }
+
+// ============================================
+// 📊 EXEMPLOS DE USO DA URL
+// ============================================
+/*
+
+1. PERÍODO PRÉ-DEFINIDO - HOJE
+   URL: ?period=today
+   Retorno: Backlog de hoje
+
+2. PERÍODO PRÉ-DEFINIDO - ÚLTIMOS 7 DIAS
+   URL: ?period=last_7_days
+   Retorno: Backlog dos últimos 7 dias
+
+3. PERÍODO PRÉ-DEFINIDO - ÚLTIMOS 30 DIAS
+   URL: ?period=last_30_days
+   Retorno: Backlog dos últimos 30 dias
+
+4. PERÍODO PRÉ-DEFINIDO - SEMANA ATUAL
+   URL: ?period=current_week
+   Retorno: Backlog da semana atual (segunda a hoje)
+
+5. PERÍODO PRÉ-DEFINIDO - MÊS ATUAL
+   URL: ?period=current_month
+   Retorno: Backlog do mês atual
+
+6. PERÍODO CUSTOMIZADO
+   URL: ?inicio=01/01/2026&fim=15/01/2026
+   Retorno: Backlog entre 01/01 e 15/01
+
+7. SEM PARÂMETROS (DEFAULT)
+   URL: (sem parâmetros)
+   Retorno: Backlog dos últimos 7 dias (padrão)
+
+8. COMBINADO COM FILTROS
+   URL: ?period=last_30_days&setor=Qualidade&operador=João
+   Retorno: Backlog dos últimos 30 dias filtrado por setor e operador
+
+*/
+
+// ============================================
+// 📊 EXEMPLO DE RESPOSTA COM PERÍODO INTELIGENTE
+// ============================================
+/*
+{
+  "status": "success",
+  "kpi": "backlog-recebimento",
+  "period": "2026-01-08 / 2026-01-15",
+  "data": {
+    "valor": 125,
+    "valor_formatado": "125",
+    "unidade": "equipamentos",
+    "contexto": "Equipamentos aguardando envio para análise",
+    "periodo_analise": {
+      "tipo": "last_7_days",
+      "descricao": "Últimos 7 dias",
+      "dias": 8,
+      "inicio": "2026-01-08",
+      "fim": "2026-01-15"
+    },
+    "referencia": {
+      "tipo": "periodo_anterior",
+      "valor": 150,
+      "periodo": "2025-12-31 a 2026-01-07"
+    },
+    "variacao": {
+      "percentual": -16.67,
+      "tendencia": "baixa",
+      "estado": "success",
+      "interpretacao": "Backlog diminuiu - melhoria operacional"
+    }
+  },
+  "meta": {
+    "generatedAt": "2026-01-15T12:30:45-03:00",
+    "executionTimeMs": 78.92,
+    "source": "vista-kpi"
+  }
+}
+*/
 ?>
