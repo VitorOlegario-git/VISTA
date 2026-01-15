@@ -868,6 +868,132 @@ function logKpiExecution(
     }
 }
 
+/**
+ * 🔍 SISTEMA DE AUDITORIA DE EXECUÇÃO DE KPIs (NOVA - 15/01/2026)
+ * 
+ * Registra informações de auditoria para compliance e observabilidade.
+ * Implementação opcional e não-bloqueante: falhas não interrompem execução.
+ * 
+ * @param string $kpiName Nome do KPI executado (ex: 'kpi-backlog-atual')
+ * @param array $periodo Array com 'inicio' e 'fim' (formato Y-m-d ou dd/mm/yyyy)
+ * @param string|null $usuario Identificador do usuário (login, email, ou 'anonymous')
+ * @param string|null $ip Endereço IP do cliente (capturado via $_SERVER['REMOTE_ADDR'])
+ * @param array $queryParams Parâmetros da requisição (filtros aplicados)
+ * @return bool True se auditoria foi gravada, false em caso de falha (não bloqueia execução)
+ * 
+ * Formato do log de auditoria:
+ * [2026-01-15 10:30:45] [kpi-backlog-atual] usuario=joao.silva ip=192.168.1.100 periodo=07/01/2026-14/01/2026 params={"operador":"Todos"}
+ * [2026-01-15 10:31:02] [kpi-tempo-medio] usuario=anonymous ip=10.0.0.50 periodo=01/01/2026-31/01/2026 params={"operador":"Maria Santos","setor":"Reparo"}
+ * 
+ * Exemplo de uso:
+ * auditarExecucaoKpi(
+ *     'kpi-backlog-atual',
+ *     ['inicio' => '2026-01-07', 'fim' => '2026-01-14'],
+ *     $_SESSION['usuario'] ?? 'anonymous',
+ *     $_SERVER['REMOTE_ADDR'] ?? 'unknown',
+ *     ['operador' => 'Todos']
+ * );
+ * 
+ * Observações:
+ * - Arquivo separado do log de execução (logs/audit.log)
+ * - Não bloqueia execução em caso de falha
+ * - IP anonimizado para compliance LGPD/GDPR (últimos 2 octetos mascarados)
+ * - Útil para: auditoria, detecção de anomalias, compliance, métricas de uso
+ */
+function auditarExecucaoKpi(
+    string $kpiName,
+    array $periodo,
+    ?string $usuario = null,
+    ?string $ip = null,
+    array $queryParams = []
+): bool {
+    try {
+        // 🔹 CAMINHO DO ARQUIVO DE AUDITORIA
+        $logDir = dirname(__DIR__, 1) . DIRECTORY_SEPARATOR . 'logs';
+        $auditFile = $logDir . DIRECTORY_SEPARATOR . 'audit.log';
+        
+        // 🔹 GARANTIR EXISTÊNCIA DO DIRETÓRIO
+        if (!is_dir($logDir)) {
+            if (!mkdir($logDir, 0755, true)) {
+                // Falha silenciosa: auditoria não deve bloquear KPI
+                return false;
+            }
+        }
+        
+        // 🔹 ANONIMIZAR IP (COMPLIANCE LGPD/GDPR)
+        // Mascara últimos 2 octetos (IPv4) ou últimos 4 grupos (IPv6)
+        $ipAnonimizado = 'unknown';
+        if ($ip !== null && $ip !== '') {
+            if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+                // IPv4: 192.168.1.100 -> 192.168.*.***
+                $partes = explode('.', $ip);
+                if (count($partes) === 4) {
+                    $ipAnonimizado = $partes[0] . '.' . $partes[1] . '.*.**';
+                }
+            } elseif (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+                // IPv6: 2001:0db8:85a3:0000:0000:8a2e:0370:7334 -> 2001:0db8:85a3:****:****:****:****:****
+                $partes = explode(':', $ip);
+                if (count($partes) >= 4) {
+                    $ipAnonimizado = implode(':', array_slice($partes, 0, 3)) . ':****:****:****:****:****';
+                }
+            } else {
+                $ipAnonimizado = 'invalid';
+            }
+        }
+        
+        // 🔹 FORMATAR PERÍODO
+        $inicioPeriodo = $periodo['inicio'] ?? 'N/A';
+        $fimPeriodo = $periodo['fim'] ?? 'N/A';
+        
+        // Converter formato Y-m-d para dd/mm/yyyy se necessário
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $inicioPeriodo)) {
+            $inicioPeriodo = date('d/m/Y', strtotime($inicioPeriodo));
+        }
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $fimPeriodo)) {
+            $fimPeriodo = date('d/m/Y', strtotime($fimPeriodo));
+        }
+        
+        $periodoFormatado = "{$inicioPeriodo}-{$fimPeriodo}";
+        
+        // 🔹 SANITIZAR USUÁRIO
+        $usuarioSanitizado = $usuario ?? 'anonymous';
+        $usuarioSanitizado = preg_replace('/[^\w\-\.@]/', '_', $usuarioSanitizado);
+        if (strlen($usuarioSanitizado) > 100) {
+            $usuarioSanitizado = substr($usuarioSanitizado, 0, 100);
+        }
+        
+        // 🔹 FORMATAR QUERY PARAMS (JSON compacto)
+        $paramsJson = json_encode($queryParams, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        if ($paramsJson === false) {
+            $paramsJson = '{}';
+        }
+        
+        // 🔹 MONTAR LINHA DE AUDITORIA
+        // Formato: [timestamp] [kpi] usuario=X ip=Y periodo=Z params={...}
+        $timestamp = date('Y-m-d H:i:s');
+        $logLine = sprintf(
+            "[%s] [%s] usuario=%s ip=%s periodo=%s params=%s\n",
+            $timestamp,
+            $kpiName,
+            $usuarioSanitizado,
+            $ipAnonimizado,
+            $periodoFormatado,
+            $paramsJson
+        );
+        
+        // 🔹 ESCREVER NO ARQUIVO DE AUDITORIA (LOCK_EX para concorrência)
+        $result = file_put_contents($auditFile, $logLine, FILE_APPEND | LOCK_EX);
+        
+        return $result !== false;
+        
+    } catch (Exception $e) {
+        // Falha silenciosa: auditoria não deve interromper execução do KPI
+        // Log de erro interno (não exposto ao cliente)
+        error_log("AVISO: Falha ao registrar auditoria de KPI: " . $e->getMessage());
+        return false;
+    }
+}
+
 // 🔹 INICIALIZAÇÃO AUTOMÁTICA
 // Define header JSON padrão quando arquivo é incluído
 if (!headers_sent()) {

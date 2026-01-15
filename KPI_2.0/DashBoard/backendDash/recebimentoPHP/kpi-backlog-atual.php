@@ -5,12 +5,13 @@
  * Equipamentos recebidos que ainda não foram enviados para análise.
  * Este endpoint utiliza o contrato padronizado VISTA (kpiResponse).
  * 
- * @version 3.0.0 - Versionamento implementado em 15/01/2026
+ * @version 3.1.0 - Auditoria implementada em 15/01/2026
  * @owner Equipe Backend VISTA
  * @uses kpiResponse() - Contrato padronizado
  * @uses validarAutenticacao() - Middleware de segurança
  * @uses logKpiExecution() - Sistema de log
  * @uses getKpiMetadata() - Versionamento de KPI
+ * @uses auditarExecucaoKpi() - Auditoria de execução
  */
 
 require_once __DIR__ . '/../../../BackEnd/config.php';
@@ -23,7 +24,7 @@ require_once __DIR__ . '/../../../BackEnd/auth-middleware.php';
 // ============================================
 $kpiMetadata = getKpiMetadata(
     'kpi-backlog-atual',           // Nome técnico do KPI
-    '3.0.0',                        // Versão semântica
+    '3.1.0',                        // Versão semântica
     'Equipe Backend VISTA',         // Responsável
     '2026-01-15'                    // Data última atualização
 );
@@ -32,6 +33,23 @@ $kpiMetadata = getKpiMetadata(
 // VALIDAÇÃO DE AUTENTICAÇÃO
 // ============================================
 validarAutenticacao();
+
+// ============================================
+// AUDITORIA DE EXECUÇÃO (OPCIONAL - NÃO BLOQUEIA)
+// ============================================
+auditarExecucaoKpi(
+    'kpi-backlog-atual',
+    [
+        'inicio' => $_GET['inicio'] ?? 'N/A',
+        'fim' => $_GET['fim'] ?? 'N/A'
+    ],
+    $_SESSION['usuario'] ?? $_SERVER['PHP_AUTH_USER'] ?? 'anonymous',
+    $_SERVER['REMOTE_ADDR'] ?? 'unknown',
+    [
+        'setor' => $_GET['setor'] ?? null,
+        'operador' => $_GET['operador'] ?? null
+    ]
+);
 
 // ============================================
 // MARCA TEMPO DE INÍCIO
