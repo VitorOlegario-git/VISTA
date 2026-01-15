@@ -110,7 +110,104 @@ function construirWherePadrao(
 }
 
 /**
- * 🔹 RESPOSTA JSON PADRONIZADA DE SUCESSO
+ * 🔹 RESPOSTA PADRONIZADA DE KPI (CONTRATO VISTA)
+ * 
+ * Função reutilizável que retorna JSON padronizado para todos os KPIs.
+ * Segue contrato único do sistema VISTA.
+ * 
+ * @param string $kpi Nome/identificador do KPI (ex: 'volume-processado', 'tempo-medio')
+ * @param string $period Período no formato 'YYYY-MM-DD' ou 'YYYY-MM'
+ * @param array $data Dados do KPI (estrutura livre conforme necessidade)
+ * @param float $executionTimeMs Tempo de execução em milissegundos
+ * @param int $httpCode Código HTTP (default: 200)
+ * 
+ * Contrato de saída:
+ * {
+ *   "status": "success",
+ *   "kpi": "nome-do-kpi",
+ *   "period": "YYYY-MM-DD / YYYY-MM",
+ *   "data": {...},
+ *   "meta": {
+ *     "generatedAt": "ISO_DATE",
+ *     "executionTimeMs": number,
+ *     "source": "vista-kpi"
+ *   }
+ * }
+ */
+function kpiResponse(
+    string $kpi,
+    string $period,
+    array $data,
+    float $executionTimeMs,
+    int $httpCode = 200
+): void {
+    http_response_code($httpCode);
+    header('Content-Type: application/json; charset=utf-8');
+    header('X-Content-Type-Options: nosniff');
+    header('X-Frame-Options: SAMEORIGIN');
+    
+    $response = [
+        'status' => 'success',
+        'kpi' => $kpi,
+        'period' => $period,
+        'data' => $data,
+        'meta' => [
+            'generatedAt' => date('c'), // ISO 8601 format
+            'executionTimeMs' => round($executionTimeMs, 2),
+            'source' => 'vista-kpi'
+        ]
+    ];
+
+    echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+    exit;
+}
+
+/**
+ * 🔹 RESPOSTA PADRONIZADA DE KPI - ERRO
+ * 
+ * Retorna resposta de erro seguindo contrato VISTA.
+ * 
+ * @param string $kpi Nome/identificador do KPI
+ * @param string $message Mensagem de erro descritiva
+ * @param int $httpCode Código HTTP de erro (default: 500)
+ * 
+ * Contrato de saída:
+ * {
+ *   "status": "error",
+ *   "kpi": "nome-do-kpi",
+ *   "message": "Descrição do erro",
+ *   "meta": {
+ *     "generatedAt": "ISO_DATE",
+ *     "source": "vista-kpi"
+ *   }
+ * }
+ */
+function kpiError(
+    string $kpi,
+    string $message,
+    int $httpCode = 500
+): void {
+    http_response_code($httpCode);
+    header('Content-Type: application/json; charset=utf-8');
+    header('X-Content-Type-Options: nosniff');
+    header('X-Frame-Options: SAMEORIGIN');
+    
+    $response = [
+        'status' => 'error',
+        'kpi' => $kpi,
+        'message' => $message,
+        'meta' => [
+            'generatedAt' => date('c'), // ISO 8601 format
+            'source' => 'vista-kpi'
+        ]
+    ];
+
+    echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+    exit;
+}
+
+/**
+ * 🔹 RESPOSTA JSON PADRONIZADA DE SUCESSO (LEGACY - mantido para retrocompatibilidade)
  * 
  * Envia resposta JSON com estrutura padrão e encerra execução.
  * 
