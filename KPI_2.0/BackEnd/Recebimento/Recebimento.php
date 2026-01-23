@@ -6,8 +6,11 @@ error_reporting(E_ALL);
 // Usar __DIR__ ao invés de DOCUMENT_ROOT
 require_once dirname(__DIR__) . '/helpers.php';
 
-// Verifica sessão e define headers de segurança
-verificarSessao();
+// Verifica sessão sem redirecionamento e retorna 401 JSON se não autenticado
+if (!verificarSessao(false)) {
+    jsonUnauthorized();
+    exit;
+}
 definirHeadersSeguranca();
 
 require_once dirname(__DIR__) . '/conexao.php';
@@ -112,10 +115,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt_insert->close();
     }
     if ($cadastro_sucesso) {
-        header("Location: https://kpi.stbextrema.com.br/BackEnd/cadastro_realizado.php");
+        // Retornar JSON com redirect em vez de header Location
+        header('Content-Type: application/json');
+        echo json_encode([
+            "success" => true,
+            "message" => "Recebimento cadastrado com sucesso",
+            // route name (sem /) para ser usado pela função redirectTo() no frontend
+            "redirect" => "cadastro-realizado"
+        ]);
         exit();
     } else {
-        echo "Erro ao cadastrar!";
+        header('Content-Type: application/json');
+        echo json_encode(["error" => "Erro ao cadastrar!"]);
     }
     // Fecha conexões
     $stmt_check->close();

@@ -307,9 +307,9 @@ $_SESSION['last_activity'] = time();
 
 <!-- Alerta grande global -->
 <div id="mensagemAlerta" class="big-alert hidden" role="alert" aria-live="assertive">
-  <div class="big-alert-box" tabindex="-1">
+    <div class="big-alert-box" tabindex="-1">
     <button class="big-alert-close" aria-label="Fechar">&times;</button>
-    <div class="big-alert-title">⚠️ Atenção</div>
+    <div class="big-alert-title"><i class="fas fa-exclamation-triangle big-alert-icon"></i> Atenção</div>
     <div class="big-alert-message"></div>
     <div class="big-alert-actions">
       <button id="bigAlertConfirm">Confirmar</button>
@@ -320,469 +320,437 @@ $_SESSION['last_activity'] = time();
 
 
 <script>
-function voltarComReload() {
-  window.top.location.href = "https://kpi.stbextrema.com.br/router_public.php?url=dashboard&reload=" + new Date().getTime();
+// =====================================================
+// CONFIGURAÇÕES GLOBAIS
+// =====================================================
+const BASE_ROUTER_URL = '/router_public.php?url=';
+
+function redirectTo(route, params = "") {
+    window.top.location.href = BASE_ROUTER_URL + route + params;
 }
 
+function voltarComReload() {
+    redirectTo("dashboard", "&reload=" + new Date().getTime());
+}
+
+// =====================================================
+// ESTADO
+// =====================================================
 let dadosAguardandoNFRetorno = [];
 let dadosQualidade = [];
 
-// ========== CONTROLE DO PAINEL ==========
+// =====================================================
+// CONTROLE DO PAINEL
+// =====================================================
 function openPanelNew() {
     const panel = document.getElementById('sidePanel');
     const overlay = document.getElementById('panelOverlay');
     const form = document.getElementById('form-qualidade');
     const title = document.getElementById('panelTitle');
-    
+
     form.reset();
     title.textContent = 'Nova Inspeção';
-    panel.classList.remove('estado-editando');
-    panel.classList.add('estado-novo');
-    panel.classList.add('aberto');
-    overlay.classList.add('ativo');
-    
-    // Limpar seleção de linhas
-    document.querySelectorAll('.row-selected').forEach(row => {
-        row.classList.remove('row-selected');
-    });
+
+    panel.classList.remove('edit-mode');
+    panel.classList.add('open');
+    overlay.classList.add('active');
+
+    // Habilitar campos que podem estar desabilitados para garantir submissão
+    try { document.getElementById('setor').disabled = false; } catch(e){}
+
+    document.querySelectorAll('.row-selected').forEach(r => r.classList.remove('row-selected'));
 }
 
 function openPanelEdit() {
     const panel = document.getElementById('sidePanel');
     const overlay = document.getElementById('panelOverlay');
     const title = document.getElementById('panelTitle');
-    
+
     title.textContent = 'Editando Inspeção';
-    panel.classList.remove('estado-novo');
-    panel.classList.add('estado-editando');
-    panel.classList.add('aberto');
-    overlay.classList.add('ativo');
+
+    panel.classList.remove('open');
+    panel.classList.add('edit-mode', 'open');
+    overlay.classList.add('active');
+
+    // Habilitar campos que podem estar desabilitados para garantir submissão
+    try { document.getElementById('setor').disabled = false; } catch(e){}
 }
 
 function closePanel() {
     const panel = document.getElementById('sidePanel');
     const overlay = document.getElementById('panelOverlay');
-    
-    panel.classList.remove('aberto');
-    overlay.classList.remove('ativo');
-    
-    // Limpar seleção de linhas
-    document.querySelectorAll('.row-selected').forEach(row => {
-        row.classList.remove('row-selected');
-    });
+
+    panel.classList.remove('open', 'edit-mode');
+    overlay.classList.remove('active');
+
+    document.querySelectorAll('.row-selected').forEach(r => r.classList.remove('row-selected'));
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-  // Inicializar máscara de CNPJ
-  initializeCNPJMask();
-  
-  const form = document.getElementById("form-qualidade");
-  if (!form) { console.error("form-qualidade não encontrado"); return; }
+// =====================================================
+// INICIALIZAÇÃO
+// =====================================================
+document.addEventListener("DOMContentLoaded", () => {
 
-  const mensagemErro = document.getElementById("mensagemErro");
-  const mensagemAlertaInline = document.getElementById("mensagemAlertaInline");
+    initializeCNPJMask();
 
-  const opOrigem = document.getElementById("operacao_origem");
-  const opDestino = document.getElementById("operacao_destino");
+    const form = document.getElementById("form-qualidade");
+    const mensagemErro = document.getElementById("mensagemErro");
+    const mensagemAlertaInline = document.getElementById("mensagemAlertaInline");
 
-  const btnAguardandoNfRetorno = document.getElementById('btn-aguardando-nf-retorno');
-  const btnQualidade = document.getElementById('btn-setor-qualidade');
-  const wrapperAguardando = document.getElementById('wrapper-aguardando-nf-retorno');
-  const wrapperQualidade = document.getElementById('wrapper-em-inspecao');
-  const tabelaAguardando = document.getElementById('tabela-info-aguardando-nf-retorno');
-  const tabelaQualidade = document.getElementById('tabela-info-em-inspecao');
-
-  // Botões do painel
-  const btnNovo = document.getElementById('btn-novo-registro');
-  const btnClosePanel = document.getElementById('btnClosePanel');
-  const btnCancelForm = document.getElementById('btnCancelForm');
-  const overlay = document.getElementById('panelOverlay');
-
-  btnNovo.addEventListener('click', openPanelNew);
-  btnClosePanel.addEventListener('click', closePanel);
-  btnCancelForm.addEventListener('click', closePanel);
-  overlay.addEventListener('click', closePanel);
-
-  // ESC para fechar painel
-  document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closePanel();
-  });
-
-  // ========= Utilitários de alerta (inline) =========
-  function mostrarAlertaSubstituicaoInline(imeis = []) {
-    const detalhe = (imeis && imeis.length)
-      ? `<div style="margin-top:6px;font-weight:400">IMEIs substituídos: ${imeis.join(", ")}</div>`
-      : "";
-    if (mensagemAlertaInline) {
-      mensagemAlertaInline.innerHTML = `⚠️ Existe equipamento substituído na remessa. Confira se está na caixa.${detalhe}`;
-      mensagemAlertaInline.style.display = "block";
-    } else {
-      console.warn("Alerta inline não encontrado:", detalhe);
-    }
-  }
-  
-  function esconderAlertaSubstituicaoInline() {
-    if (mensagemAlertaInline) {
-      mensagemAlertaInline.style.display = "none";
-      mensagemAlertaInline.innerHTML = "";
-    }
-  }
-
-  // ========= Regra de origem/destino =========
-  opOrigem.addEventListener("change", function () {
-    if (opOrigem.value === "aguardando_NF_retorno") {
-      opDestino.innerHTML = '';
-      const opt = document.createElement("option");
-      opt.value = "inspecao_qualidade";
-      opt.textContent = "Envio qualidade";
-      opDestino.appendChild(opt);
-    } else {
-      opDestino.innerHTML = `
-        <option value="">Selecione</option>
-        <option value="inspecao_qualidade">Envio qualidade</option>
-        <option value="envio_expedicao">Enviado para expedição</option>
-      `;
-    }
-  });
-
-  // ========= showBigAlert robusto =========
-  function showBigAlert({ title = "Atenção", message = "", detalheHtml = "", requireConfirm = true } = {}) {
-    function ensureModalExists() {
-      let wrapper = document.getElementById("mensagemAlerta");
-      if (wrapper) return wrapper;
-
-      wrapper = document.createElement("div");
-      wrapper.id = "mensagemAlerta";
-      wrapper.className = "big-alert hidden";
-      wrapper.setAttribute("role", "alert");
-      wrapper.setAttribute("aria-live", "assertive");
-      wrapper.style.position = "fixed";
-      wrapper.style.inset = "0";
-      wrapper.style.display = "none";
-      wrapper.style.alignItems = "center";
-      wrapper.style.justifyContent = "center";
-      wrapper.style.background = "rgba(0,0,0,0.55)";
-      wrapper.style.zIndex = "99999";
-      wrapper.style.padding = "20px";
-
-      wrapper.innerHTML = `
-        <div class="big-alert-box" tabindex="-1" role="dialog" aria-modal="true"
-             style="background:#fff;border:6px solid #ff4d4d;color:#8b0000;width:min(980px,95%);border-radius:12px;padding:28px;box-shadow:0 10px 40px rgba(0,0,0,0.4);text-align:center;outline:none;position:relative;">
-          <button class="big-alert-close" aria-label="Fechar" style="position:absolute;right:12px;top:8px;background:transparent;border:none;font-size:28px;color:#8b0000;cursor:pointer;">&times;</button>
-          <div class="big-alert-title" style="font-size:34px;font-weight:800;margin-bottom:8px;">Atenção</div>
-          <div class="big-alert-message" style="font-size:20px;font-weight:600;line-height:1.3;margin-top:6px;max-height:36vh;overflow:auto;"></div>
-          <div class="big-alert-actions" style="margin-top:18px;display:flex;gap:12px;justify-content:center;">
-            <button id="bigAlertConfirm" style="padding:12px 20px;font-size:18px;border-radius:8px;border:2px solid #8b0000;background:#fff;color:#8b0000;cursor:pointer;min-width:140px;">Confirmar</button>
-            <button id="bigAlertCancel" style="padding:12px 20px;font-size:18px;border-radius:8px;border:2px solid #8b0000;background:#fff;color:#8b0000;cursor:pointer;min-width:140px;">Cancelar</button>
-          </div>
-        </div>
-      `;
-      document.body.appendChild(wrapper);
-      return wrapper;
-    }
-
-    return new Promise((resolve) => {
-      try {
-        const wrapper = ensureModalExists();
-        const box = wrapper.querySelector(".big-alert-box") || wrapper;
-        const titleEl = wrapper.querySelector(".big-alert-title");
-        const messageEl = wrapper.querySelector(".big-alert-message");
-        const confirmBtn = wrapper.querySelector("#bigAlertConfirm");
-        const cancelBtn = wrapper.querySelector("#bigAlertCancel");
-        const closeBtn = wrapper.querySelector(".big-alert-close");
-
-        if (titleEl) titleEl.textContent = title;
-        if (messageEl) messageEl.innerHTML = `<div style="font-weight:700">${String(message)}</div>${detalheHtml || ''}`;
-
-        wrapper.style.display = "flex";
-        wrapper.classList.remove("hidden");
-        if (box && typeof box.focus === "function") box.focus();
-
-        function cleanup(result) {
-          try { wrapper.style.display = "none"; } catch (_) {}
-          if (confirmBtn) confirmBtn.removeEventListener("click", onConfirm);
-          if (cancelBtn) cancelBtn.removeEventListener("click", onCancel);
-          if (closeBtn) closeBtn.removeEventListener("click", onCancel);
-          document.removeEventListener("keydown", onKey);
-          resolve(Boolean(result));
+    function showFormError(msg) {
+        if (mensagemErro) {
+            mensagemErro.textContent = msg || '';
+            mensagemErro.style.display = msg ? 'block' : 'none';
         }
-        function onConfirm() { cleanup(true); }
-        function onCancel() { cleanup(false); }
-        function onKey(e) {
-          if (e.key === "Escape") onCancel();
-          if (e.key === "Enter" && requireConfirm) onConfirm();
+    }
+
+    function hideFormError() {
+        if (mensagemErro) {
+            mensagemErro.textContent = '';
+            mensagemErro.style.display = 'none';
+        }
+    }
+
+    const btnAguardando = document.getElementById('btn-aguardando-nf-retorno');
+    const btnQualidade = document.getElementById('btn-setor-qualidade');
+
+    const wrapperAguardando = document.getElementById('wrapper-aguardando-nf-retorno');
+    const wrapperQualidade = document.getElementById('wrapper-em-inspecao');
+
+    const tabelaAguardando = document.getElementById('tabela-info-aguardando-nf-retorno');
+    const tabelaQualidade = document.getElementById('tabela-info-em-inspecao');
+
+    document.getElementById('btn-novo-registro').onclick = openPanelNew;
+    document.getElementById('btnClosePanel').onclick = closePanel;
+    document.getElementById('btnCancelForm').onclick = closePanel;
+    document.getElementById('panelOverlay').onclick = closePanel;
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closePanel();
+    });
+
+    // =====================================================
+    // SUBMIT (PRECHECK + SAVE)
+    // =====================================================
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        hideFormError();
+
+        // Validação cliente: checar campos obrigatórios antes do precheck
+        const requiredFields = [
+            { id: 'cnpj', name: 'CNPJ' },
+            { id: 'nota_fiscal', name: 'NF Entrada' },
+            { id: 'razao_social', name: 'Razão Social' },
+            { id: 'operacao_origem', name: 'Operação Origem' },
+            { id: 'operacao_destino', name: 'Operação Destino' },
+            { id: 'setor', name: 'Setor' },
+            { id: 'data_inicio_qualidade', name: 'Data Início Inspeção' }
+        ];
+
+        for (const f of requiredFields) {
+            const el = document.getElementById(f.id);
+            const val = el ? (el.value || '').toString().trim() : '';
+            if (!val) {
+                showFormError(`Campo obrigatório: ${f.name}`);
+                try { if (el) el.focus(); } catch(e){}
+                return;
+            }
         }
 
-        if (confirmBtn) confirmBtn.addEventListener("click", onConfirm);
-        if (cancelBtn) cancelBtn.addEventListener("click", onCancel);
-        if (closeBtn) closeBtn.addEventListener("click", onCancel);
-        document.addEventListener("keydown", onKey);
+        // Remover atributo disabled de campos dentro do form antes de construir the FormData
+        try {
+            form.querySelectorAll('[disabled]').forEach(el => el.removeAttribute('disabled'));
+        } catch (err) { console.warn('qualidade: error enabling disabled fields', err); }
 
-      } catch (err) {
-        console.error("showBigAlert fallback (confirm):", err);
-        const fallback = window.confirm(message + (detalheHtml ? "\n\n" + detalheHtml.replace(/<[^>]*>?/gm, '') : ''));
-        resolve(Boolean(fallback));
-      }
+        const formData = new FormData(form);
+        const checkData = new FormData(form);
+        checkData.set("only_check", "1");
+
+        try {
+            // Debug: log formData contents before sending
+            try {
+                const preview = {};
+                for (const pair of formData.entries()) { preview[pair[0]] = pair[1]; }
+                console.log('qualidade: formData before precheck ->', preview);
+                const previewCheck = {};
+                for (const pair of checkData.entries()) { previewCheck[pair[0]] = pair[1]; }
+                console.log('qualidade: checkData before precheck ->', previewCheck);
+            } catch (dbg) { console.warn('qualidade: cannot preview formData', dbg); }
+
+            // ---------- PRECHECK ----------
+            let resCheck = await fetch(
+                "/BackEnd/Qualidade/Qualidade.php",
+                { method: "POST", body: checkData }
+            );
+
+            let textCheck = await resCheck.text();
+            console.log('qualidade: precheck response status=', resCheck.status, 'text=', textCheck);
+            let jsonCheck;
+            try { jsonCheck = JSON.parse(textCheck); } catch (e) { jsonCheck = null; }
+            if (resCheck.status === 400) {
+                try { console.error('qualidade: precheck error json=', jsonCheck); } catch(e){}
+            }
+
+            if (jsonCheck.substitution?.has_substitution) {
+                mensagemAlertaInline.style.display = "block";
+                mensagemAlertaInline.innerHTML =
+                    "⚠️ Existe equipamento substituído na remessa. Verifique a caixa.";
+
+                // Usar modal customizado que retorna Promise quando disponível
+                let confirmar = true;
+                try {
+                    if (window.__qualidadeConfirm) {
+                        confirmar = await window.__qualidadeConfirm(
+                            "Existe equipamento substituído na remessa. Deseja continuar?"
+                        );
+                    } else {
+                        confirmar = confirm(
+                            "Existe equipamento substituído na remessa. Deseja continuar?"
+                        );
+                    }
+                } catch (e) {
+                    console.error('Erro no confirm custom:', e);
+                    confirmar = false;
+                }
+
+                if (!confirmar) return;
+            } else {
+                mensagemAlertaInline.style.display = "none";
+            }
+
+            // ---------- SAVE ----------
+            let resSave = await fetch(
+                "/BackEnd/Qualidade/Qualidade.php",
+                { method: "POST", body: formData }
+            );
+
+            let textSave = await resSave.text();
+            console.log('qualidade: save response status=', resSave.status, 'text=', textSave);
+            let jsonSave;
+            try { jsonSave = JSON.parse(textSave); } catch (e) { jsonSave = null; }
+            if (resSave.status === 400) {
+                try { console.error('qualidade: save error json=', jsonSave); } catch(e){}
+            }
+
+            if (jsonSave.error) {
+                mensagemErro.textContent = jsonSave.error;
+                return;
+            }
+
+            if (jsonSave.success) {
+
+                // Redirect seguro (se vier do backend)
+                if (jsonSave.redirect) {
+                    redirectTo(jsonSave.redirect);
+                    return;
+                }
+
+                alert("Inspeção registrada com sucesso.");
+                form.reset();
+                closePanel();
+
+                if (btnAguardando.classList.contains('ativo')) {
+                    btnAguardando.click();
+                } else {
+                    btnQualidade.click();
+                }
+            }
+
+        } catch (err) {
+            console.error(err);
+            mensagemErro.textContent = "Erro na comunicação com o servidor.";
+        }
     });
-  }
 
-  function showError(msg) {
-    console.error(msg);
-    if (mensagemErro) mensagemErro.innerText = msg;
-  }
+    // =====================================================
+    // TABELAS
+    // =====================================================
+    function mostrarTabela(wrapper) {
+        wrapperAguardando.style.display = 'none';
+        wrapperQualidade.style.display = 'none';
+        wrapper.style.display = 'block';
 
-  // ========= SUBMIT (pré-check -> confirmar -> salvar) =========
-  form.addEventListener("submit", async function (e) {
-    e.preventDefault();
-    if (mensagemErro) mensagemErro.innerText = "";
-
-    const formData = new FormData(this);
-    const checkData = new FormData(this);
-    checkData.set("only_check", "1");
-
-    try {
-      // PRE-CHECK
-      let res = await fetch("https://kpi.stbextrema.com.br/BackEnd/Qualidade/Qualidade.php", {
-        method: "POST",
-        body: checkData
-      });
-      const text = await res.text();
-      console.log("PRECHECK RAW:", text);
-
-      if (!res.ok) {
-        showError("Falha no servidor (pré-check): " + res.status);
-        return;
-      }
-
-      let jsonCheck;
-      try { jsonCheck = JSON.parse(text); } catch (err) {
-        console.error("JSON inválido (pré-check):", err, text);
-        showError("Resposta inválida do servidor (pré-check).");
-        return;
-      }
-
-      // Se substituição detectada: mostrar modal grande para confirmar
-      if (jsonCheck.substitution && jsonCheck.substitution.checked) {
-        if (jsonCheck.substitution.has_substitution) {
-          const imeis = Array.isArray(jsonCheck.substitution.imeis) ? jsonCheck.substitution.imeis : [];
-          const detalhe = imeis.length ? `<div style="margin-top:6px;font-weight:400">IMEIs substituídos: ${imeis.join(", ")}</div>` : "";
-
-          mostrarAlertaSubstituicaoInline(imeis);
-
-          const confirmado = await showBigAlert({
-            title: "Existe equipamento substituído na remessa",
-            message: "Existe equipamento substituído na remessa. Confira se está na caixa.",
-            detalheHtml: detalhe,
-            requireConfirm: true
-          });
-          if (!confirmado) {
-            return;
-          }
-        } else {
-          esconderAlertaSubstituicaoInline();
-        }
-      }
-
-      // SAVE
-      let resSave = await fetch("https://kpi.stbextrema.com.br/BackEnd/Qualidade/Qualidade.php", {
-        method: "POST",
-        body: formData
-      });
-      let textSave = await resSave.text();
-      console.log("SAVE RAW:", textSave);
-
-      if (!resSave.ok) {
-        showError("Falha no servidor: " + resSave.status);
-        return;
-      }
-
-      let jsonSave;
-      try { jsonSave = JSON.parse(textSave); } catch (err) {
-        console.error("JSON inválido (save):", err, textSave);
-        showError("Resposta inválida do servidor.");
-        return;
-      }
-
-      if (jsonSave.substitution && jsonSave.substitution.checked) {
-        if (jsonSave.substitution.has_substitution) {
-          const imeis = Array.isArray(jsonSave.substitution.imeis) ? jsonSave.substitution.imeis : [];
-          const detalhe = imeis.length ? `<div style="margin-top:6px;font-weight:400">IMEIs substituídos: ${imeis.join(", ")}</div>` : "";
-          mostrarAlertaSubstituicaoInline(imeis);
-
-          await showBigAlert({
-            title: "Atenção — Substituição detectada",
-            message: "Existe equipamento substituído na remessa. Confira se está na caixa.",
-            detalheHtml: detalhe,
-            requireConfirm: false
-          });
-        } else {
-          esconderAlertaSubstituicaoInline();
-        }
-      }
-
-      if (jsonSave.success && jsonSave.redirect) {
-        window.location.href = jsonSave.redirect;
-        return;
-      } else if (jsonSave.error) {
-        showError(jsonSave.error);
-        return;
-      }
-
-      if (jsonSave.success) {
-        try { form.reset(); } catch (_) {}
-        if (mensagemErro) mensagemErro.innerText = "";
-        closePanel();
-        // Recarregar tabela ativa
-        if (btnAguardandoNfRetorno.classList.contains('ativo')) {
-          btnAguardandoNfRetorno.click();
-        } else {
-          btnQualidade.click();
-        }
-      }
-
-    } catch (error) {
-      console.error("Erro geral na requisição:", error);
-      showError("Erro na comunicação com o servidor.");
-    }
-  });
-
-  // ========= Tabelas / preenchimento =========
-  function mostrarTabela(wrapper) {
-    wrapperAguardando.style.display = 'none';
-    wrapperQualidade.style.display = 'none';
-    wrapper.style.display = 'block';
-    tabelaAguardando.querySelector('tbody').innerHTML = '';
-    tabelaQualidade.querySelector('tbody').innerHTML = '';
-  }
-
-  function preencherInputs(item, tipo, row) {
-    document.querySelector('#cnpj').value = item.cnpj || '';
-    document.querySelector('#razao_social').value = item.razao_social || '';
-    document.querySelector('#nota_fiscal').value = item.nota_fiscal || '';
-    document.querySelector("#setor").value = item.setor || '';
-    document.querySelector('#quantidade').value = item.quantidade || '';
-    document.querySelector('#quantidade_parcial').value = item.quantidade_parcial || '';
-
-    if (tipo === "aguardando") {
-      document.querySelector('#operacao_origem').value = item.operacao_destino || '';
-    } else if (tipo === "qualidade") {
-      document.querySelector('#data_inicio_qualidade').value = item.data_inicio_qualidade || '';
-      document.querySelector('#quantidade').value = item.quantidade || '';
-      document.querySelector('#quantidade_parcial').value = item.quantidade_parcial || '';
-      document.querySelector('#operacao_origem').value = item.operacao_destino || '';
-      document.querySelector('#nota_fiscal_retorno').value = item.nota_fiscal_retorno || '';
+        tabelaAguardando.querySelector('tbody').innerHTML = '';
+        tabelaQualidade.querySelector('tbody').innerHTML = '';
     }
 
-    // Highlight da linha
-    document.querySelectorAll('.row-selected').forEach(r => r.classList.remove('row-selected'));
-    if (row) row.classList.add('row-selected');
-    
-    openPanelEdit();
-  }
+    function preencherInputs(item, tipo, row) {
+        document.getElementById('cnpj').value = item.cnpj || '';
+        document.getElementById('razao_social').value = item.razao_social || '';
+        document.getElementById('nota_fiscal').value = item.nota_fiscal || '';
+        document.getElementById('setor').value = item.setor || '';
+        document.getElementById('quantidade').value = item.quantidade || '';
+        document.getElementById('quantidade_parcial').value = item.quantidade_parcial || '';
 
-  function preencherTabelaAguardando(dados) {
-    mostrarTabela(wrapperAguardando);
-    const tbody = tabelaAguardando.querySelector('tbody');
-    dados.forEach(item => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${item.setor || ''}</td>
-        <td>${item.cnpj || ''}</td>
-        <td>${item.razao_social || ''}</td>
-        <td>${item.nota_fiscal || ''}</td>
-        <td>${item.quantidade || ''}</td>
-        <td>${item.quantidade_parcial || ''}</td>
-        <td>${item.operacao_destino || ''}</td>
-      `;
-      row.addEventListener('click', () => preencherInputs(item, "aguardando", row));
-      tbody.appendChild(row);
+        if (tipo === "qualidade") {
+            document.getElementById('data_inicio_qualidade').value = item.data_inicio_qualidade || '';
+            document.getElementById('nota_fiscal_retorno').value = item.nota_fiscal_retorno || '';
+        }
+
+        document.querySelectorAll('.row-selected').forEach(r => r.classList.remove('row-selected'));
+        if (row) row.classList.add('row-selected');
+
+        // Log para debug: identifica remessa clicada
+        try { console.log('qualidade: preencherInputs item=', item, 'tipo=', tipo); } catch(e) {}
+
+        openPanelEdit();
+    }
+
+    function preencherTabelaAguardando(dados) {
+        mostrarTabela(wrapperAguardando);
+        const tbody = tabelaAguardando.querySelector('tbody');
+
+        dados.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${item.setor || ''}</td>
+                <td>${item.cnpj || ''}</td>
+                <td>${item.razao_social || ''}</td>
+                <td>${item.nota_fiscal || ''}</td>
+                <td>${item.quantidade || ''}</td>
+                <td>${item.quantidade_parcial || ''}</td>
+                <td>${item.operacao_destino || ''}</td>
+            `;
+            row.onclick = () => preencherInputs(item, "aguardando", row);
+            tbody.appendChild(row);
+        });
+    }
+
+    function preencherTabelaQualidade(dados) {
+        mostrarTabela(wrapperQualidade);
+        const tbody = tabelaQualidade.querySelector('tbody');
+
+        dados.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${item.setor || ''}</td>
+                <td>${item.cnpj || ''}</td>
+                <td>${item.razao_social || ''}</td>
+                <td>${item.nota_fiscal || ''}</td>
+                <td>${item.data_inicio_qualidade || ''}</td>
+                <td>${item.quantidade || ''}</td>
+                <td>${item.quantidade_parcial || ''}</td>
+                <td>${item.operacao_destino || ''}</td>
+                <td>${item.nota_fiscal_retorno || ''}</td>
+            `;
+            row.onclick = () => preencherInputs(item, "qualidade", row);
+            tbody.appendChild(row);
+        });
+    }
+
+    function destacarBotao(btn) {
+        btnAguardando.classList.remove("ativo");
+        btnQualidade.classList.remove("ativo");
+        btn.classList.add("ativo");
+    }
+
+    function filtrarAguardando(listaAguardando, listaQualidade) {
+        const chaves = new Set(listaQualidade.map(i => `${i.cnpj}-${i.nota_fiscal}`));
+        return listaAguardando.filter(i => !chaves.has(`${i.cnpj}-${i.nota_fiscal}`));
+    }
+
+    // =====================================================
+    // BOTÕES DE VISÃO
+    // =====================================================
+    btnAguardando.onclick = () => {
+        destacarBotao(btnAguardando);
+        fetch("/BackEnd/Qualidade/consulta_qualidade.php")
+            .then(r => r.json())
+            .then(qualidade => {
+                dadosQualidade = qualidade;
+                fetch("/BackEnd/Qualidade/consulta_aguardando_nf.php")
+                    .then(r => r.json())
+                    .then(aguardando => {
+                        dadosAguardandoNFRetorno = aguardando;
+                        preencherTabelaAguardando(
+                            filtrarAguardando(dadosAguardandoNFRetorno, dadosQualidade)
+                        );
+                    });
+            });
+    };
+
+    btnQualidade.onclick = () => {
+        destacarBotao(btnQualidade);
+        fetch("/BackEnd/Qualidade/consulta_qualidade.php")
+            .then(r => r.json())
+            .then(dados => {
+                dadosQualidade = dados;
+                preencherTabelaQualidade(dados);
+            });
+    };
+
+    // Inicialização padrão
+    btnAguardando.click();
+
+    // =====================================================
+    // FILTRO POR NF
+    // =====================================================
+    document.getElementById("filtro-nf").addEventListener("input", function () {
+        const termo = this.value.toLowerCase().trim();
+        if (!/^[\w\s\-./]*$/.test(termo)) return;
+
+        [tabelaAguardando, tabelaQualidade].forEach(tabela => {
+            tabela.querySelectorAll("tbody tr").forEach(row => {
+                const nf = row.cells[3]?.textContent.toLowerCase().trim() || '';
+                const nfRet = row.cells[8]?.textContent.toLowerCase().trim() || '';
+                row.style.display = (nf === termo || nfRet === termo) ? "" : "none";
+            });
+        });
     });
-  }
 
-  function preencherTabelaQualidade(dados) {
-    mostrarTabela(wrapperQualidade);
-    const tbody = tabelaQualidade.querySelector('tbody');
-    dados.forEach(item => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${item.setor || ''}</td>
-        <td>${item.cnpj || ''}</td>
-        <td>${item.razao_social || ''}</td>
-        <td>${item.nota_fiscal || ''}</td>
-        <td>${item.data_inicio_qualidade || ''}</td>
-        <td>${item.quantidade || ''}</td>
-        <td>${item.quantidade_parcial || ''}</td>
-        <td>${item.operacao_destino || ''}</td>
-        <td>${item.nota_fiscal_retorno || ''}</td>
-      `;
-      row.addEventListener('click', () => preencherInputs(item, "qualidade", row));
-      tbody.appendChild(row);
-    });
-  }
+    // Handlers para o alerta grande (fechar/confirmar/cancelar) com suporte a Promise
+    (function setupBigAlertHandlers(){
+        const bigAlert = document.getElementById('mensagemAlerta');
+        if (!bigAlert) return;
 
-  function destacarBotao(btn) {
-    btnAguardandoNfRetorno.classList.remove("ativo");
-    btnQualidade.classList.remove("ativo");
-    btn.classList.add("ativo");
-  }
+        const msgBox = bigAlert.querySelector('.big-alert-message');
+        const btnClose = bigAlert.querySelector('.big-alert-close');
+        const btnConfirm = document.getElementById('bigAlertConfirm');
+        const btnCancel = document.getElementById('bigAlertCancel');
 
-  function filtrarAguardando(listaAguardando, listaQualidade) {
-    const chavesQualidade = new Set(listaQualidade.map(item => `${item.cnpj}-${item.nota_fiscal}`));
-    return listaAguardando.filter(item => {
-      const chave = `${item.cnpj}-${item.nota_fiscal}`;
-      return !chavesQualidade.has(chave);
-    });
-  }
+        let pendingResolve = null;
 
-  // Eventos para os botões (busca dados)
-  btnAguardandoNfRetorno.addEventListener('click', () => {
-    destacarBotao(btnAguardandoNfRetorno);
-    fetch("https://kpi.stbextrema.com.br/BackEnd/Qualidade/consulta_qualidade.php")
-      .then(res => res.json())
-      .then(qualidade => {
-        dadosQualidade = qualidade;
-        fetch("https://kpi.stbextrema.com.br/BackEnd/Qualidade/consulta_aguardando_nf.php")
-          .then(res => res.json())
-          .then(aguardandoNF => {
-            dadosAguardandoNFRetorno = aguardandoNF;
-            const filtrados = filtrarAguardando(dadosAguardandoNFRetorno, dadosQualidade);
-            preencherTabelaAguardando(filtrados);
-          });
-      });
-  });
+        function hideBigAlert() {
+            bigAlert.classList.add('hidden');
+            if (msgBox) msgBox.textContent = '';
+        }
 
-  btnQualidade.addEventListener('click', () => {
-    destacarBotao(btnQualidade);
-    fetch("https://kpi.stbextrema.com.br/BackEnd/Qualidade/consulta_qualidade.php")
-      .then(res => res.json())
-      .then(dados => {
-        dadosQualidade = dados;
-        preencherTabelaQualidade(dados);
-      });
-  });
+        function showBigAlert(message){
+            if (msgBox) msgBox.textContent = message || '';
+            bigAlert.classList.remove('hidden');
+        }
 
-  // Inicializa com "Aguardando NF de retorno" visível
-  btnAguardandoNfRetorno.click();
+        function showConfirm(message){
+            return new Promise((resolve) => {
+                pendingResolve = resolve;
+                showBigAlert(message);
+            });
+        }
 
-  // Filtro por NF entrada / NF retorno (exato)
-  document.getElementById("filtro-nf").addEventListener("input", function () {
-    const termo = this.value.toLowerCase().trim();
-    if (!/^[\w\s\-./]*$/.test(termo)) return;
+        function finishConfirm(result){
+            try { hideBigAlert(); } catch(e){}
+            if (pendingResolve) {
+                pendingResolve(result);
+                pendingResolve = null;
+            }
+        }
 
-    const tabelas = [tabelaAguardando, tabelaQualidade];
+        if (btnClose) btnClose.addEventListener('click', () => finishConfirm(false));
+        if (btnCancel) btnCancel.addEventListener('click', () => finishConfirm(false));
+        if (btnConfirm) btnConfirm.addEventListener('click', () => finishConfirm(true));
 
-    tabelas.forEach(tabela => {
-      const linhas = tabela.querySelectorAll("tbody tr");
-      linhas.forEach(linha => {
-        const notaFiscal = linha.cells[3]?.textContent.trim().toLowerCase() || '';
-        const notaFiscalRetorno = linha.cells[8]?.textContent.trim().toLowerCase() || '';
-        linha.style.display = (notaFiscal === termo || notaFiscalRetorno === termo) ? "" : "none";
-      });
-    });
-  });
+        // Expor para debugging e compatibilidade
+        window.__qualidadeShowBigAlert = showBigAlert;
+        window.__qualidadeHideBigAlert = hideBigAlert;
+        window.__qualidadeConfirm = showConfirm;
 
-}); // DOMContentLoaded
+        // Garantir que o alerta esteja escondido ao iniciar
+        try { hideBigAlert(); } catch(e){}
+    })();
+
+});
 </script>
+
 
 </body>
 </html>

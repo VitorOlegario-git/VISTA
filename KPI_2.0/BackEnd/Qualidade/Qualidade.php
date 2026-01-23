@@ -218,7 +218,7 @@ echo json_encode([
   "success"=>true,
   "message"=>"Dados atualizados com sucesso.",
   "rows"=>$linhasAfetadas,
-  "redirect"=>"https://kpi.stbextrema.com.br/BackEnd/cadastro_realizado.php",
+  "redirect"=>"cadastro-realizado",
   "substitution"=>[
     "checked"=>true,
     "has_substitution"=>$hasSubstitution,

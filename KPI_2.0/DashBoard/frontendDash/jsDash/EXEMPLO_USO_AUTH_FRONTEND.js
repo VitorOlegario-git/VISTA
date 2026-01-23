@@ -115,7 +115,7 @@ function handleAuthError() {
     alert('Sessão expirada. Faça login novamente.');
     
     // Opção 2: Redirecionar para login
-    // window.location.href = '/login.php';
+    // window.location.href = '/router_public.php?url=login';
     
     // Opção 3: Exibir modal customizado
     // showAuthModal();

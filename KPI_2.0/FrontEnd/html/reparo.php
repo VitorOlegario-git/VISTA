@@ -133,7 +133,7 @@ $_SESSION['last_activity'] = time();
         <div id="loading" style="display: none;">Carregando...</div>
         <div id="mensagemErro"></div>
 
-        <form id="form-reparo" action="https://kpi.stbextrema.com.br/BackEnd/Reparo/Reparo.php" method="POST">
+        <form id="form-reparo" action="/BackEnd/Reparo/Reparo.php" method="POST">
 
             <!-- Bloco: Cliente -->
             <div class="form-section">
@@ -356,380 +356,274 @@ $_SESSION['last_activity'] = time();
 </div>
 
 <script>
-// ==========================================
-// CONTROLE DO PAINEL DESLIZANTE
-// ==========================================
+// =====================================================
+// CONFIGURAÇÕES GERAIS
+// =====================================================
+const ROUTER = '/router_public.php?url=';
 
-const sidePanel = document.getElementById('side-panel');
-const btnNewRecord = document.getElementById('btn-new-record');
-const btnClosePanel = document.getElementById('btn-close-panel');
-const panelOverlay = document.getElementById('panel-overlay');
-const panelTitle = document.getElementById('panel-title');
-const panelIcon = document.getElementById('panel-icon');
-const formReparo = document.getElementById('form-reparo');
+function redirect(route, params = "") {
+    window.top.location.href = ROUTER + route + params;
+}
 
+function voltarComReload() {
+    redirect("dashboard", "&reload=" + Date.now());
+}
+
+// =====================================================
+// ESTADO
+// =====================================================
 let isPanelOpen = false;
 let isEditMode = false;
 
+// =====================================================
+// ELEMENTOS
+// =====================================================
+const sidePanel    = document.getElementById('side-panel');
+const panelOverlay = document.getElementById('panel-overlay');
+const btnNew       = document.getElementById('btn-new-record');
+const btnClose     = document.getElementById('btn-close-panel');
+const panelTitle   = document.getElementById('panel-title');
+const panelIcon    = document.getElementById('panel-icon');
+const form         = document.getElementById('form-reparo');
+const msgErro      = document.getElementById('mensagemErro');
+
+// =====================================================
+// PAINEL
+// =====================================================
 function openPanelNew() {
     isEditMode = false;
     isPanelOpen = true;
-    
-    formReparo.reset();
-    
+    form.reset();
+
     sidePanel.classList.add('open');
     sidePanel.classList.remove('edit-mode');
     panelOverlay.classList.add('active');
-    
-    panelTitle.textContent = 'Novo Reparo';
-    panelIcon.className = 'fas fa-plus-circle';
-    
-    document.getElementById('operador').value = '<?php echo $_SESSION['username'] ?? ''; ?>';
-    
-    const campoDataInicio = document.querySelector('#data_inicio_reparo');
-    if (campoDataInicio) campoDataInicio.readOnly = false;
+
+    panelTitle.textContent = "Novo Reparo";
+    panelIcon.className = "fas fa-plus-circle";
+    document.getElementById('operador').value = "<?php echo $_SESSION['username'] ?? ''; ?>";
 }
 
 function openPanelEdit() {
     isEditMode = true;
     isPanelOpen = true;
-    
+
     sidePanel.classList.add('open', 'edit-mode');
     panelOverlay.classList.add('active');
-    
-    panelTitle.textContent = 'Editando Reparo';
-    panelIcon.className = 'fas fa-edit';
+
+    panelTitle.textContent = "Editando Reparo";
+    panelIcon.className = "fas fa-edit";
 }
 
 function closePanel() {
     isPanelOpen = false;
     isEditMode = false;
-    
+
     sidePanel.classList.remove('open', 'edit-mode');
     panelOverlay.classList.remove('active');
-    
-    document.querySelectorAll('table tbody tr').forEach(r => r.classList.remove('row-selected'));
+
+    document.querySelectorAll('table tbody tr')
+        .forEach(r => r.classList.remove('row-selected'));
 }
 
-btnNewRecord.addEventListener('click', openPanelNew);
-btnClosePanel.addEventListener('click', closePanel);
-panelOverlay.addEventListener('click', closePanel);
+// Eventos painel
+btnNew.onclick = openPanelNew;
+btnClose.onclick = closePanel;
+panelOverlay.onclick = closePanel;
 
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && isPanelOpen) {
-        closePanel();
-    }
+document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && isPanelOpen) closePanel();
 });
 
-// ==========================================
-// FUNÇÕES ORIGINAIS (PRESERVADAS)
-// ==========================================
+// =====================================================
+// INICIALIZAÇÃO
+// =====================================================
+let dadosAguardando = [];
+let dadosReparo = [];
 
-function voltarComReload() {
-    window.top.location.href = "https://kpi.stbextrema.com.br/router_public.php?url=dashboard&reload=" + new Date().getTime();
-}
+document.addEventListener("DOMContentLoaded", () => {
 
-let dadosAguardandoPg = [];
-let dadosEmReparo = [];
-
-document.addEventListener("DOMContentLoaded", function () {
-    // Inicializar máscara de CNPJ
     initializeCNPJMask();
-    const acaoSelect = document.getElementById("acao");
-    const parcialSelect = document.getElementById("sim_nao");
-    const inputNumero = document.querySelector("input[name='numero_orcamento']");
-    const inputValor = document.querySelector("input[name='valor_orcamento']");
-    const quantidadeParcial = document.getElementById("quantidade_parcial");
-    const form = document.getElementById("form-reparo");
-    const mensagemErro = document.getElementById("mensagemErro");
-    const operacaoOrigem = document.getElementById("operacao_origem");
-    const operacaoDestino = document.getElementById("operacao_destino");
-    const dataSolicitacaoNF = document.getElementById("data_solicitacao_nf");
 
+    const acao      = document.getElementById("acao");
+    const parcial   = document.getElementById("sim_nao");
+    const qtdParc   = document.getElementById("quantidade_parcial");
+    const opOrigem  = document.getElementById("operacao_origem");
+    const opDestino = document.getElementById("operacao_destino");
+    const setor     = document.getElementById("setor");
+    const numOrc    = document.getElementById("numero_orcamento");
+    const valOrc    = document.getElementById("valor_orcamento");
+    const dataFim   = document.getElementById("data_solicitacao_nf");
 
-    const btnAguardando = document.getElementById('btn-aguardando-pg');
-    const btnEmReparo = document.getElementById('btn-em-reparo');
-    const tabelaAguardando = document.getElementById('tabela-info-aguardando-pagamento');
-    const tabelaEmReparo = document.getElementById('tabela-info-em-reparo');
+    const btnAg = document.getElementById("btn-aguardando-pg");
+    const btnRp = document.getElementById("btn-em-reparo");
+    const tblAg = document.getElementById("tabela-info-aguardando-pagamento");
+    const tblRp = document.getElementById("tabela-info-em-reparo");
 
-    parcialSelect.addEventListener("change", function () {
-        const isParcial = this.value === "sim";
-        quantidadeParcial.required = isParcial;
-    });
+    // ---------------------------
+    // REGRAS DE FORMULÁRIO
+    // ---------------------------
+    parcial.onchange = () => {
+        qtdParc.required = parcial.value === "sim";
+    };
 
-    acaoSelect.addEventListener("change", function () {
-    const valorSelecionado = this.value;
+    acao.onchange = () => {
+        const isFim = acao.value === "fim";
+        numOrc.required  = isFim;
+        valOrc.required  = isFim;
+        dataFim.required = isFim;
+        qtdParc.disabled = isFim;
+        if (isFim) qtdParc.value = "";
+        atualizarDestino();
+    };
 
-    // Regras para "inicio"
-    const isInicio = valorSelecionado === "inicio";
-    parcialSelect.required = isInicio;
+    function atualizarDestino() {
+        opDestino.innerHTML = `<option value="">Selecione</option>`;
 
-    // Regras para "fim"
-    const isFim = valorSelecionado === "fim";
-    inputNumero.required = isFim;
-    inputValor.required = isFim;
-    quantidadeParcial.disabled = isFim;
-    dataSolicitacaoNF.required = isFim;
-
-    if (isFim) {
-        quantidadeParcial.value = "";
-    }
-    });
-
-    
-    function atualizarOperacaoDestinoReparo() {
-    const acao = acaoSelect.value;
-    const origem = operacaoOrigem.value;
-    const setor = document.getElementById("setor").value;
-    
-    // Limpa o destino e adiciona o "Selecione"
-    operacaoDestino.innerHTML = '<option value="">Selecione</option>';
-    
-    if (acao === "inicio") {
-        operacaoDestino.innerHTML += '<option value="em_reparo">Em reparo</option>';
-        operacaoDestino.innerHTML += '<option value="segregado">Segregado</option>';
-        operacaoDestino.innerHTML += '<option value="descarte">Descarte</option>';
-        return; // impede que o restante execute
-    }
-    
-    if (acao === "fim") {
-        if (setor === "dev-varejo" || setor === "dev-datora" || setor === "dev-lumini") {
-            operacaoDestino.innerHTML += '<option value="estocado">Estocado</option>';
+        if (acao.value === "inicio") {
+            ["em_reparo","segregado","descarte"].forEach(v =>
+                opDestino.innerHTML += `<option value="${v}">${v.replace("_"," ")}</option>`
+            );
             return;
-        } else {
-            operacaoDestino.innerHTML += '<option value="aguardando_NF_retorno">Aguardando NF de retorno</option>';
-            operacaoDestino.innerHTML += '<option value="reparo_pendente">Reparo pendente</option>';
-            operacaoDestino.innerHTML += '<option value="segregado">Segregado</option>';
-            operacaoDestino.innerHTML += '<option value="descarte">Descarte</option>';
-            return; // impede que a lista padrão abaixo seja carregada
+        }
+
+        if (acao.value === "fim") {
+            if (setor.value.startsWith("dev")) {
+                opDestino.innerHTML += `<option value="estocado">Estocado</option>`;
+            } else {
+                ["aguardando_NF_retorno","reparo_pendente","segregado","descarte"]
+                    .forEach(v => opDestino.innerHTML += `<option value="${v}">${v.replace("_"," ")}</option>`);
+            }
         }
     }
-    
-    // Caso nenhuma condição acima seja satisfeita, carrega as opções completas
-    const opcoes = [
-        { value: "em_reparo", text: "Em reparo" },
-        { value: "aguardando_NF_retorno", text: "Aguardando NF de retorno" },
-        { value: "estocado", text: "Estocado" },
-        { value: "reparo_pendente", text: "Reparo pendente" }
-    ];
-    
-    opcoes.forEach(opcao => {
-        const opt = document.createElement("option");
-        opt.value = opcao.value;
-        opt.textContent = opcao.text;
-        operacaoDestino.appendChild(opt);
-    });
-    }
 
-        // Dispara a atualização ao mudar ação, setor ou origem
-         acaoSelect.addEventListener("change", atualizarOperacaoDestinoReparo);
-         operacaoOrigem.addEventListener("change", atualizarOperacaoDestinoReparo);
-         document.getElementById("setor").addEventListener("change", atualizarOperacaoDestinoReparo);
+    acao.onchange = atualizarDestino;
+    setor.onchange = atualizarDestino;
+    opOrigem.onchange = atualizarDestino;
 
+    // ---------------------------
+    // SUBMIT
+    // ---------------------------
+    form.addEventListener("submit", async e => {
+        e.preventDefault();
+        msgErro.innerHTML = "";
 
-
-   form.addEventListener("submit", function (e) {
-    e.preventDefault();
-    const formData = new FormData(this);
-
-    fetch("https://kpi.stbextrema.com.br/BackEnd/Reparo/Reparo.php", {
-        method: "POST",
-        body: formData
-    })
-    .then(res => res.text())
-    .then(text => {
         try {
-            const data = JSON.parse(text);
+            const res = await fetch(
+                "/BackEnd/Reparo/Reparo.php",
+                { method: "POST", body: new FormData(form) }
+            );
 
-            if (data.success) {
-                alert(data.success);
-                form.reset();
+            const text = await res.text();
+            let json;
 
-                const cnpj = formData.get("cnpj");
-                const nf = formData.get("nota_fiscal");
+            try { json = JSON.parse(text); }
+            catch { throw "Resposta inválida do servidor"; }
 
-                if (data.acao === "inicio") {
-                    window.top.location.href = window.top.location.origin +
-                        "/FrontEnd/html/cadastro_excel_pos_analise.php?cnpj=" +
-                        encodeURIComponent(cnpj) + "&nf_entrada=" + encodeURIComponent(nf);
-                } else if (data.acao === "fim") {
-                    window.top.location.href = "https://kpi.stbextrema.com.br/BackEnd/cadastro_realizado.php";
-                }
-            } else if (data.error) {
-                mensagemErro.innerHTML = `<p style='color:red;'>${data.error}</p>`;
-            } else {
-                mensagemErro.innerHTML = `<p style='color:red;'>Resposta inesperada: ${text}</p>`;
+            if (json.error) {
+                msgErro.innerHTML = `<p style="color:red">${json.error}</p>`;
+                return;
             }
+
+            alert(json.success || "Operação realizada");
+
+            if (json.acao === "inicio") {
+                redirect("cadastro-pos-analise",
+                    "&cnpj=" + encodeURIComponent(form.cnpj.value) +
+                    "&nf_entrada=" + encodeURIComponent(form.nota_fiscal.value)
+                );
+            } else {
+                redirect("dashboard");
+            }
+
         } catch (err) {
-            mensagemErro.innerHTML = `<p style='color:red;'>Erro ao processar resposta: ${text}</p>`;
+            msgErro.innerHTML = `<p style="color:red">${err}</p>`;
         }
     });
-});
 
-
-    function mostrarTabela(tabela) {
-        tabelaAguardando.style.display = 'none';
-        tabelaEmReparo.style.display = 'none';
-        tabelaAguardando.querySelector('tbody').innerHTML = "";
-        tabelaEmReparo.querySelector('tbody').innerHTML = "";
-        tabela.style.display = 'table';
+    // ---------------------------
+    // TABELAS
+    // ---------------------------
+    function mostrarTabela(tbl) {
+        tblAg.style.display = "none";
+        tblRp.style.display = "none";
+        tbl.querySelector("tbody").innerHTML = "";
+        tbl.style.display = "table";
     }
 
-   function preencherInputs(item, tipo, row) {
-    document.querySelectorAll('table tbody tr').forEach(r => r.classList.remove('row-selected'));
-    
-    if (row) row.classList.add('row-selected');
-    
-    document.querySelector('#cnpj').value = item.cnpj || '';
-    document.querySelector('#razao_social').value = item.razao_social || '';
-    document.querySelector('#nota_fiscal').value = item.nota_fiscal || '';
-    document.querySelector("#setor").value = item.setor || '';
+    function preencher(item, tipo, row) {
+        document.querySelectorAll("tbody tr").forEach(r => r.classList.remove("row-selected"));
+        row.classList.add("row-selected");
 
-    const qtdTotal = parseInt(item.quantidade_total || 0);
-    const qtdParcial = parseInt(item.quantidade_parcial || 0);
-    const campoQuantidade = document.querySelector('#quantidade');
+        form.cnpj.value          = item.cnpj;
+        form.razao_social.value  = item.razao_social;
+        form.nota_fiscal.value   = item.nota_fiscal;
+        form.setor.value         = item.setor;
+        form.quantidade.value    = item.quantidade_total;
+        form.quantidade_parcial.value = item.quantidade_parcial || "";
+        form.operacao_origem.value = item.status;
+        form.numero_orcamento.value = item.numero_orcamento || "";
+        form.valor_orcamento.value  = item.valor_orcamento || "";
 
-    if (qtdParcial > 0 && qtdParcial !== qtdTotal) {
-        campoQuantidade.value = qtdParcial;
-    } else {
-        campoQuantidade.value = qtdTotal;
+        if (tipo === "reparo") {
+            form.data_inicio_reparo.value = item.data_inicio_reparo?.split(" ")[0] || "";
+            form.data_inicio_reparo.readOnly = true;
+        }
+
+        openPanelEdit();
     }
 
-    if (tipo === "aguardando") {
-        document.querySelector('#numero_orcamento').value = item.numero_orcamento || '';
-        document.querySelector('#valor_orcamento').value = item.valor_orcamento || '';
-        document.querySelector('#operacao_origem').value = item.status || '';
-
-    } else if (tipo === "reparo") {
-        const campoDataInicio = document.querySelector('#data_inicio_reparo');
-        campoDataInicio.value = item.data_inicio_reparo ? item.data_inicio_reparo.split(" ")[0] : '';
-        campoDataInicio.readOnly = true;
-
-        document.querySelector('#quantidade').value = (qtdParcial > 0 && qtdParcial !== qtdTotal) ? qtdParcial : qtdTotal;
-        document.querySelector('#quantidade_parcial').value = qtdParcial;
-
-        document.querySelector('#operacao_origem').value = item.status || '';
-        document.querySelector('#numero_orcamento').value = item.numero_orcamento || '';
-        document.querySelector('#valor_orcamento').value = item.valor_orcamento || '';
-    }
-    
-    openPanelEdit();
-    }
-
-
-    function preencherTabelaAguardando(dados) {
-        mostrarTabela(tabelaAguardando);
-        const tbody = tabelaAguardando.querySelector('tbody');
+    function preencherTabela(tbl, dados, tipo) {
+        mostrarTabela(tbl);
+        const tbody = tbl.querySelector("tbody");
         dados.forEach(item => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${item.setor || ''}</td>
-                <td>${item.cnpj || ''}</td>
-                <td>${item.razao_social || ''}</td>
-                <td>${item.nota_fiscal || ''}</td>
-                <td>${item.quantidade_total || ''}</td>
-                <td>${item.status || ''}</td>
-                <td>${item.numero_orcamento || ''}</td>
-                <td>${item.valor_orcamento || ''}</td>
-            `;
-            row.addEventListener('click', () => preencherInputs(item, "aguardando", row));
-            tbody.appendChild(row);
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${item.setor}</td>
+                <td>${item.cnpj}</td>
+                <td>${item.razao_social}</td>
+                <td>${item.nota_fiscal}</td>
+                <td>${item.quantidade_total}</td>
+                <td>${item.status}</td>
+                <td>${item.numero_orcamento || ""}</td>
+                <td>${item.valor_orcamento || ""}</td>`;
+            tr.onclick = () => preencher(item, tipo, tr);
+            tbody.appendChild(tr);
         });
     }
 
-    function preencherTabelaEmReparo(dados) {
-        mostrarTabela(tabelaEmReparo);
-        const tbody = tabelaEmReparo.querySelector('tbody');
-        dados.forEach(item => {
-            const row = document.createElement('tr');
-            row.innerHTML = ` 
-                <td>${item.setor || ''}</td>
-                <td>${item.cnpj || ''}</td>
-                <td>${item.razao_social || ''}</td>
-                <td>${item.nota_fiscal || ''}</td>
-                <td>${item.data_inicio_reparo ? item.data_inicio_reparo.split(" ")[0] : ''}</td>
-                <td>${item.quantidade_total || ''}</td>
-                <td>${item.quantidade_parcial || ''}</td>
-                <td>${item.status || ''}</td>
-                <td>${item.numero_orcamento || ''}</td>
-                <td>${item.valor_orcamento || ''}</td>
-            `;
-            row.addEventListener('click', () => preencherInputs(item, "reparo", row));
-            tbody.appendChild(row);
-        });
-    }
+    btnAg.onclick = async () => {
+        const r = await fetch("/BackEnd/Reparo/consulta_reparo.php").then(r=>r.json());
+        const a = await fetch("/BackEnd/Reparo/consulta_aguardando_pg.php").then(r=>r.json());
+        dadosReparo = r;
+        dadosAguardando = a.filter(x => !r.some(y => y.cnpj===x.cnpj && y.nota_fiscal===x.nota_fiscal));
+        preencherTabela(tblAg, dadosAguardando, "aguardando");
+    };
 
-    function destacarBotao(btn) {
-        btnAguardando.classList.remove("ativo");
-        btnEmReparo.classList.remove("ativo");
-        btn.classList.add("ativo");
-    }
+    btnRp.onclick = async () => {
+        dadosReparo = await fetch("/BackEnd/Reparo/consulta_reparo.php").then(r=>r.json());
+        preencherTabela(tblRp, dadosReparo, "reparo");
+    };
 
-    function filtrarAguardando(listaAguardando, listaReparo) {
-        const chavesReparo = new Set(listaReparo.map(item => `${item.cnpj}-${item.nota_fiscal}`));
-        return listaAguardando.filter(item => {
-            const chave = `${item.cnpj}-${item.nota_fiscal}`;
-            return !chavesReparo.has(chave);
-        });
-    }
+    btnAg.click();
 
-    btnAguardando.addEventListener('click', () => {
-        destacarBotao(btnAguardando);
-        fetch("https://kpi.stbextrema.com.br/BackEnd/Reparo/consulta_reparo.php")
-            .then(res => res.json())
-            .then(reparo => {
-                dadosEmReparo = reparo;
-                fetch("https://kpi.stbextrema.com.br/BackEnd/Reparo/consulta_aguardando_pg.php")
-                    .then(res => res.json())
-                    .then(aguardando => {
-                        dadosAguardando = aguardando;
-                        const filtrados = filtrarAguardando(dadosAguardando, dadosEmReparo);
-                        preencherTabelaAguardando(filtrados);
-                    });
+    // ---------------------------
+    // FILTRO NF
+    // ---------------------------
+    document.getElementById("filtro-nf").addEventListener("input", function () {
+        const termo = this.value.toLowerCase().trim();
+        if (!/^[\w\-./]*$/.test(termo)) return;
+
+        [tblAg, tblRp].forEach(tbl => {
+            tbl.querySelectorAll("tbody tr").forEach(tr => {
+                tr.style.display =
+                    tr.cells[3].textContent.toLowerCase() === termo ? "" : "none";
             });
-    });
-
-    btnEmReparo.addEventListener('click', () => {
-        destacarBotao(btnEmReparo);
-        fetch("https://kpi.stbextrema.com.br/BackEnd/Reparo/consulta_reparo.php")
-            .then(res => res.json())
-            .then(dados => {
-                dadosEmReparo = dados;
-                preencherTabelaEmReparo(dados);
-            });
-    });
-
-    // Inicializa com "Aguardando análise" visível
-    btnAguardando.click();
-
-    // Filtro por NF
-   document.getElementById("filtro-nf").addEventListener("input", function () {
-    const termo = this.value.toLowerCase().trim();
-
-    // Ignora termos inválidos com caracteres especiais que possam causar erro
-    if (!/^[\w\s\-./]*$/.test(termo)) return;
-
-    const tabelas = [
-        document.getElementById("tabela-info-aguardando-pagamento"),
-        document.getElementById("tabela-info-em-reparo")
-    ];
-
-    tabelas.forEach(tabela => {
-        const linhas = tabela.querySelectorAll("tbody tr");
-        linhas.forEach(linha => {
-            const colunaNF = linha.cells[3];
-            if (colunaNF && colunaNF.textContent.trim().toLowerCase() === termo) {
-                linha.style.display = "";
-            } else {
-                linha.style.display = "none";
-            }
         });
     });
-});
-
-
 });
 </script>
+
     
 </body>
 </html>

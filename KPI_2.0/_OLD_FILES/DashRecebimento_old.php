@@ -13,13 +13,13 @@ $tempo_limite = 1200; // 20 minutos
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $tempo_limite) {
     session_unset();
     session_destroy();
-    header("Location: https://kpi.stbextrema.com.br/FrontEnd/tela_login.php");
+    header("Location: /router_public.php?url=login");
     exit();
 }
 
 // Verifica se a sessão está ativa
 if (!isset($_SESSION['username'])) {
-    header("Location: https://kpi.stbextrema.com.br/FrontEnd/tela_login.php");
+    header("Location: /router_public.php?url=login");
     exit();
 }
 
@@ -46,47 +46,47 @@ $_SESSION['last_activity'] = time();
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0/dist/chartjs-plugin-annotation.min.js"></script>
 
 <!-- RECEBIMENTO -->
-    <script src="https://kpi.stbextrema.com.br/DashBoard/frontendDash/jsDash/recebimentoJS/graficoQuantidade.js"></script>
-    <script src="https://kpi.stbextrema.com.br/DashBoard/frontendDash/jsDash/recebimentoJS/graficoTempoMedio.js"></script>
-    <script src="https://kpi.stbextrema.com.br/DashBoard/frontendDash/jsDash/recebimentoJS/graficoRecebimentosSetor.js"></script>
-    <script src="https://kpi.stbextrema.com.br/DashBoard/frontendDash/jsDash/recebimentoJS/graficoRecebimentosOperador.js"></script>
-    <script src="https://kpi.stbextrema.com.br/DashBoard/frontendDash/jsDash/recebimentoJS/graficoOperacoes.js"></script>
-    <script src="https://kpi.stbextrema.com.br/DashBoard/frontendDash/jsDash/recebimentoJS/graficoTaxaRejeicao.js"></script>
-    <script src="https://kpi.stbextrema.com.br/DashBoard/frontendDash/jsDash/recebimentoJS/graficoTempoOperacoes.js"></script>
-    <script src="https://kpi.stbextrema.com.br/DashBoard/frontendDash/jsDash/recebimentoJS/graficoTopEmpresas.js"></script>
-    <script src="https://kpi.stbextrema.com.br/DashBoard/frontendDash/jsDash/recebimentoJS/graficoRecebimentosDia.js"></script>
-    <script src="https://kpi.stbextrema.com.br/DashBoard/frontendDash/jsDash/recebimentoJS/graficoTendenciaMensal.js"></script>
+    <script src="/DashBoard/frontendDash/jsDash/recebimentoJS/graficoQuantidade.js"></script>
+    <script src="/DashBoard/frontendDash/jsDash/recebimentoJS/graficoTempoMedio.js"></script>
+    <script src="/DashBoard/frontendDash/jsDash/recebimentoJS/graficoRecebimentosSetor.js"></script>
+    <script src="/DashBoard/frontendDash/jsDash/recebimentoJS/graficoRecebimentosOperador.js"></script>
+    <script src="/DashBoard/frontendDash/jsDash/recebimentoJS/graficoOperacoes.js"></script>
+    <script src="/DashBoard/frontendDash/jsDash/recebimentoJS/graficoTaxaRejeicao.js"></script>
+    <script src="/DashBoard/frontendDash/jsDash/recebimentoJS/graficoTempoOperacoes.js"></script>
+    <script src="/DashBoard/frontendDash/jsDash/recebimentoJS/graficoTopEmpresas.js"></script>
+    <script src="/DashBoard/frontendDash/jsDash/recebimentoJS/graficoRecebimentosDia.js"></script>
+    <script src="/DashBoard/frontendDash/jsDash/recebimentoJS/graficoTendenciaMensal.js"></script>
 
 <!-- ANÁLISE -->
-    <script src="https://kpi.stbextrema.com.br/DashBoard/frontendDash/jsDash/analiseJS/produtividadeAnalise.js"></script>
-    <script src="https://kpi.stbextrema.com.br/DashBoard/frontendDash/jsDash/analiseJS/graficoTicketMedio.js"></script>
-    <script src="https://kpi.stbextrema.com.br/DashBoard/frontendDash/jsDash/analiseJS/tempoMedioAnalise.js"></script>
-    <script src="https://kpi.stbextrema.com.br/DashBoard/frontendDash/jsDash/analiseJS/parcialCompleta.js"></script>
-    <script src="https://kpi.stbextrema.com.br/DashBoard/frontendDash/jsDash/analiseJS/analisesCliente.js"></script>
+    <script src="/DashBoard/frontendDash/jsDash/analiseJS/produtividadeAnalise.js"></script>
+    <script src="/DashBoard/frontendDash/jsDash/analiseJS/graficoTicketMedio.js"></script>
+    <script src="/DashBoard/frontendDash/jsDash/analiseJS/tempoMedioAnalise.js"></script>
+    <script src="/DashBoard/frontendDash/jsDash/analiseJS/parcialCompleta.js"></script>
+    <script src="/DashBoard/frontendDash/jsDash/analiseJS/analisesCliente.js"></script>
 
 <!-- Reparo -->  
-    <script src="https://kpi.stbextrema.com.br/DashBoard/frontendDash/jsDash/reparoJS/produtividadeReparo.js"></script>
-    <script src="https://kpi.stbextrema.com.br/DashBoard/frontendDash/jsDash/reparoJS/tempoReparoOperador.js"></script>
-    <script src="https://kpi.stbextrema.com.br/DashBoard/frontendDash/jsDash/reparoJS/reparosPorCliente.js"></script>
+    <script src="/DashBoard/frontendDash/jsDash/reparoJS/produtividadeReparo.js"></script>
+    <script src="/DashBoard/frontendDash/jsDash/reparoJS/tempoReparoOperador.js"></script>
+    <script src="/DashBoard/frontendDash/jsDash/reparoJS/reparosPorCliente.js"></script>
 
 
 
 <!-- Qualidade -->
-    <script src="https://kpi.stbextrema.com.br/DashBoard/frontendDash/jsDash/qualidadeJS/quantidadesEquip.js"></script>
-    <script src="https://kpi.stbextrema.com.br/DashBoard/frontendDash/jsDash/qualidadeJS/principaisServicos.js"></script>
-    <script src="https://kpi.stbextrema.com.br/DashBoard/frontendDash/jsDash/qualidadeJS/principaisLaudos.js"></script>
-    <script src="https://kpi.stbextrema.com.br/DashBoard/frontendDash/jsDash/qualidadeJS/semConsertoProdutos.js"></script>
+    <script src="/DashBoard/frontendDash/jsDash/qualidadeJS/quantidadesEquip.js"></script>
+    <script src="/DashBoard/frontendDash/jsDash/qualidadeJS/principaisServicos.js"></script>
+    <script src="/DashBoard/frontendDash/jsDash/qualidadeJS/principaisLaudos.js"></script>
+    <script src="/DashBoard/frontendDash/jsDash/qualidadeJS/semConsertoProdutos.js"></script>
 <!-- Financeiro -->
-    <script src="https://kpi.stbextrema.com.br/DashBoard/frontendDash/jsDash/financeiroJS/orcamentosGeradosAnalise.js"></script>
-    <script src="https://kpi.stbextrema.com.br/DashBoard/frontendDash/jsDash/financeiroJS/orcamentosGeradosReparo.js"></script>
-    <script src="https://kpi.stbextrema.com.br/DashBoard/frontendDash/jsDash/financeiroJS/kpiCustosProdutos.js"></script>
+    <script src="/DashBoard/frontendDash/jsDash/financeiroJS/orcamentosGeradosAnalise.js"></script>
+    <script src="/DashBoard/frontendDash/jsDash/financeiroJS/orcamentosGeradosReparo.js"></script>
+    <script src="/DashBoard/frontendDash/jsDash/financeiroJS/kpiCustosProdutos.js"></script>
 </head>
 <body>
 
     <div class="top-container">
         <!-- Formulário de seleção de datas -->
         <div class="data-container">
-            <form action="https://kpi.stbextrema.com.br/DashBoard/equip_recebidos_analise.php" method="post">
+            <form action="/DashBoard/equip_recebidos_analise.php" method="post">
                 
                     <label for="data_inicial">De:</label>
                     <input type="date" id="data_inicial" name="data_inicial">
@@ -1094,7 +1094,7 @@ graficosFinanceiro.forEach(({ linkId, containerIds, funcao }) => {
 });
 
 function atualizarStatusOperadores() {
-    fetch('https://kpi.stbextrema.com.br/DashBoard/backendDash/ADMIN/admin.php')
+    fetch('/DashBoard/backendDash/ADMIN/admin.php')
         .then(res => res.json())
         .then(data => {
             data.forEach((item, index) => {
@@ -1135,7 +1135,7 @@ document.querySelectorAll('.btn-relatorio').forEach(btn => {
     if (di) qs.set("data_inicio", di);
     if (df) qs.set("data_fim", df);
 
-    const url = `https://kpi.stbextrema.com.br/DashBoard/backendDash/ADMIN/relatorio_operador_eventos.php?${qs.toString()}`;
+    const url = `/DashBoard/backendDash/ADMIN/relatorio_operador_eventos.php?${qs.toString()}`;
     window.open(url, "_blank");
   });
 });

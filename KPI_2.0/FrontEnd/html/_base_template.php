@@ -9,16 +9,16 @@ header("Pragma: no-cache");
 $tempo_limite = 1200; // 20 minutos
 
 // Verifica inatividade
-if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $tempo_limite) {
+    if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $tempo_limite) {
     session_unset();
     session_destroy();
-    header("Location: https://kpi.stbextrema.com.br/FrontEnd/tela_login.php");
+    header("Location: /router_public.php?url=login");
     exit();
 }
 
 // Verifica se a sessÃ£o estÃ¡ ativa
 if (!isset($_SESSION['username'])) {
-    header("Location: https://kpi.stbextrema.com.br/FrontEnd/tela_login.php");
+    header("Location: /router_public.php?url=login");
     exit();
 }
 
@@ -32,16 +32,43 @@ $_SESSION['last_activity'] = time();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recebimento - VISTA</title>
-    <link rel="stylesheet" href="https://kpi.stbextrema.com.br/FrontEnd/CSS/recebimento.css">
-    <link rel="icon" href="https://kpi.stbextrema.com.br/FrontEnd/CSS/imagens/VISTA.png">
+    <link rel="stylesheet" href="/FrontEnd/CSS/recebimento.css">
+    <link rel="stylesheet" href="/FrontEnd/CSS/header.css">
+    <link rel="icon" href="/FrontEnd/CSS/imagens/VISTA.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://kpi.stbextrema.com.br/FrontEnd/JS/CnpjMask.js"></script>
+    <script src="/FrontEnd/JS/CnpjMask.js"></script>
 </head>
 <body>
 
 <!-- Overlay do Painel (para Mobile) -->
 <div class="panel-overlay" id="panel-overlay"></div>
+
+<!-- Cabeçalho Corporativo (logo + título + subtítulo) -->
+<header class="app-header" id="logoHeader">
+    <div class="app-header-content">
+        <div class="app-header-left">
+            <img src="/FrontEnd/CSS/imagens/VISTA.png" alt="VISTA Logo" class="app-logo">
+            <div class="app-brand">
+                <span class="app-title">VISTA</span>
+                <span class="app-subtitle">Visão Integrada de Sistemas Técnicos e Análises</span>
+            </div>
+        </div>
+        <div class="app-header-right">
+            <span class="app-user-greeting">Bem-vindo, <strong><?php echo htmlspecialchars($_SESSION['username'] ?? ''); ?></strong></span>
+            <div class="app-user-avatar" id="userAvatar">
+                <?php echo isset($_SESSION['username']) ? strtoupper(substr($_SESSION['username'],0,2)) : ''; ?>
+            </div>
+            <button class="app-btn-logout" id="logoutBtn" title="Sair do sistema">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+</header>
 
 <!-- Ãrea Principal: Tabela -->
 <div class="main-content">
@@ -101,7 +128,7 @@ $_SESSION['last_activity'] = time();
 
     <!-- Corpo do Painel: FormulÃ¡rio -->
     <div class="panel-body">
-        <form id="form-recebimento" action="https://kpi.stbextrema.com.br/BackEnd/Recebimento/Recebimento.php" method="POST">
+        <form id="form-recebimento" action="/BackEnd/Recebimento/Recebimento.php" method="POST">
 
             <!-- Bloco: IdentificaÃ§Ã£o -->
             <div class="form-section">
@@ -365,7 +392,7 @@ document.addEventListener('keydown', function(e) {
 // ==========================================
 
 function forcarRecarregamento() {
-    window.location.assign("https://kpi.stbextrema.com.br/router_public.php?url=dashboard&nocache=" + new Date().getTime());
+    window.location.assign('/router_public.php?url=dashboard&nocache=' + new Date().getTime());
 }
 
 function showSuccessModal(message) {
@@ -386,7 +413,7 @@ document.addEventListener("DOMContentLoaded", function () {
         cnpjInput.addEventListener("blur", function () {
             let cnpj = this.value.trim();
             if (cnpj.length === 18) {
-                fetch("https://kpi.stbextrema.com.br/BackEnd/buscar_cliente.php", {
+                fetch("/BackEnd/buscar_cliente.php", {
                     method: "POST",
                     headers: { "Content-Type": "application/x-www-form-urlencoded" },
                     body: "cnpj=" + encodeURIComponent(cnpj)
@@ -397,7 +424,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         document.getElementById("razao_social").value = data.razao_social;
                     } else {
                         alert("Cliente nÃ£o cadastrado. VocÃª serÃ¡ redirecionado para o cadastro.");
-                        window.location.href = "https://kpi.stbextrema.com.br/router_public.php?url=cadastrar-cliente&cnpj=" + encodeURIComponent(data.cnpj_usado);
+                        window.location.href = '/router_public.php?url=cadastrar-cliente&cnpj=' + encodeURIComponent(data.cnpj_usado);
                     }
                 })
                 .catch(error => console.error("Erro ao buscar cliente:", error));
@@ -406,7 +433,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Consulta de recebimentos
-    fetch("https://kpi.stbextrema.com.br/BackEnd/Recebimento/consulta_recebimento.php")
+    fetch("/BackEnd/Recebimento/consulta_recebimento.php")
         .then(response => response.json())
         .then(dados => {
             const tbody = document.querySelector('#tabela-info tbody');

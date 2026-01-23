@@ -134,7 +134,7 @@
 
 function voltarComReload() {
     // Redireciona e força o recarregamento
-    window.location.href = "https://kpi.stbextrema.com.br/router_public.php?url=dashboard&reload=" + new Date().getTime();
+    window.location.href = '/router_public.php?url=dashboard&reload=' + new Date().getTime();
 }
 
 const statusGeral = document.getElementById("status-geral");
@@ -158,7 +158,7 @@ document.getElementById("consultar").addEventListener("click", function () {
 
     console.log("🔎 Enviando dados:", Object.fromEntries(formData.entries()));
 
-    fetch("https://kpi.stbextrema.com.br/BackEnd/Consulta/consulta_resumo_geral.php", {
+    fetch("/BackEnd/Consulta/consulta_resumo_geral.php", {
         method: "POST",
         body: formData
     })
@@ -308,7 +308,7 @@ function exportarDOCX() {
 
 
 document.getElementById("consultar-status").addEventListener("click", function () {
-    fetch("https://kpi.stbextrema.com.br/BackEnd/Consulta/consulta_status.php")
+    fetch("/BackEnd/Consulta/consulta_status.php")
         .then(response => response.json())
         .then(data => {
             const container = document.getElementById("status-geral");

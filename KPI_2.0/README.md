@@ -225,9 +225,9 @@ O sistema usa URLs limpas e profissionais sem expor a estrutura de diretórios:
 
 **URLs Atuais:**
 ```
-https://kpi.stbextrema.com.br/router_public.php?url=dashboard
-https://kpi.stbextrema.com.br/router_public.php?url=login
-https://kpi.stbextrema.com.br/router_public.php?url=analise
+ /router_public.php?url=dashboard
+ /router_public.php?url=login
+ /router_public.php?url=analise
 ```
 
 **Principais Rotas:**

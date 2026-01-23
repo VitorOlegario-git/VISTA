@@ -396,17 +396,19 @@ Sugestão de ordem de migração:
 
 ### 1. Teste Manual (Navegador)
 ```
-http://kpi.stbextrema.com.br/DashBoard/backendDash/recebimentoPHP/kpi-backlog-atual.php?inicio=07/01/2026&fim=14/01/2026
+ /DashBoard/backendDash/recebimentoPHP/kpi-backlog-atual.php?inicio=07/01/2026&fim=14/01/2026
 ```
 
 ### 2. Teste com cURL
 ```bash
-curl -i "http://kpi.stbextrema.com.br/DashBoard/backendDash/recebimentoPHP/kpi-backlog-atual.php?inicio=07/01/2026&fim=14/01/2026&operador=Todos"
+
+curl -i "/DashBoard/backendDash/recebimentoPHP/kpi-backlog-atual.php?inicio=07/01/2026&fim=14/01/2026&operador=Todos"
 ```
 
 ### 3. Validação JSON
 ```bash
-curl -s "http://kpi.stbextrema.com.br/DashBoard/backendDash/recebimentoPHP/kpi-backlog-atual.php?inicio=07/01/2026&fim=14/01/2026" | python -m json.tool
+
+curl -s "/DashBoard/backendDash/recebimentoPHP/kpi-backlog-atual.php?inicio=07/01/2026&fim=14/01/2026" | python -m json.tool
 ```
 
 ### 4. Checklist de Validação

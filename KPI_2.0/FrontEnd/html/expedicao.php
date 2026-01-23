@@ -22,8 +22,8 @@ $_SESSION['last_activity'] = time();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expedição - KPI 2.0</title>
-    <link rel="stylesheet" href="https://kpi.stbextrema.com.br/FrontEnd/CSS/expedicao.css">
-    <link rel="icon" href="https://kpi.stbextrema.com.br/FrontEnd/CSS/imagens/VISTA.png">
+    <link rel="stylesheet" href="/FrontEnd/CSS/expedicao.css">
+    <link rel="icon" href="/FrontEnd/CSS/imagens/VISTA.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="../JS/CnpjMask.js"></script>
@@ -116,7 +116,7 @@ $_SESSION['last_activity'] = time();
         </button>
     </div>
 
-    <div class="panel-content">
+    <div class="panel-body">
         <form id="form-expedicao">
             <div id="mensagemErro" class="error-message"></div>
 
@@ -303,151 +303,187 @@ $_SESSION['last_activity'] = time();
 </div>
 
 <script>
-function voltarComReload() {
-    window.top.location.href = "https://kpi.stbextrema.com.br/router_public.php?url=dashboard&reload=" + new Date().getTime();
+// =====================================================
+// CONFIGURAÇÕES GLOBAIS
+// =====================================================
+const BASE_ROUTER_URL = '/router_public.php?url=';
+
+function redirectTo(route, params = "") {
+    window.top.location.href = BASE_ROUTER_URL + route + params;
 }
 
+function voltarComReload() {
+    redirectTo("dashboard", "&reload=" + new Date().getTime());
+}
+
+// =====================================================
+// VARIÁVEIS DE ESTADO
+// =====================================================
 let dadosAguardandoExpedicao = [];
 let dadosExpedido = [];
 
-// ========== CONTROLE DO PAINEL ==========
+// =====================================================
+// CONTROLE DO PAINEL LATERAL
+// =====================================================
 function openPanelNew() {
     const panel = document.getElementById('sidePanel');
     const overlay = document.getElementById('panelOverlay');
     const form = document.getElementById('form-expedicao');
     const title = document.getElementById('panelTitle');
-    
+
     form.reset();
     title.textContent = 'Nova Expedição';
-    panel.classList.remove('estado-editando');
-    panel.classList.add('estado-novo');
-    panel.classList.add('aberto');
-    overlay.classList.add('ativo');
-    
-    document.querySelectorAll('.row-selected').forEach(row => {
-        row.classList.remove('row-selected');
-    });
+
+    panel.classList.remove('edit-mode');
+    panel.classList.add('new-mode', 'open');
+    overlay.classList.add('active');
+
+    document.querySelectorAll('.row-selected').forEach(r => r.classList.remove('row-selected'));
 }
 
 function openPanelEdit() {
     const panel = document.getElementById('sidePanel');
     const overlay = document.getElementById('panelOverlay');
     const title = document.getElementById('panelTitle');
-    
+
     title.textContent = 'Editando Expedição';
-    panel.classList.remove('estado-novo');
-    panel.classList.add('estado-editando');
-    panel.classList.add('aberto');
-    overlay.classList.add('ativo');
+
+    panel.classList.remove('new-mode');
+    panel.classList.add('edit-mode', 'open');
+    overlay.classList.add('active');
 }
 
 function closePanel() {
     const panel = document.getElementById('sidePanel');
     const overlay = document.getElementById('panelOverlay');
-    
-    panel.classList.remove('aberto');
-    overlay.classList.remove('ativo');
-    
-    document.querySelectorAll('.row-selected').forEach(row => {
-        row.classList.remove('row-selected');
-    });
+
+    panel.classList.remove('open', 'edit-mode', 'new-mode');
+    overlay.classList.remove('active');
+
+    document.querySelectorAll('.row-selected').forEach(r => r.classList.remove('row-selected'));
 }
 
-document.addEventListener("DOMContentLoaded", function () {
+// =====================================================
+// INICIALIZAÇÃO
+// =====================================================
+document.addEventListener("DOMContentLoaded", () => {
+
     const form = document.getElementById("form-expedicao");
     const mensagemErro = document.getElementById("mensagemErro");
-    
+
     const btnExpedicao = document.getElementById('btn-expedicao');
     const btnEnviado = document.getElementById('btn-enviado');
+
     const wrapperAguardando = document.getElementById('wrapper-aguardando-expedicao');
     const wrapperConcluida = document.getElementById('wrapper-expedicao-concluida');
-    const tabelaAguardandoExpedicao = document.getElementById('tabela-info-aguardando-expedicao');
-    const tabelaExpedido = document.getElementById('tabela-info-expedicao-concluida');
 
-    const btnNovo = document.getElementById('btn-novo-registro');
-    const btnClosePanel = document.getElementById('btnClosePanel');
-    const btnCancelForm = document.getElementById('btnCancelForm');
-    const overlay = document.getElementById('panelOverlay');
+    const tabelaAguardando = document.getElementById('tabela-info-aguardando-expedicao');
+    const tabelaConcluida = document.getElementById('tabela-info-expedicao-concluida');
 
-    btnNovo.addEventListener('click', openPanelNew);
-    btnClosePanel.addEventListener('click', closePanel);
-    btnCancelForm.addEventListener('click', closePanel);
-    overlay.addEventListener('click', closePanel);
+    document.getElementById('btn-novo-registro').onclick = openPanelNew;
+    document.getElementById('btnClosePanel').onclick = closePanel;
+    document.getElementById('btnCancelForm').onclick = closePanel;
+    document.getElementById('panelOverlay').onclick = closePanel;
 
-    document.addEventListener('keydown', (e) => {
+    document.addEventListener('keydown', e => {
         if (e.key === 'Escape') closePanel();
     });
 
-    form.addEventListener("submit", async function (e) {
+    // =====================================================
+    // SUBMIT DO FORMULÁRIO (BLINDADO)
+    // =====================================================
+    form.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const formData = new FormData(this);
+        mensagemErro.textContent = "";
+
+        const formData = new FormData(form);
 
         try {
-            const res = await fetch("https://kpi.stbextrema.com.br/BackEnd/Expedicao/Expedicao.php", {
-                method: "POST",
-                body: formData
-            });
+            const res = await fetch(
+                "/BackEnd/Expedicao/Expedicao.php",
+                { method: "POST", body: formData }
+            );
+
             const text = await res.text();
-            console.log("RESPOSTA RAW:", text);
-            const json = JSON.parse(text);
-            
-            if (json.success && json.redirect) {
-                window.location.href = json.redirect;
-            } else if (json.error) {
-                mensagemErro.innerText = json.error;
-            } else if (json.success) {
+            let json;
+
+            try {
+                json = JSON.parse(text);
+            } catch {
+                throw new Error("Resposta inválida do servidor.");
+            }
+
+            if (json.success) {
+
+                // Redirect explícito (se vier do backend)
+                if (json.redirect) {
+                    redirectTo(json.redirect);
+                    return;
+                }
+
+                alert("Expedição registrada com sucesso.");
                 form.reset();
-                mensagemErro.innerText = "";
                 closePanel();
-                // Recarregar tabela ativa
+
+                // Recarrega a tabela ativa
                 if (btnExpedicao.classList.contains('ativo')) {
                     btnExpedicao.click();
                 } else {
                     btnEnviado.click();
                 }
+
+            } else if (json.error) {
+                mensagemErro.textContent = json.error;
+            } else {
+                throw new Error("Resposta inesperada.");
             }
+
         } catch (err) {
-            console.error("Erro ao converter para JSON:", err);
-            mensagemErro.innerText = "Erro no formato da resposta do servidor.";
+            console.error(err);
+            mensagemErro.textContent = err.message;
         }
     });
 
+    // =====================================================
+    // FUNÇÕES DE TABELA
+    // =====================================================
     function mostrarTabela(wrapper) {
         wrapperAguardando.style.display = 'none';
         wrapperConcluida.style.display = 'none';
         wrapper.style.display = 'block';
-        tabelaAguardandoExpedicao.querySelector('tbody').innerHTML = '';
-        tabelaExpedido.querySelector('tbody').innerHTML = '';
+
+        tabelaAguardando.querySelector('tbody').innerHTML = '';
+        tabelaConcluida.querySelector('tbody').innerHTML = '';
     }
 
     function preencherInputs(item, tipo, row) {
-        document.querySelector('#cnpj').value = item.cnpj || '';
-        document.querySelector('#razao_social').value = item.razao_social || '';
-        document.querySelector('#nota_fiscal').value = item.nota_fiscal || '';
-        document.querySelector("#setor").value = item.setor || '';
-        document.querySelector('#quantidade').value = item.quantidade || '';
-        document.querySelector('#nota_fiscal_retorno').value = item.nota_fiscal_retorno || '';
+        document.getElementById('cnpj').value = item.cnpj || '';
+        document.getElementById('nota_fiscal').value = item.nota_fiscal || '';
+        document.getElementById('razao_social').value = item.razao_social || '';
+        document.getElementById('setor').value = item.setor || '';
+        document.getElementById('quantidade').value = item.quantidade || '';
+        document.getElementById('nota_fiscal_retorno').value = item.nota_fiscal_retorno || '';
 
-        if (tipo === "aguardandoExpedicao") {
-            document.querySelector('#operacao_origem').value = item.operacao_destino || '';
-            document.querySelector('#data_envio_expedicao').value = item.data_envio_expedicao || '';
-        } else if (tipo === "expedido") {
-            document.querySelector('#data_envio_expedicao').value = item.data_inicio_qualidade || '';
-            document.querySelector('#quantidade').value = item.quantidade || '';
-            document.querySelector('#operacao_origem').value = item.operacao_destino || '';
-            document.querySelector('#nota_fiscal_retorno').value = item.nota_fiscal_retorno || '';
+        if (tipo === "aguardando") {
+            document.getElementById('operacao_origem').value = item.operacao_destino || '';
+            document.getElementById('data_envio_expedicao').value = item.data_envio_expedicao || '';
         }
 
-        // Highlight da linha
+        if (tipo === "expedido") {
+            document.getElementById('operacao_origem').value = item.operacao_destino || '';
+            document.getElementById('data_envio_cliente').value = item.data_envio_cliente || '';
+        }
+
         document.querySelectorAll('.row-selected').forEach(r => r.classList.remove('row-selected'));
         if (row) row.classList.add('row-selected');
-        
+
         openPanelEdit();
     }
 
-    function preencherTabelaAguardandoExpedicao(dados) {
+    function preencherTabelaAguardando(dados) {
         mostrarTabela(wrapperAguardando);
-        const tbody = tabelaAguardandoExpedicao.querySelector('tbody');
+        const tbody = tabelaAguardando.querySelector('tbody');
+
         dados.forEach(item => {
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -460,17 +496,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td>${item.operacao_destino || ''}</td>
                 <td>${item.nota_fiscal_retorno || ''}</td>
             `;
-            row.addEventListener('click', () => preencherInputs(item, "aguardandoExpedicao", row));
+            row.onclick = () => preencherInputs(item, "aguardando", row);
             tbody.appendChild(row);
         });
     }
 
-    function preencherTabelaExpedido(dados) {
+    function preencherTabelaConcluida(dados) {
         mostrarTabela(wrapperConcluida);
-        const tbody = tabelaExpedido.querySelector('tbody');
+        const tbody = tabelaConcluida.querySelector('tbody');
+
         dados.forEach(item => {
             const row = document.createElement('tr');
-            row.innerHTML = ` 
+            row.innerHTML = `
                 <td>${item.setor || ''}</td>
                 <td>${item.cnpj || ''}</td>
                 <td>${item.razao_social || ''}</td>
@@ -480,7 +517,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td>${item.operacao_destino || ''}</td>
                 <td>${item.nota_fiscal_retorno || ''}</td>
             `;
-            row.addEventListener('click', () => preencherInputs(item, "expedido", row));
+            row.onclick = () => preencherInputs(item, "expedido", row);
             tbody.appendChild(row);
         });
     }
@@ -491,55 +528,51 @@ document.addEventListener("DOMContentLoaded", function () {
         btn.classList.add("ativo");
     }
 
-    function filtrarAguardando(listaAguardandoExpedicao, listaexpedido) {
-        const chavesExpedido = new Set(listaexpedido.map(item => `${item.cnpj}-${item.nota_fiscal}`));
-        return listaAguardandoExpedicao.filter(item => {
-            const chave = `${item.cnpj}-${item.nota_fiscal}`;
-            return !chavesExpedido.has(chave);
-        });
-    }
-
-    btnExpedicao.addEventListener('click', async () => {
+    // =====================================================
+    // BOTÕES DE FILTRO
+    // =====================================================
+    btnExpedicao.onclick = async () => {
         destacarBotao(btnExpedicao);
-        const expedicao = await fetch("https://kpi.stbextrema.com.br/BackEnd/Expedicao/consulta_expedicao.php").then(res => res.json());
-        const aguardando = await fetch("https://kpi.stbextrema.com.br/BackEnd/Expedicao/consulta_aguardando_envio.php").then(res => res.json());
-        dadosExpedido = expedicao;
-        dadosAguardandoExpedicao = aguardando;
-        const filtrados = filtrarAguardando(aguardando, expedicao);
-        preencherTabelaAguardandoExpedicao(filtrados);
-    });
+        const expedido = await fetch("/BackEnd/Expedicao/consulta_expedicao.php").then(r => r.json());
+        const aguardando = await fetch("/BackEnd/Expedicao/consulta_aguardando_envio.php").then(r => r.json());
 
-    btnEnviado.addEventListener('click', async () => {
+        const chaves = new Set(expedido.map(i => `${i.cnpj}-${i.nota_fiscal}`));
+        const filtrados = aguardando.filter(i => !chaves.has(`${i.cnpj}-${i.nota_fiscal}`));
+
+        dadosExpedido = expedido;
+        dadosAguardandoExpedicao = filtrados;
+
+        preencherTabelaAguardando(filtrados);
+    };
+
+    btnEnviado.onclick = async () => {
         destacarBotao(btnEnviado);
-        const dados = await fetch("https://kpi.stbextrema.com.br/BackEnd/Expedicao/consulta_expedicao.php").then(res => res.json());
+        const dados = await fetch("/BackEnd/Expedicao/consulta_expedicao.php").then(r => r.json());
         dadosExpedido = dados;
-        preencherTabelaExpedido(dados);
-    });
+        preencherTabelaConcluida(dados);
+    };
 
+    // Inicialização padrão
     btnExpedicao.click();
 
+    // =====================================================
+    // FILTRO POR NF
+    // =====================================================
     document.getElementById("filtro-nf").addEventListener("input", function () {
         const termo = this.value.toLowerCase().trim();
-
         if (!/^[\w\s\-./]*$/.test(termo)) return;
 
-        const tabelas = [tabelaAguardandoExpedicao, tabelaExpedido];
-
-        tabelas.forEach(tabela => {
-            const linhas = tabela.querySelectorAll("tbody tr");
-            linhas.forEach(linha => {
-                const notaFiscal = linha.cells[3]?.textContent.toLowerCase().trim() || '';
-                const notaFiscalRetorno = linha.cells[7]?.textContent.toLowerCase().trim() || '';
-
-                if (notaFiscal === termo || notaFiscalRetorno === termo) {
-                    linha.style.display = "";
-                } else {
-                    linha.style.display = "none";
-                }
+        [tabelaAguardando, tabelaConcluida].forEach(tabela => {
+            tabela.querySelectorAll("tbody tr").forEach(row => {
+                const nf = row.cells[3]?.textContent.toLowerCase().trim() || '';
+                const nfRet = row.cells[7]?.textContent.toLowerCase().trim() || '';
+                row.style.display = (nf === termo || nfRet === termo) ? "" : "none";
             });
         });
     });
+
 });
 </script>
+
 </body>
 </html>

@@ -471,15 +471,21 @@ function enviarSucesso(
  * @param string $message Mensagem descritiva do erro
  */
 function enviarErro(int $httpCode, string $message): void {
+    // Log full detail internally (do not expose to clients)
+    error_log(sprintf('[enviarErro] http=%d message=%s', $httpCode, $message));
+
     http_response_code($httpCode);
     header('Content-Type: application/json; charset=utf-8');
-    
+
+    // Public message should be generic to avoid leaking internals
+    $publicMessage = $httpCode >= 500 ? 'Erro interno no servidor' : 'Requisição inválida';
+
     echo json_encode([
         'error' => true,
-        'message' => $message,
+        'message' => $publicMessage,
         'timestamp' => date('Y-m-d H:i:s')
     ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-    
+
     exit;
 }
 
@@ -854,12 +860,15 @@ function logKpiExecution(
         
         $logLine .= PHP_EOL;
         
-        // 🔹 ESCREVER NO ARQUIVO (atômico + lock)
-        // FILE_APPEND: adiciona ao final
-        // LOCK_EX: lock exclusivo durante escrita (thread-safe)
-        $result = file_put_contents($logFile, $logLine, FILE_APPEND | LOCK_EX);
-        
-        return $result !== false;
+        // 🔹 ESCREVER NO ARQUIVO (tentar escrever silenciosamente)
+        $result = @file_put_contents($logFile, $logLine, FILE_APPEND | LOCK_EX);
+        if ($result === false) {
+            // Fallback para error_log caso gravação no arquivo falhe
+            error_log('[endpoint-helpers] Falha ao gravar log de execução: ' . trim($logLine));
+            return false;
+        }
+
+        return true;
         
     } catch (Exception $e) {
         // Falha silenciosa: log não deve interromper execução do KPI
@@ -981,10 +990,14 @@ function auditarExecucaoKpi(
             $paramsJson
         );
         
-        // 🔹 ESCREVER NO ARQUIVO DE AUDITORIA (LOCK_EX para concorrência)
-        $result = file_put_contents($auditFile, $logLine, FILE_APPEND | LOCK_EX);
-        
-        return $result !== false;
+        // 🔹 ESCREVER NO ARQUIVO DE AUDITORIA (tentar escrever silenciosamente)
+        $result = @file_put_contents($auditFile, $logLine, FILE_APPEND | LOCK_EX);
+        if ($result === false) {
+            error_log('[endpoint-helpers] Falha ao gravar audit.log: ' . trim($logLine));
+            return false;
+        }
+
+        return true;
         
     } catch (Exception $e) {
         // Falha silenciosa: auditoria não deve interromper execução do KPI

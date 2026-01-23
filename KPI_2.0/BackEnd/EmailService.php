@@ -182,6 +182,45 @@ class EmailService {
         
         return $this->enviarHTML($email, $assunto, $html, $nome);
     }
+
+    /**
+     * Gera um template HTML padronizado para e-mails com suporte simples a idiomas.
+     * @param string $title
+     * @param string $bodyHtml Conteúdo HTML principal (já formatado)
+     * @param string $lang Código do idioma: 'pt' ou 'en'
+     * @return string HTML completo
+     */
+    public function formatTemplate(string $title, string $bodyHtml, string $lang = 'pt') {
+        $brandUrl = 'https://kpi.stbextrema.com.br/FrontEnd/CSS/imagens/VISTA.png';
+
+        $strings = [
+            'pt' => [
+                'greeting' => 'Olá',
+                'help' => 'Se precisar de ajuda, responda este e-mail.',
+                'signature' => 'Atenciosamente,<br>Sistema VISTA - Suntech do Brasil'
+            ],
+            'en' => [
+                'greeting' => 'Hello',
+                'help' => 'If you need help, reply to this email.',
+                'signature' => 'Regards,<br>VISTA System - Suntech do Brasil'
+            ]
+        ];
+
+        $t = $strings[$lang] ?? $strings['pt'];
+
+        $html = "<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'>";
+        $html .= "<style>body{font-family:Arial,Helvetica,sans-serif;color:#222;background:#fff} .container{max-width:680px;margin:0 auto;padding:20px} .brand{display:flex;align-items:center;gap:12px} .brand img{height:48px}</style>";
+        $html .= "</head><body><div class='container'>";
+        $html .= "<div class='brand'><img src='{$brandUrl}' alt='VISTA' /><div style='font-size:18px;color:#0066cc;font-weight:600'>VISTA</div></div>";
+        $html .= "<h2 style='color:#0066cc;margin-top:18px;'>" . htmlspecialchars($title) . "</h2>";
+        $html .= "<div style='margin:14px 0;'>" . $bodyHtml . "</div>";
+        $html .= "<div style='margin-top:18px;color:#666;font-size:14px;'>" . $t['help'] . "</div>";
+        $html .= "<hr style='margin:18px 0;border:none;border-top:1px solid #eee'>";
+        $html .= "<div style='color:#666;font-size:13px;'>" . $t['signature'] . "</div>";
+        $html .= "</div></body></html>";
+
+        return $html;
+    }
     
     /**
      * Retorna o último erro do PHPMailer

@@ -1,109 +1,56 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
+@import url('tela_login.css');
+
+/* Compatibilidade: estilos específicos para a página de cadastro que usa o layout do login */
+
+/* Mapear a classe antiga `.registro-container` para o novo layout `.login-container` */
+.registro-container {
+  display: none; /* mantido para compatibilidade com versões antigas */
+}
+
+/* Pequenos ajustes visuais para a página de cadastro que reutiliza o template de login */
+.login-container h2 {
+  margin-bottom: 25px;
+  font-size: 24px;
+  color: #00d9ff;
+}
+
+.login-container .error-message {
+  background: rgba(255, 68, 68, 0.12);
+  border: 1px solid #ff6b6b;
+  color: #ffcccc;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.login-container .success-message {
+  background: rgba(61, 204, 147, 0.08);
+  border: 1px solid rgba(61, 204, 147, 0.25);
+  color: #dfffe6;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+/* Forçar inputs a aplicar o estilo do template */
+.login-container input[type="email"],
+.login-container input[type="text"],
+.login-container input[type="password"] {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid rgba(0, 217, 255, 0.3);
+  border-radius: 10px;
+  background: rgba(15, 35, 55, 0.6);
+  color: #fff;
+  font-size: 16px;
+}
+
+.btn-login {
+  width: 100%;
+  margin-top: 8px;
+}
+
+@media (max-width: 500px) {
+  .login-container {
+    padding: 20px;
   }
-  
-  body {
-    background: radial-gradient(circle at center, #043b6c 0%, #02101d 100%);
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #fff;
-  }
-  
-  /* Cabeçalho fixo no topo */
-  .header {
-    height: 100px;
-    width: 100%;
-    position: fixed;
-    top: 10px;
-    background-image: url('../CSS/imagens/Suntech-Sunlab.png');
-    background-size: 38%;
-    background-position: center;
-    background-repeat: no-repeat;
-    z-index: 1000;
-  }
-  
-  .registro-container {
-    background-color: rgba(0, 0, 0, 0.6);
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 0 30px rgba(0, 174, 255, 0.4);
-    width: 90%;
-    max-width: 400px;
-    text-align: center;
-    margin-top: 120px;
-  }
-  
-  .registro-container h2 {
-    margin-bottom: 25px;
-    font-size: 24px;
-  }
-  
-  .registro-container label {
-    display: block;
-    margin-bottom: 5px;
-    text-align: left;
-    font-weight: bold;
-  }
-  .registro-container input[type="email"],
-  .registro-container input[type="text"],
-  .registro-container input[type="password"] {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 20px;
-    border: none;
-    border-radius: 8px;
-    background-color: #fff;
-    color: #000;
-    font-size: 15px;
-    box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
-  }
-  
-  .registro-container input[type="submit"] {
-    background-color: #00aeff;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 12px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .registro-container input[type="submit"]:hover {
-    background-color: #008fd6;
-  }
-  
-  .registro-container .error-message {
-    color: #ff6b6b;
-    margin-bottom: 10px;
-  }
-  
-  .registro-container .back-link {
-    display: block;
-    margin-top: 15px;
-    color: #ccc;
-    text-decoration: underline;
-    font-size: 14px;
-    cursor: pointer;
-  }
-  
-  @media screen and (max-width: 500px) {
-    .registro-container {
-      padding: 20px;
-    }
-  
-    .registro-container h2 {
-      font-size: 20px;
-    }
-  
-    .registro-container input[type="submit"] {
-      font-size: 15px;
-    }
-  }
+}
   

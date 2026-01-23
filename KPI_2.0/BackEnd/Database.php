@@ -4,7 +4,17 @@
  * Implementa padrão Singleton para conexão única
  */
 
-require_once __DIR__ . '/config.php';
+// Carrega config se existir; não morrer se estiver ausente
+$configPath = __DIR__ . '/config.php';
+if (file_exists($configPath)) {
+    require_once $configPath;
+} else {
+    $logPath = __DIR__ . '/../logs/php_errors.log';
+    if (!file_exists(dirname($logPath))) {
+        @mkdir(dirname($logPath), 0755, true);
+    }
+    error_log('[Database] WARNING: config.php not found at ' . $configPath);
+}
 
 class Database {
     private static $instance = null;
@@ -14,20 +24,30 @@ class Database {
      * Construtor privado para Singleton
      */
     private function __construct() {
+        // Tenta abrir conexão MySQLi (por padrão TCP/host). Não logar senha.
         $this->connection = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
-        
-        // Define charset
-        $this->connection->set_charset("utf8mb4");
-        
+
+        // Define charset se a conexão foi estabelecida
+        if ($this->connection && !$this->connection->connect_error) {
+            $this->connection->set_charset("utf8mb4");
+        }
+
         // Verifica conexão
         if ($this->connection->connect_error) {
-            $errorMsg = "Erro de conexão MySQL: " . $this->connection->connect_error;
-            error_log($errorMsg);
-            
-            if (APP_DEBUG) {
-                throw new Exception($errorMsg);
+            // Preferir mysqli_connect_error para informações da última tentativa
+            $connectErr = mysqli_connect_error();
+            $connectErrNo = mysqli_connect_errno();
+
+            // Log detalhado para diagnóstico, sem expor senha
+            $errDetail = sprintf('[Database] CONNECT ERROR host=%s db=%s user=%s error=%s code=%s', DB_HOST, DB_NAME, DB_USERNAME, $connectErr, $connectErrNo);
+            error_log($errDetail);
+
+            // Em modo debug, propagar mensagem completa (ajuda em ambientes de desenvolvimento)
+            if (defined('APP_DEBUG') && APP_DEBUG) {
+                throw new Exception('Erro de conexão MySQL: ' . $connectErr);
             } else {
-                throw new Exception("Erro ao conectar com o banco de dados. Contate o administrador.");
+                // Lançar mensagem genérica para evitar vazamento
+                throw new Exception('Erro ao conectar com o banco de dados. Contate o administrador.');
             }
         }
     }
@@ -61,9 +81,9 @@ class Database {
         $stmt = $this->connection->prepare($sql);
         
         if (!$stmt) {
-            $error = "Erro ao preparar query: " . $this->connection->error;
+            $error = sprintf('[Database] PREPARE ERROR host=%s db=%s user=%s error=%s', DB_HOST, DB_NAME, DB_USERNAME, $this->connection->error);
             error_log($error);
-            throw new Exception(APP_DEBUG ? $error : "Erro ao executar operação no banco de dados");
+            throw new Exception(APP_DEBUG ? $this->connection->error : "Erro ao executar operação no banco de dados");
         }
         
         if (!empty($params)) {
@@ -75,9 +95,9 @@ class Database {
         }
         
         if (!$stmt->execute()) {
-            $error = "Erro ao executar query: " . $stmt->error;
+            $error = sprintf('[Database] EXECUTE ERROR host=%s db=%s user=%s error=%s', DB_HOST, DB_NAME, DB_USERNAME, $stmt->error);
             error_log($error);
-            throw new Exception(APP_DEBUG ? $error : "Erro ao executar operação no banco de dados");
+            throw new Exception(APP_DEBUG ? $stmt->error : "Erro ao executar operação no banco de dados");
         }
         
         return $stmt->get_result();
@@ -90,9 +110,9 @@ class Database {
         $stmt = $this->connection->prepare($sql);
         
         if (!$stmt) {
-            $error = "Erro ao preparar INSERT: " . $this->connection->error;
+            $error = sprintf('[Database] PREPARE INSERT ERROR host=%s db=%s user=%s error=%s', DB_HOST, DB_NAME, DB_USERNAME, $this->connection->error);
             error_log($error);
-            throw new Exception(APP_DEBUG ? $error : "Erro ao inserir dados");
+            throw new Exception(APP_DEBUG ? $this->connection->error : "Erro ao inserir dados");
         }
         
         if (!empty($params)) {
@@ -103,9 +123,9 @@ class Database {
         }
         
         if (!$stmt->execute()) {
-            $error = "Erro ao executar INSERT: " . $stmt->error;
+            $error = sprintf('[Database] INSERT EXECUTE ERROR host=%s db=%s user=%s error=%s', DB_HOST, DB_NAME, DB_USERNAME, $stmt->error);
             error_log($error);
-            throw new Exception(APP_DEBUG ? $error : "Erro ao inserir dados");
+            throw new Exception(APP_DEBUG ? $stmt->error : "Erro ao inserir dados");
         }
         
         return $this->connection->insert_id;
@@ -118,9 +138,9 @@ class Database {
         $stmt = $this->connection->prepare($sql);
         
         if (!$stmt) {
-            $error = "Erro ao preparar comando: " . $this->connection->error;
+            $error = sprintf('[Database] PREPARE COMMAND ERROR host=%s db=%s user=%s error=%s', DB_HOST, DB_NAME, DB_USERNAME, $this->connection->error);
             error_log($error);
-            throw new Exception(APP_DEBUG ? $error : "Erro ao executar operação");
+            throw new Exception(APP_DEBUG ? $this->connection->error : "Erro ao executar operação");
         }
         
         if (!empty($params)) {
@@ -131,9 +151,9 @@ class Database {
         }
         
         if (!$stmt->execute()) {
-            $error = "Erro ao executar comando: " . $stmt->error;
+            $error = sprintf('[Database] COMMAND EXECUTE ERROR host=%s db=%s user=%s error=%s', DB_HOST, DB_NAME, DB_USERNAME, $stmt->error);
             error_log($error);
-            throw new Exception(APP_DEBUG ? $error : "Erro ao executar operação");
+            throw new Exception(APP_DEBUG ? $stmt->error : "Erro ao executar operação");
         }
         
         return $stmt->affected_rows;
@@ -214,6 +234,17 @@ function getConnection() {
  * Função helper para obter instância do Database
  */
 function getDb() {
-    return Database::getInstance();
+    try {
+        return Database::getInstance();
+    } catch (Exception $e) {
+        // Log details for operators without exposing sensitive data
+        error_log(sprintf('[Database] GETDB ERROR host=%s db=%s user=%s error=%s', DB_HOST, DB_NAME, DB_USERNAME, $e->getMessage()));
+        if (defined('APP_DEBUG') && APP_DEBUG) {
+            // In debug, propagate original exception for diagnostics
+            throw $e;
+        }
+        // In production, throw a generic exception to be handled by controllers
+        throw new Exception('Database connection failed');
+    }
 }
 ?>

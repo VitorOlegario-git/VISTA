@@ -13,13 +13,13 @@ $tempo_limite = 1200; // 20 minutos
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $tempo_limite) {
     session_unset();
     session_destroy();
-    header("Location: https://kpi.stbextrema.com.br/FrontEnd/tela_login.php");
+    header("Location: /router_public.php?url=login");
     exit();
 }
 
 // Verifica se a sessão está ativa
 if (!isset($_SESSION['username'])) {
-    header("Location: https://kpi.stbextrema.com.br/FrontEnd/tela_login.php");
+    header("Location: /router_public.php?url=login");
     exit();
 }
 
@@ -34,7 +34,7 @@ $_SESSION['last_activity'] = time();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro Expedicao</title>
     <link rel="stylesheet" href="../CSS/expedicao.css">
-    <link rel="icon" href="https://kpi.stbextrema.com.br/FrontEnd/CSS/imagens/VISTA.png">
+    <link rel="icon" href="/FrontEnd/CSS/imagens/VISTA.png">
     <style>
         .button-group2 button.ativo {
             background-color: #1d3557;
@@ -164,7 +164,7 @@ $_SESSION['last_activity'] = time();
 <script>
 function voltarComReload() {
     // Redireciona e força o recarregamento
-    window.location.href = "https://kpi.stbextrema.com.br/router_public.php?url=dashboard&reload=" + new Date().getTime();
+    window.location.href = "/router_public.php?url=dashboard&reload=" + new Date().getTime();
 }
 
 let dadosAguardandoExpedicao = [];
@@ -183,7 +183,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const formData = new FormData(this);
 
         try {
-            const res = await fetch("https://kpi.stbextrema.com.br/BackEnd/Expedicao/Expedicao.php", {
+            const res = await fetch("/BackEnd/Expedicao/Expedicao.php", {
                 method: "POST",
                 body: formData
             });
@@ -283,8 +283,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     btnExpedicao.addEventListener('click', async () => {
         destacarBotao(btnExpedicao);
-        const expedicao = await fetch("https://kpi.stbextrema.com.br/BackEnd/Expedicao/consulta_expedicao.php").then(res => res.json());
-        const aguardando = await fetch("https://kpi.stbextrema.com.br/BackEnd/Expedicao/consulta_aguardando_envio.php").then(res => res.json());
+        const expedicao = await fetch("/BackEnd/Expedicao/consulta_expedicao.php").then(res => res.json());
+        const aguardando = await fetch("/BackEnd/Expedicao/consulta_aguardando_envio.php").then(res => res.json());
         dadosExpedido = expedicao;
         dadosAguardandoExpedicao = aguardando;
         const filtrados = filtrarAguardando(aguardando, expedicao);
@@ -293,7 +293,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     btnEnviado.addEventListener('click', async () => {
         destacarBotao(btnEnviado);
-        const dados = await fetch("https://kpi.stbextrema.com.br/BackEnd/Expedicao/consulta_expedicao.php").then(res => res.json());
+        const dados = await fetch("/BackEnd/Expedicao/consulta_expedicao.php").then(res => res.json());
         dadosExpedido = dados;
         preencherTabelaExpedido(dados);
     });

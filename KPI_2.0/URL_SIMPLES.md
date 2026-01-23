@@ -31,9 +31,9 @@ Move-Item .htaccess_simples .htaccess
 
 2. **Pronto!** Agora você pode usar:
 ```
-https://kpi.stbextrema.com.br/login
-https://kpi.stbextrema.com.br/dashboard
-https://kpi.stbextrema.com.br/analise
+/login
+/dashboard
+/analise
 ```
 
 ### **Opção 2: Servidor SEM mod_rewrite (Alternativa)**
@@ -41,9 +41,9 @@ https://kpi.stbextrema.com.br/analise
 Se o mod_rewrite não funcionar, use URLs com `router_public.php`:
 
 ```
-https://kpi.stbextrema.com.br/router_public.php?url=login
-https://kpi.stbextrema.com.br/router_public.php?url=dashboard
-https://kpi.stbextrema.com.br/router_public.php?url=analise
+/router_public.php?url=login
+/router_public.php?url=dashboard
+/router_public.php?url=analise
 ```
 
 Para ativar este modo, edite [router.php](router.php):
@@ -91,20 +91,20 @@ URLs antigas redirecionam automaticamente:
 
 ### **Teste 1: Verifica se mod_rewrite está funcionando**
 ```
-Acesse: https://kpi.stbextrema.com.br/login
+Acesse: /login
 ```
 - ✅ **Funciona?** Mod_rewrite OK!
 - ❌ **Erro 404?** Use a Opção 2
 
 ### **Teste 2: Verifica redirecionamentos**
 ```
-Acesse: https://kpi.stbextrema.com.br/FrontEnd/tela_login.php
+Acesse: /FrontEnd/tela_login.php
 ```
 Deve redirecionar automaticamente para `/login`
 
 ### **Teste 3: Página 404 personalizada**
 ```
-Acesse: https://kpi.stbextrema.com.br/pagina-inexistente
+Acesse: /pagina-inexistente
 ```
 Deve mostrar uma página 404 bonita
 
@@ -218,7 +218,7 @@ Test-Path Z:\KPI_2.0\.htaccess
 
 **Solução 2:** Use o modo alternativo com `?url=`
 ```
-https://kpi.stbextrema.com.br/router_public.php?url=login
+/router_public.php?url=login
 ```
 
 ### **Problema: CSS/JS não carregam**

@@ -49,7 +49,7 @@ APP_DEBUG=false
 
 Acesse via navegador:
 ```
-http://kpi.stbextrema.com.br/test_config.php
+/test_config.php
 ```
 
 Este script testa:
@@ -269,10 +269,10 @@ require_once __DIR__ . '/../BackEnd/conexao.php';
 
 ## 📞 Próximos Passos
 
-1. **Acesse o teste:** http://kpi.stbextrema.com.br/test_config.php
 2. **Verifique todos os ✅** - Se algum mostrar ❌, corrija antes de prosseguir
 3. **Remova test_config.php** após os testes
-4. **Acesse o login:** http://kpi.stbextrema.com.br/FrontEnd/tela_login.php
+1. **Acesse o teste:** /test_config.php
+4. **Acesse o login:** /FrontEnd/tela_login.php
 5. **Se funcionar:** Pronto! ✅
 6. **Se não funcionar:** Verifique os logs conforme orientado acima
 

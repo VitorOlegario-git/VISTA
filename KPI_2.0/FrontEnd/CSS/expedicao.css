@@ -707,6 +707,53 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     transform: translateY(-2px);
 }
 
+/* Explicit buttons used in the form markup */
+.btn-submit {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 13px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    background: linear-gradient(135deg, #388bfd 0%, #2563eb 100%);
+    color: #ffffff;
+    box-shadow: 0 6px 18px rgba(56,139,253,0.18);
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 26px rgba(56,139,253,0.24);
+}
+
+.btn-cancel {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    background: transparent; /* outline style */
+    color: #e2e8f0;
+    border: 1px solid rgba(226,232,240,0.06);
+}
+
+.btn-cancel:hover {
+    background: rgba(255,255,255,0.03);
+    transform: translateY(-1px);
+}
+
+.btn-submit i, .btn-cancel i { font-size: 14px; }
+
 /* ==========================================
    MENSAGENS E LOADING
    ========================================== */

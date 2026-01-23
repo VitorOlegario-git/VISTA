@@ -145,18 +145,50 @@ document.addEventListener("DOMContentLoaded", function () {
         formData.append("jsonData", JSON.stringify(jsonData));
         formData.append("entrada_id", entradaId);
 
-        fetch("https://kpi.stbextrema.com.br/BackEnd/Analise/salvar_dados_no_banco.php", {
-            method: "POST",
-            body: formData
+        // Use public router so endpoint works regardless of rewrite/root
+        fetch('/router_public.php?url=BackEnd/Analise/salvar_dados_no_banco.php', {
+            method: 'POST',
+            body: formData,
+            credentials: 'include'
         })
-        .then(res => res.json())
+        .then(async res => {
+            const contentType = res.headers.get('content-type') || '';
+            const text = await res.text();
+
+            if (!res.ok) {
+                console.error('Request failed', res.status, text);
+                // Try to parse JSON error if possible
+                if (contentType.includes('application/json')) {
+                    try {
+                        const parsed = JSON.parse(text);
+                        throw new Error(parsed.error || JSON.stringify(parsed));
+                    } catch (e) {
+                        throw new Error(parsedErrorMessage(text));
+                    }
+                }
+                throw new Error('Requisição falhou com status ' + res.status);
+            }
+
+            if (!contentType.includes('application/json')) {
+                console.error('Non-JSON response', text);
+                throw new Error('Resposta inesperada do servidor (não JSON)');
+            }
+
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                console.error('JSON parse error:', e, 'raw:', text);
+                throw new Error('Erro ao interpretar resposta JSON');
+            }
+        })
         .then(response => {
             console.log("Resposta do servidor:", response);
 
             if (response.success) {
                 alert("Dados salvos com sucesso!");
                 setTimeout(() => {
-                    window.location.href = "https://kpi.stbextrema.com.br/BackEnd/cadastro_realizado.php";
+                    // Redirect via public router to avoid 404s when rewrite is absent
+                    window.location.href = '/router_public.php?url=cadastro-realizado';
                 }, 1000);
             } else {
                 alert("Erro ao salvar: " + (response.error || "Erro desconhecido."));
@@ -168,12 +200,23 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .catch(err => {
             console.error("Erro de requisição:", err);
-            alert("Erro ao comunicar com o servidor.");
+            alert("Erro ao comunicar com o servidor: " + (err.message || err));
             // ======== FEEDBACK VISUAL: Restaurar botão ========
             btn.disabled = false;
             if (btnText) btnText.style.display = "inline";
             if (btnLoading) btnLoading.style.display = "none";
         });
+
+        // Helper to extract any useful message from non-JSON responses
+        function parsedErrorMessage(rawText) {
+            try {
+                const j = JSON.parse(rawText);
+                return j.error || JSON.stringify(j);
+            } catch (e) {
+                // Strip HTML tags if present and return first 200 chars
+                return rawText.replace(/<[^>]*>/g, '').trim().slice(0, 200);
+            }
+        }
     }
 
     // Eventos

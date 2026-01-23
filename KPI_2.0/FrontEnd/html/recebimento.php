@@ -107,7 +107,7 @@ $_SESSION['last_activity'] = time();
 
     <!-- Corpo do Painel: Formulário -->
     <div class="panel-body">
-        <form id="form-recebimento" action="https://kpi.stbextrema.com.br/BackEnd/Recebimento/Recebimento.php" method="POST">
+        <form id="form-recebimento" action="/BackEnd/Recebimento/Recebimento.php" method="POST">
 
             <!-- Bloco: Identificação -->
             <div class="form-section">
@@ -289,184 +289,262 @@ $_SESSION['last_activity'] = time();
 </div>
 
 <script>
-// ==========================================
-// CONTROLE DO PAINEL DESLIZANTE
-// ==========================================
+// =====================================================
+// CONFIGURAÇÕES GLOBAIS
+// =====================================================
+const BASE_ROUTER_URL = '/router_public.php?url=';
 
-const sidePanel = document.getElementById('side-panel');
-const btnNewRecord = document.getElementById('btn-new-record');
-const btnClosePanel = document.getElementById('btn-close-panel');
-const panelOverlay = document.getElementById('panel-overlay');
-const panelTitle = document.getElementById('panel-title');
-const panelIcon = document.getElementById('panel-icon');
-const formRecebimento = document.getElementById('form-recebimento');
+function redirectTo(route, params = "") {
+    window.top.location.href = BASE_ROUTER_URL + route + params;
+}
 
+function forcarRecarregamento() {
+    redirectTo("dashboard", "&nocache=" + Date.now());
+}
+
+// =====================================================
+// ESTADO
+// =====================================================
 let isPanelOpen = false;
 let isEditMode = false;
 
-// Abrir painel para novo registro
+// =====================================================
+// ELEMENTOS
+// =====================================================
+const sidePanel       = document.getElementById('side-panel');
+const panelOverlay    = document.getElementById('panel-overlay');
+const btnNewRecord    = document.getElementById('btn-new-record');
+const btnClosePanel   = document.getElementById('btn-close-panel');
+const panelTitle      = document.getElementById('panel-title');
+const panelIcon       = document.getElementById('panel-icon');
+const form            = document.getElementById('form-recebimento');
+
+// =====================================================
+// CONTROLE DO PAINEL
+// =====================================================
 function openPanelNew() {
     isEditMode = false;
     isPanelOpen = true;
-    
-    // Limpar formulário
-    formRecebimento.reset();
-    
-    // Atualizar visual
+
+    form.reset();
+
     sidePanel.classList.add('open');
     sidePanel.classList.remove('edit-mode');
     panelOverlay.classList.add('active');
-    
-    // Atualizar título
-    panelTitle.textContent = 'Novo Recebimento';
-    panelIcon.className = 'fas fa-plus-circle';
-    
-    // Restaurar valor do operador
-    document.getElementById('operador').value = '<?php echo $_SESSION['username'] ?? ''; ?>';
+
+    panelTitle.textContent = "Novo Recebimento";
+    panelIcon.className = "fas fa-plus-circle";
+
+    document.getElementById('operador').value = "<?php echo $_SESSION['username'] ?? ''; ?>";
+
+    limparSelecaoTabela();
 }
 
-// Abrir painel para edição
 function openPanelEdit() {
     isEditMode = true;
     isPanelOpen = true;
-    
-    // Atualizar visual
+
     sidePanel.classList.add('open', 'edit-mode');
     panelOverlay.classList.add('active');
-    
-    // Atualizar título
-    panelTitle.textContent = 'Editando Recebimento';
-    panelIcon.className = 'fas fa-edit';
+
+    panelTitle.textContent = "Editando Recebimento";
+    panelIcon.className = "fas fa-edit";
 }
 
-// Fechar painel
 function closePanel() {
     isPanelOpen = false;
     isEditMode = false;
-    
+
     sidePanel.classList.remove('open', 'edit-mode');
     panelOverlay.classList.remove('active');
-    
-    // Remover seleção da tabela
-    document.querySelectorAll('#tabela-info tbody tr').forEach(r => r.classList.remove('row-selected'));
+
+    limparSelecaoTabela();
 }
 
-// Event Listeners
-btnNewRecord.addEventListener('click', openPanelNew);
-btnClosePanel.addEventListener('click', closePanel);
-panelOverlay.addEventListener('click', closePanel);
+function limparSelecaoTabela() {
+    document
+        .querySelectorAll('#tabela-info tbody tr')
+        .forEach(r => r.classList.remove('row-selected'));
+}
 
-// ESC key para fechar
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && isPanelOpen) {
-        closePanel();
-    }
+// =====================================================
+// EVENTOS GERAIS
+// =====================================================
+btnNewRecord.onclick = openPanelNew;
+btnClosePanel.onclick = closePanel;
+panelOverlay.onclick = closePanel;
+
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && isPanelOpen) closePanel();
 });
 
-// ==========================================
-// FUNÇÕES ORIGINAIS (PRESERVADAS)
-// ==========================================
-
-function forcarRecarregamento() {
-    window.location.assign("https://kpi.stbextrema.com.br/router_public.php?url=dashboard&nocache=" + new Date().getTime());
-}
-
+// =====================================================
+// MODAL DE SUCESSO
+// =====================================================
 function showSuccessModal(message) {
     document.getElementById("success-message").innerText = message;
     document.getElementById("success-modal").style.display = "block";
-    setTimeout(closeSuccessModal, 3000);
+    setTimeout(closeSuccessModal, 2500);
 }
 
 function closeSuccessModal() {
     document.getElementById("success-modal").style.display = "none";
-    closePanel(); // Fechar painel após sucesso
+    closePanel();
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    // Inicializar máscara de CNPJ
-    initializeCNPJMask();
-    
-    const cnpjInput = document.getElementById("cnpj");
+// =====================================================
+// INICIALIZAÇÃO
+// =====================================================
+document.addEventListener("DOMContentLoaded", () => {
 
+    initializeCNPJMask();
+
+    // -----------------------------------------------
+    // BUSCA CLIENTE POR CNPJ
+    // -----------------------------------------------
+    const cnpjInput = document.getElementById("cnpj");
     if (cnpjInput) {
-        cnpjInput.addEventListener("blur", function () {
-            let cnpj = this.value.trim();
-            if (cnpj.length === 18) {
-                fetch("https://kpi.stbextrema.com.br/BackEnd/buscar_cliente.php", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    body: "cnpj=" + encodeURIComponent(cnpj)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.encontrado) {
-                        document.getElementById("razao_social").value = data.razao_social;
-                    } else {
-                        alert("Cliente não cadastrado. Você será redirecionado para o cadastro.");
-                        window.location.href = "https://kpi.stbextrema.com.br/router_public.php?url=cadastrar-cliente&cnpj=" + encodeURIComponent(data.cnpj_usado);
+        cnpjInput.addEventListener("blur", async () => {
+            const cnpj = cnpjInput.value.trim();
+            if (cnpj.length !== 18) return;
+
+            try {
+                const res = await fetch(
+                    "/BackEnd/buscar_cliente.php",
+                    {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: "cnpj=" + encodeURIComponent(cnpj)
                     }
-                })
-                .catch(error => console.error("Erro ao buscar cliente:", error));
+                );
+
+                const json = await res.json();
+
+                if (json.encontrado) {
+                    document.getElementById("razao_social").value = json.razao_social;
+                } else {
+                    alert("Cliente não cadastrado. Você será redirecionado.");
+                    redirectTo("cadastrar-cliente", "&cnpj=" + encodeURIComponent(json.cnpj_usado));
+                }
+
+            } catch (err) {
+                console.error("Erro ao buscar cliente:", err);
             }
         });
     }
 
-    // Consulta de recebimentos
-    fetch("https://kpi.stbextrema.com.br/BackEnd/Recebimento/consulta_recebimento.php")
-        .then(response => response.json())
-        .then(dados => {
-            const tbody = document.querySelector('#tabela-info tbody');
-            tbody.innerHTML = "";
-            dados.forEach(item => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${item.cod_rastreio}</td>
-                    <td>${item.setor}</td>
-                    <td>${item.cnpj}</td>
-                    <td>${item.razao_social}</td>
-                    <td>${item.data_recebimento}</td>
-                    <td>${item.quantidade}</td>
-                    <td>${item.operacao_destino}</td>
-                    <td>${item.observacoes}</td>
-                `;
-                row.addEventListener('click', () => preencherInputs(item, row));
-                tbody.appendChild(row);
-            });
-        });
+    // -----------------------------------------------
+    // LISTAGEM DE RECEBIMENTOS
+    // -----------------------------------------------
+    carregarTabelaRecebimento();
 
-    function preencherInputs(item, row) {
-        // Remove seleção anterior
-        document.querySelectorAll('#tabela-info tbody tr').forEach(r => r.classList.remove('row-selected'));
-        
-        // Adiciona classe na linha clicada
+    function carregarTabelaRecebimento() {
+        fetch("/BackEnd/Recebimento/consulta_recebimento.php")
+            .then(r => r.json())
+            .then(dados => {
+                const tbody = document.querySelector('#tabela-info tbody');
+                tbody.innerHTML = "";
+
+                dados.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${item.cod_rastreio || ''}</td>
+                        <td>${item.setor || ''}</td>
+                        <td>${item.cnpj || ''}</td>
+                        <td>${item.razao_social || ''}</td>
+                        <td>${item.data_recebimento || ''}</td>
+                        <td>${item.quantidade || ''}</td>
+                        <td>${item.operacao_destino || ''}</td>
+                        <td>${item.observacoes || ''}</td>
+                    `;
+                    row.onclick = () => preencherFormulario(item, row);
+                    tbody.appendChild(row);
+                });
+            });
+    }
+
+    function preencherFormulario(item, row) {
+        limparSelecaoTabela();
         row.classList.add('row-selected');
-        
-        // Preenche os campos
-        document.querySelector('#cod_rastreio').value = item.cod_rastreio;
-        document.querySelector('#setor').value = item.setor;
-        document.querySelector('#cnpj').value = item.cnpj;
-        document.querySelector('#razao_social').value = item.razao_social;
-        document.querySelector('#data_recebimento').value = item.data_recebimento;
-        document.querySelector('#quantidade').value = item.quantidade;
-        document.querySelector('#operacao_origem').value = item.operacao_destino;
-        document.querySelector('#obs').value = item.observacoes;
-        
-        // Abre painel em modo edição
+
+        document.getElementById('cod_rastreio').value     = item.cod_rastreio || '';
+        document.getElementById('setor').value            = item.setor || '';
+        document.getElementById('cnpj').value             = item.cnpj || '';
+        document.getElementById('razao_social').value     = item.razao_social || '';
+        document.getElementById('data_recebimento').value = item.data_recebimento || '';
+        document.getElementById('nota_fiscal').value      = item.nota_fiscal || '';
+        document.getElementById('quantidade').value       = item.quantidade || '';
+        document.getElementById('operacao_origem').value  = item.operacao_destino || '';
+        document.getElementById('obs').value              = item.observacoes || '';
+
         openPanelEdit();
     }
 
-    document.getElementById("filtro-rastreio-cnpj").addEventListener("input", function () {
-        const termo = this.value.toLowerCase();
-        const linhas = document.querySelectorAll("#tabela-info tbody tr");
+    // -----------------------------------------------
+    // SUBMIT DO FORMULÁRIO
+    // -----------------------------------------------
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
 
-        linhas.forEach(linha => {
-            const codRastreio = linha.cells[0].textContent.toLowerCase();
-            const cnpj = linha.cells[2].textContent.toLowerCase();
-            linha.style.display = codRastreio.includes(termo) || cnpj.includes(termo) ? "" : "none";
-        });
+        const formData = new FormData(form);
+
+        try {
+            const res = await fetch(
+                "/BackEnd/Recebimento/Recebimento.php",
+                { method: "POST", body: formData }
+            );
+
+            const text = await res.text();
+            let json;
+
+            try {
+                json = JSON.parse(text);
+            } catch {
+                alert("Resposta inválida do servidor.");
+                return;
+            }
+
+            if (json.error) {
+                alert(json.error);
+                return;
+            }
+
+            if (json.success) {
+                showSuccessModal(json.success);
+                carregarTabelaRecebimento();
+            }
+
+            if (json.redirect) {
+                redirectTo(json.redirect);
+            }
+
+        } catch (err) {
+            console.error("Erro no envio:", err);
+            alert("Erro ao salvar recebimento.");
+        }
     });
+
+    // -----------------------------------------------
+    // FILTRO (RASTREIO / CNPJ)
+    // -----------------------------------------------
+    document
+        .getElementById("filtro-rastreio-cnpj")
+        .addEventListener("input", function () {
+
+            const termo = this.value.toLowerCase().trim();
+            const linhas = document.querySelectorAll("#tabela-info tbody tr");
+
+            linhas.forEach(linha => {
+                const rastreio = linha.cells[0].textContent.toLowerCase();
+                const cnpj     = linha.cells[2].textContent.toLowerCase();
+                linha.style.display =
+                    rastreio.includes(termo) || cnpj.includes(termo) ? "" : "none";
+            });
+        });
+
 });
 </script>
+
 
 </body>
 </html>

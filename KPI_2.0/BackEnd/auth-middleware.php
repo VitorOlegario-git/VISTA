@@ -21,6 +21,8 @@ if (basename($_SERVER['PHP_SELF']) === 'auth-middleware.php') {
  * Suporta dois formatos:
  * - Authorization: Bearer TOKEN_AQUI
  * - Authorization: TOKEN_AQUI
+ *
+ * Sugestão: Para maior segurança, implemente JWT futuramente.
  * 
  * @param bool $required Se true, retorna 401 e encerra execução. Se false, apenas retorna bool.
  * @return bool True se autenticado, false caso contrário
@@ -245,8 +247,11 @@ function logAuthEvent(string $level, string $message, array $context = []): void
     $contextJson = !empty($context) ? ' | ' . json_encode($context, JSON_UNESCAPED_UNICODE) : '';
     $logEntry = "[{$timestamp}] [{$level}] {$message}{$contextJson}\n";
     
-    // Escrever log (silencioso se falhar)
-    @file_put_contents($logFile, $logEntry, FILE_APPEND | LOCK_EX);
+    // Tentar escrever no arquivo de log (silencioso) e, se falhar, usar error_log
+    $res = @file_put_contents($logFile, $logEntry, FILE_APPEND | LOCK_EX);
+    if ($res === false) {
+        error_log('[auth-middleware] Falha ao gravar auth.log: ' . trim($logEntry));
+    }
 }
 
 /**

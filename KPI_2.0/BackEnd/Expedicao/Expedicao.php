@@ -130,7 +130,7 @@ if (!empty(trim($saidaIndesejada))) {
     echo json_encode([
         "success" => true,
         "message" => "Cadastro/atualização concluída com sucesso.",
-        "redirect" => "https://kpi.stbextrema.com.br/BackEnd/cadastro_realizado.php"
+        "redirect" => "cadastro-realizado"
     ]);
 }
 exit();

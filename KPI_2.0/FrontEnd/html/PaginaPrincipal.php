@@ -27,7 +27,7 @@ definirHeadersSeguranca();
                 <img src="<?php echo asset('FrontEnd/CSS/imagens/VISTA.png'); ?>" alt="VISTA Logo" class="app-logo">
                 <div class="app-brand">
                     <span class="app-title">VISTA</span>
-                    <span class="app-subtitle">Sistema de Gestão Integrada</span>
+                    <span class="app-subtitle">Visão Integrada de Sistemas Técnicos e Análises</span>
                 </div>
             </div>
             <div class="app-header-right">
@@ -63,7 +63,7 @@ definirHeadersSeguranca();
                             <h3 class="card-title">Inventário de Status de Remessas</h3>
                         </div>
                         <p class="card-description">Ferramenta restrita para validação e correção manual de status operacionais.</p>
-                        <button class="card-action-btn" onclick="window.location.href='/inventario-status.php'">Acessar Inventário</button>
+                        <button class="card-action-btn" onclick="window.location.href='/router_public.php?url=inventario/ciclos'">Acessar Inventário</button>
                     </div>
                 </div>
                 <?php endif; ?>

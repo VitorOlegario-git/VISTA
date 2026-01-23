@@ -127,7 +127,8 @@ $_SESSION['last_activity'] = time();
         $('#entrada_id').val('Consultando...');
 
         $.ajax({
-            url: 'https://kpi.stbextrema.com.br/FrontEnd/html/consulta_id.php',
+            // Use public router to avoid 404 when server rewrite/root differs
+            url: '/router_public.php?url=consulta/id',
             method: 'POST',
             dataType: 'json',
             data: {

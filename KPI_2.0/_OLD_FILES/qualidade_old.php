@@ -11,16 +11,16 @@ $tempo_limite = 1200; // 20 minutos
 
 // Verifica inatividade
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $tempo_limite) {
-    session_unset();
-    session_destroy();
-    header("Location:https://kpi.stbextrema.com.br/FrontEnd/tela_login.php");
-    exit();
+  session_unset();
+  session_destroy();
+  header("Location: /router_public.php?url=login");
+  exit();
 }
 
 // Verifica se a sessão está ativa
 if (!isset($_SESSION['username'])) {
-    header("Location:https://kpi.stbextrema.com.br/FrontEnd/tela_login.php");
-    exit();
+  header("Location: /router_public.php?url=login");
+  exit();
 }
 
 $_SESSION['last_activity'] = time();
@@ -34,7 +34,7 @@ $_SESSION['last_activity'] = time();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro Qualidade</title>
     <link rel="stylesheet" href="../CSS/qualidade.css">
-    <link rel="icon" href="https://kpi.stbextrema.com.br/FrontEnd/CSS/imagens/VISTA.png">
+    <link rel="icon" href="/FrontEnd/CSS/imagens/VISTA.png">
 
     <style>
         .button-group2 button.ativo {
@@ -179,7 +179,7 @@ $_SESSION['last_activity'] = time();
 <script>
 
 function voltarComReload() {
-  window.top.location.href = "https://kpi.stbextrema.com.br/router_public.php?url=dashboard&reload=" + new Date().getTime();
+  window.top.location.href = "/router_public.php?url=dashboard&reload=" + new Date().getTime();
 }
 
 let dadosAguardandoNFRetorno = [];
@@ -339,7 +339,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     try {
       // PRE-CHECK
-      let res = await fetch("https://kpi.stbextrema.com.br/BackEnd/Qualidade/Qualidade.php", {
+      let res = await fetch("/BackEnd/Qualidade/Qualidade.php", {
         method: "POST",
         body: checkData
       });
@@ -384,7 +384,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       // SAVE
-      let resSave = await fetch("https://kpi.stbextrema.com.br/BackEnd/Qualidade/Qualidade.php", {
+      let resSave = await fetch("/BackEnd/Qualidade/Qualidade.php", {
         method: "POST",
         body: formData
       });
@@ -525,11 +525,11 @@ document.addEventListener("DOMContentLoaded", function () {
   // eventos para os botões (busca dados)
   btnAguardandoNfRetorno.addEventListener('click', () => {
     destacarBotao(btnAguardandoNfRetorno);
-    fetch("https://kpi.stbextrema.com.br/BackEnd/Qualidade/consulta_qualidade.php")
+    fetch("/BackEnd/Qualidade/consulta_qualidade.php")
       .then(res => res.json())
       .then(qualidade => {
         dadosQualidade = qualidade;
-        fetch("https://kpi.stbextrema.com.br/BackEnd/Qualidade/consulta_aguardando_nf.php")
+        fetch("/BackEnd/Qualidade/consulta_aguardando_nf.php")
           .then(res => res.json())
           .then(aguardandoNF => {
             dadosAguardandoNFRetorno = aguardandoNF;
@@ -541,7 +541,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   btnQualidade.addEventListener('click', () => {
     destacarBotao(btnQualidade);
-    fetch("https://kpi.stbextrema.com.br/BackEnd/Qualidade/consulta_qualidade.php")
+    fetch("/BackEnd/Qualidade/consulta_qualidade.php")
       .then(res => res.json())
       .then(dados => {
         dadosQualidade = dados;

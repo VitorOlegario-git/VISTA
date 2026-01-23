@@ -146,7 +146,8 @@ document.addEventListener("DOMContentLoaded", function () {
         if (btnText) btnText.style.display = "none";
         if (btnLoading) btnLoading.style.display = "flex";
 
-        fetch("https://kpi.stbextrema.com.br/BackEnd/Reparo/salvar_dados_no_banco_2.php", {
+        // Use public router so the request works regardless of server root or rewrite rules
+        fetch("/router_public.php?url=reparo/salvar-apontamentos-pos-analise", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -166,7 +167,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (response.success) {
                     alert("Dados salvos com sucesso!");
                     setTimeout(() => {
-                        window.location.href = "https://kpi.stbextrema.com.br/BackEnd/cadastro_realizado.php";
+                        // Redirect through public router to avoid 404 when URL rewriting is not configured
+                        window.location.href = '/router_public.php?url=cadastro-realizado';
                     }, 1000);
                 } else {
                     alert("Erro ao salvar: " + (response.error || "Erro desconhecido."));

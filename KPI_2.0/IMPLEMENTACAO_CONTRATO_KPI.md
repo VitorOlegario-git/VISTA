@@ -187,17 +187,19 @@ Z:/KPI_2.0/
 
 ### Método 1: Navegador
 ```
-http://kpi.stbextrema.com.br/DashBoard/backendDash/kpis/TESTE_KPI_RESPONSE.php
+ /DashBoard/backendDash/kpis/TESTE_KPI_RESPONSE.php
 ```
 
 ### Método 2: Curl (Sucesso)
 ```bash
-curl -i "http://kpi.stbextrema.com.br/DashBoard/backendDash/kpis/TESTE_KPI_RESPONSE.php?teste=success"
+
+curl -i "/DashBoard/backendDash/kpis/TESTE_KPI_RESPONSE.php?teste=success"
 ```
 
 ### Método 3: Curl (Erro)
 ```bash
-curl -i "http://kpi.stbextrema.com.br/DashBoard/backendDash/kpis/TESTE_KPI_RESPONSE.php?teste=error"
+
+curl -i "/DashBoard/backendDash/kpis/TESTE_KPI_RESPONSE.php?teste=error"
 ```
 
 ### Validar JSON

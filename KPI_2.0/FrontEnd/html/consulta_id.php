@@ -11,7 +11,8 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
-require_once $_SERVER['DOCUMENT_ROOT'] . "/BackEnd/conexao.php";
+// Use caminho relativo ao arquivo para suportar diferentes server roots
+require_once __DIR__ . '/../../BackEnd/conexao.php';
 
 header("Content-Type: application/json");
 
@@ -22,17 +23,20 @@ if (empty($nota_fiscal) || empty($cnpj)) {
     echo json_encode(["error" => "CNPJ ou NF não informados"]);
     exit();
 }
+// Normaliza CNPJ (remove pontos, barras e traços) para comparação robusta
+$cnpj_digits = preg_replace('/\D/', '', $cnpj);
 
-$sql = "SELECT id FROM analise_resumo WHERE nota_fiscal = ? AND cnpj = ? LIMIT 1";
+// Consulta comparando CNPJ sem formatação (usa REPLACE encadeado)
+$sql = "SELECT id FROM analise_resumo WHERE nota_fiscal = ? AND REPLACE(REPLACE(REPLACE(REPLACE(cnpj, '.', ''), '/', ''), '-', ''), ' ', '') = ? LIMIT 1";
 $stmt = $conn->prepare($sql);
 if (!$stmt) {
-    echo json_encode(["error" => "Erro na preparação da consulta"]);
+    echo json_encode(["error" => "Erro na preparação da consulta", "detail" => $conn->error]);
     exit();
 }
 
-$stmt->bind_param("ss", $nota_fiscal, $cnpj);
+$stmt->bind_param("ss", $nota_fiscal, $cnpj_digits);
 if (!$stmt->execute()) {
-    echo json_encode(["error" => "Erro na execução da consulta"]);
+    echo json_encode(["error" => "Erro na execução da consulta", "detail" => $stmt->error]);
     $stmt->close();
     $conn->close();
     exit();

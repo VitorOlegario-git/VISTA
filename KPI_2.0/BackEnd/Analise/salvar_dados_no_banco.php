@@ -76,7 +76,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         $conn->commit();
-        echo json_encode(["success" => true, "message" => "Dados inseridos com sucesso"]);
+        echo json_encode([
+            "success" => true,
+            "message" => "Dados inseridos com sucesso",
+            "redirect" => "cadastro-realizado"
+        ]);
     } catch (Exception $e) {
         $conn->rollback();
         echo json_encode(["error" => "Erro na gravação: " . $e->getMessage()]);

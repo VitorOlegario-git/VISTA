@@ -13,13 +13,13 @@ $tempo_limite = 1200; // 20 minutos
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $tempo_limite) {
     session_unset();
     session_destroy();
-    header("Location: https://kpi.stbextrema.com.br/FrontEnd/tela_login.php");
+    header("Location: /router_public.php?url=login");
     exit();
 }
 
 // Verifica se a sessão está ativa
 if (!isset($_SESSION['username'])) {
-    header("Location: https://kpi.stbextrema.com.br/FrontEnd/tela_login.php");
+    header("Location: /router_public.php?url=login");
     exit();
 }
 
@@ -33,8 +33,8 @@ $_SESSION['last_activity'] = time();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro Análise</title>
-    <link rel="stylesheet" href="https://kpi.stbextrema.com.br/FrontEnd/CSS/analise.css">
-    <link rel="icon" href="https://kpi.stbextrema.com.br/FrontEnd/CSS/imagens/VISTA.png">
+    <link rel="stylesheet" href="/FrontEnd/CSS/analise.css">
+    <link rel="icon" href="/FrontEnd/CSS/imagens/VISTA.png">
     <style>
         .button-group2 button.ativo {
             background-color: #1d3557;
@@ -44,7 +44,7 @@ $_SESSION['last_activity'] = time();
         }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://kpi.stbextrema.com.br/FrontEnd/JS/CnpjMask.js"></script>
+    <script src="/FrontEnd/JS/CnpjMask.js"></script>
 </head>
 <body>
 <div class="analise-container">
@@ -190,7 +190,7 @@ $_SESSION['last_activity'] = time();
 
 function voltarComReload() {
     // Redireciona e força o recarregamento
-    window.top.location.href = "https://kpi.stbextrema.com.br/router_public.php?url=dashboard&reload=" + new Date().getTime();
+    window.top.location.href = "/router_public.php?url=dashboard&reload=" + new Date().getTime();
 }
 
 let dadosAguardando = [];
@@ -281,7 +281,7 @@ operacaoOrigem.addEventListener("change", atualizarOperacaoDestino);
     mensagemErro.innerHTML = ""; // Limpa mensagens antigas
 
     try {
-        const res = await fetch("https://kpi.stbextrema.com.br/BackEnd/Analise/Analise.php", {
+        const res = await fetch("/BackEnd/Analise/Analise.php", {
             method: "POST",
             body: formData
         });
@@ -304,9 +304,9 @@ operacaoOrigem.addEventListener("change", atualizarOperacaoDestino);
               if (data.acao === "inicio") {
                 const cnpj = encodeURIComponent(formData.get("cnpj"));
                 const nf = encodeURIComponent(formData.get("nota_fiscal"));
-                window.top.location.href = `https://kpi.stbextrema.com.br/router_public.php?url=cadastro-entrada&cnpj=${cnpj}&nf_entrada=${nf}`;
+                window.top.location.href = `/router_public.php?url=cadastro-entrada&cnpj=${cnpj}&nf_entrada=${nf}`;
               } else if (data.acao === "fim") {
-                window.top.location.href = "https://kpi.stbextrema.com.br/BackEnd/cadastro_realizado.php";
+                window.top.location.href = '/router_public.php?url=cadastro-realizado';
               }
            }, 200);
 
@@ -418,11 +418,11 @@ operacaoOrigem.addEventListener("change", atualizarOperacaoDestino);
 
     btnAguardando.addEventListener('click', () => {
         destacarBotao(btnAguardando);
-        fetch("https://kpi.stbextrema.com.br/BackEnd/Analise/consulta_analise.php")
+        fetch("/BackEnd/Analise/consulta_analise.php")
             .then(res => res.json())
             .then(analise => {
                 dadosEmAnalise = analise;
-                fetch("https://kpi.stbextrema.com.br/BackEnd/Analise/consulta_aguardando_analise.php")
+                fetch("/BackEnd/Analise/consulta_aguardando_analise.php")
                     .then(res => res.json())
                     .then(aguardando => {
                         dadosAguardando = aguardando;
@@ -434,7 +434,7 @@ operacaoOrigem.addEventListener("change", atualizarOperacaoDestino);
 
     btnEmAnalise.addEventListener('click', () => {
         destacarBotao(btnEmAnalise);
-        fetch("https://kpi.stbextrema.com.br/BackEnd/Analise/consulta_analise.php")
+        fetch("/BackEnd/Analise/consulta_analise.php")
             .then(res => res.json())
             .then(dados => {
                 dadosEmAnalise = dados;

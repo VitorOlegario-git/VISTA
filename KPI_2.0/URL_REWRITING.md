@@ -27,16 +27,16 @@
 
 **Antes:**
 ```
-https://kpi.stbextrema.com.br/FrontEnd/html/PaginaPrincipal.php
-https://kpi.stbextrema.com.br/FrontEnd/tela_login.php
-https://kpi.stbextrema.com.br/FrontEnd/html/analise.php
+/FrontEnd/html/PaginaPrincipal.php
+/FrontEnd/tela_login.php
+/FrontEnd/html/analise.php
 ```
 
 **Depois:**
 ```
-https://kpi.stbextrema.com.br/dashboard
-https://kpi.stbextrema.com.br/login
-https://kpi.stbextrema.com.br/analise
+/dashboard
+/login
+/analise
 ```
 
 ---
@@ -134,25 +134,25 @@ O `.htaccess` também implementa:
 
 ### **Teste 1: URLs Amigáveis**
 ```
-✅ https://kpi.stbextrema.com.br/login
-✅ https://kpi.stbextrema.com.br/dashboard
-✅ https://kpi.stbextrema.com.br/analise
+✅ /login
+✅ /dashboard
+✅ /analise
 ```
 
 ### **Teste 2: Redirecionamentos Automáticos**
 Acesse a URL antiga e veja se redireciona:
 ```
-https://kpi.stbextrema.com.br/FrontEnd/tela_login.php
+/FrontEnd/tela_login.php
     ↓ deve redirecionar para ↓
-https://kpi.stbextrema.com.br/login
+/login
 ```
 
 ### **Teste 3: Bloqueios de Segurança**
 Tente acessar (deve dar erro 403/404):
 ```
-❌ https://kpi.stbextrema.com.br/.env
-❌ https://kpi.stbextrema.com.br/logs/
-❌ https://kpi.stbextrema.com.br/BackEnd/config.php
+❌ /.env
+❌ /logs/
+❌ /BackEnd/config.php
 ```
 
 ---

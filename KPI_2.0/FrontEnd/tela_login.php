@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username'], $_POST['s
         if (password_verify($senha, $usuario['senha'])) {
             // Usa função helper para autenticação segura
             autenticarUsuario($usuario['id'], $usuario['nome']);
-            header("Location: https://kpi.stbextrema.com.br/router_public.php?url=dashboard");
+            header("Location: /router_public.php?url=dashboard");
             exit();
         } else {
             $erro = "Usuário ou senha inválidos.";

@@ -10,16 +10,16 @@ header("Pragma: no-cache");
 $tempo_limite = 1200; // 20 minutos
 
 // Verifica inatividade
-if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $tempo_limite) {
+    if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $tempo_limite) {
     session_unset();
     session_destroy();
-    header("Location: https://kpi.stbextrema.com.br/FrontEnd/tela_login.php");
+    header("Location: /router_public.php?url=login");
     exit();
 }
 
 // Verifica se a sessão está ativa
 if (!isset($_SESSION['username'])) {
-    header("Location: https://kpi.stbextrema.com.br/FrontEnd/tela_login.php");
+    header("Location: /router_public.php?url=login");
     exit();
 }
 
@@ -34,7 +34,7 @@ $_SESSION['last_activity'] = time();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro Reparo</title>
     <link rel="stylesheet" href="../CSS/reparo.css">
-    <link rel="icon" href="https://kpi.stbextrema.com.br/FrontEnd/CSS/imagens/VISTA.png">
+    <link rel="icon" href="/FrontEnd/CSS/imagens/VISTA.png">
 
     <style>
         .button-group2 button.ativo {
@@ -196,7 +196,7 @@ $_SESSION['last_activity'] = time();
 
 function voltarComReload() {
     // Redireciona e força o recarregamento
-    window.top.location.href = "https://kpi.stbextrema.com.br/router_public.php?url=dashboard&reload=" + new Date().getTime();
+    window.top.location.href = "/router_public.php?url=dashboard&reload=" + new Date().getTime();
 }
 
 let dadosAguardandoPg = [];
@@ -294,7 +294,7 @@ document.addEventListener("DOMContentLoaded", function () {
     e.preventDefault();
     const formData = new FormData(this);
 
-    fetch("https://kpi.stbextrema.com.br/BackEnd/Reparo/Reparo.php", {
+    fetch("/BackEnd/Reparo/Reparo.php", {
         method: "POST",
         body: formData
     })
@@ -315,7 +315,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         "/FrontEnd/html/cadastro_excel_pos_analise.php?cnpj=" +
                         encodeURIComponent(cnpj) + "&nf_entrada=" + encodeURIComponent(nf);
                 } else if (data.acao === "fim") {
-                    window.top.location.href = "https://kpi.stbextrema.com.br/BackEnd/cadastro_realizado.php";
+                    window.top.location.href = '/router_public.php?url=cadastro-realizado';
                 }
             } else if (data.error) {
                 mensagemErro.innerHTML = `<p style='color:red;'>${data.error}</p>`;
@@ -432,11 +432,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     btnAguardando.addEventListener('click', () => {
         destacarBotao(btnAguardando);
-        fetch("https://kpi.stbextrema.com.br/BackEnd/Reparo/consulta_reparo.php")
+        fetch("/BackEnd/Reparo/consulta_reparo.php")
             .then(res => res.json())
             .then(reparo => {
                 dadosEmReparo = reparo;
-                fetch("https://kpi.stbextrema.com.br/BackEnd/Reparo/consulta_aguardando_pg.php")
+                fetch("/BackEnd/Reparo/consulta_aguardando_pg.php")
                     .then(res => res.json())
                     .then(aguardando => {
                         dadosAguardando = aguardando;
@@ -448,7 +448,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     btnEmReparo.addEventListener('click', () => {
         destacarBotao(btnEmReparo);
-        fetch("https://kpi.stbextrema.com.br/BackEnd/Reparo/consulta_reparo.php")
+        fetch("/BackEnd/Reparo/consulta_reparo.php")
             .then(res => res.json())
             .then(dados => {
                 dadosEmReparo = dados;

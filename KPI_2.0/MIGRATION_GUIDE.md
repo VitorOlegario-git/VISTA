@@ -31,7 +31,7 @@
 session_start();
 
 if (!isset($_SESSION['username'])) {
-    header("Location: https://kpi.stbextrema.com.br/FrontEnd/tela_login.php");
+    header("Location: /router_public.php?url=login");
     exit();
 }
 
@@ -41,7 +41,7 @@ $tempo_limite = 1200;
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $tempo_limite) {
     session_unset();
     session_destroy();
-    header("Location: https://kpi.stbextrema.com.br/FrontEnd/tela_login.php");
+    header("Location: /router_public.php?url=login");
     exit();
 }
 
@@ -117,10 +117,10 @@ if (!$validator->required($cnpj, 'cnpj') || !$validator->cnpj($cnpj)) {
 
 **❌ ANTES:**
 ```php
-header("Location: https://kpi.stbextrema.com.br/BackEnd/cadastro_realizado.php");
+header("Location: /BackEnd/cadastro_realizado.php");
 
-<link rel="stylesheet" href="https://kpi.stbextrema.com.br/FrontEnd/CSS/style.css">
-<img src="https://kpi.stbextrema.com.br/FrontEnd/CSS/imagens/logo.png">
+<link rel="stylesheet" href="/FrontEnd/CSS/style.css">
+<img src="/FrontEnd/CSS/imagens/logo.png">
 ```
 
 **✅ DEPOIS:**
@@ -217,12 +217,12 @@ $tempo_limite = 1200;
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $tempo_limite) {
     session_unset();
     session_destroy();
-    header("Location: https://kpi.stbextrema.com.br/FrontEnd/tela_login.php");
+    header("Location: /router_public.php?url=login");
     exit();
 }
 
 if (!isset($_SESSION['username'])) {
-    header("Location: https://kpi.stbextrema.com.br/FrontEnd/tela_login.php");
+    header("Location: /router_public.php?url=login");
     exit();
 }
 

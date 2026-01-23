@@ -1,103 +1,143 @@
 <?php
 /**
  * Sistema de Roteamento PHP
- * Funciona sem precisar de configurações avançadas do Apache
+ * VISTA – Front Controller estável e previsível
  */
 
-class Router {
-    private $routes = [];
-    private $notFound = null;
-    
+class Router
+{
+    private array $routes = [];
+    private $notFoundCallback = null;
+
     /**
-     * Adiciona uma rota
+     * Registra uma rota
+     * @param string $pattern
+     * @param string|callable $target
      */
-    public function add($pattern, $file) {
-        $this->routes[$pattern] = $file;
+    public function add(string $pattern, $target): void
+    {
+        $this->routes[$this->normalize($pattern)] = $target;
     }
-    
+
     /**
-     * Define página 404
+     * Define callback para 404
      */
-    public function notFound($callback) {
-        $this->notFound = $callback;
+    public function notFound(callable $callback): void
+    {
+        $this->notFoundCallback = $callback;
     }
-    
+
     /**
-     * Processa a requisição
+     * Executa o roteamento
      */
-    public function dispatch() {
-        // Verifica se está usando query string (quando mod_rewrite não funciona)
-        if (isset($_GET['url'])) {
-            $uri = '/' . trim($_GET['url'], '/');
-        } else {
-            // Pega a URI requisitada
-            $uri = $_SERVER['REQUEST_URI'];
-            
-            // Remove query string
-            $uri = strtok($uri, '?');
-            
-            // Remove barra final
-            $uri = rtrim($uri, '/');
-        }
-        
-        // Se vazio, é a raiz
-        if (empty($uri)) {
-            $uri = '/';
-        }
-        
-        // Procura rota exata
+    public function dispatch(): void
+    {
+        $uri = $this->getUri();
+
+        // 1. Rota exata
         if (isset($this->routes[$uri])) {
-            return $this->loadPage($this->routes[$uri]);
+            $this->resolve($this->routes[$uri]);
+            return;
         }
-        
-        // Procura rota com regex
-        foreach ($this->routes as $pattern => $file) {
-            if (preg_match('#^' . $pattern . '$#', $uri, $matches)) {
-                return $this->loadPage($file, $matches);
+
+        // 2. Rotas por regex
+        foreach ($this->routes as $pattern => $target) {
+            if (@preg_match('#^' . $pattern . '$#', $uri, $matches)) {
+                array_shift($matches);
+                $this->resolve($target, $matches);
+                return;
             }
         }
-        
-        // Página não encontrada
-        if ($this->notFound) {
-            return call_user_func($this->notFound);
-        }
-        
-        http_response_code(404);
-        echo "<h1>404 - Página não encontrada</h1>";
+
+        // 3. 404
+        $this->handleNotFound();
     }
-    
+
+    /**
+     * Resolve o destino da rota
+     */
+    private function resolve($target, array $params = []): void
+    {
+        // Callback (redirect, lógica)
+        if (is_callable($target)) {
+            call_user_func_array($target, $params);
+            exit;
+        }
+
+        // Arquivo PHP
+        $this->loadFile($target, $params);
+        exit;
+    }
+
     /**
      * Carrega arquivo PHP
      */
-    private function loadPage($file, $params = []) {
-        $fullPath = __DIR__ . '/' . $file;
-        
+    private function loadFile(string $file, array $params = []): void
+    {
+        $fullPath = __DIR__ . '/' . ltrim($file, '/');
+
         if (!file_exists($fullPath)) {
             http_response_code(500);
-            echo "<h1>Erro: Arquivo não encontrado</h1>";
-            echo "<p>$fullPath</p>";
-            return;
+            echo "<h1>Erro interno</h1>";
+            echo "<p>Arquivo não encontrado:</p>";
+            echo "<pre>{$fullPath}</pre>";
+            exit;
         }
-        
-        // Torna parâmetros disponíveis para a página
-        extract($params);
-        
-        // Inclui o arquivo
+
+        extract($params, EXTR_SKIP);
         require $fullPath;
+    }
+
+    /**
+     * Trata página não encontrada
+     */
+    private function handleNotFound(): void
+    {
+        http_response_code(404);
+
+        if ($this->notFoundCallback) {
+            call_user_func($this->notFoundCallback);
+            exit;
+        }
+
+        echo "<h1>404 - Página não encontrada</h1>";
+        exit;
+    }
+
+    /**
+     * Normaliza padrões de rota
+     */
+    private function normalize(string $path): string
+    {
+        return $path === '/' ? '/' : '/' . trim($path, '/');
+    }
+
+    /**
+     * Obtém a URI requisitada
+     */
+    private function getUri(): string
+    {
+        if (isset($_GET['url'])) {
+            return '/' . trim($_GET['url'], '/');
+        }
+
+        $uri = strtok($_SERVER['REQUEST_URI'], '?');
+        $uri = rtrim($uri, '/');
+
+        return $uri === '' ? '/' : $uri;
     }
 }
 
 /**
  * Cria e configura o roteador
  */
-function createRouter() {
+function createRouter(): Router
+{
     $router = new Router();
-    
+
     // =====================================================
-    // ROTAS PRINCIPAIS
+    // AUTENTICAÇÃO
     // =====================================================
-    
-    // Autenticação
     $router->add('/', 'FrontEnd/tela_login.php');
     $router->add('/login', 'FrontEnd/tela_login.php');
     $router->add('/cadastro', 'FrontEnd/CadastroUsuario.php');
@@ -105,141 +145,151 @@ function createRouter() {
     $router->add('/nova-senha', 'FrontEnd/NovaSenha.php');
     $router->add('/confirmar-cadastro', 'FrontEnd/confirmar_cadastro.php');
     $router->add('/logout', 'BackEnd/logout.php');
-    
-    // Dashboard
+
+    // =====================================================
+    // DASHBOARD
+    // =====================================================
     $router->add('/dashboard', 'FrontEnd/html/PaginaPrincipal.php');
     $router->add('/home', 'FrontEnd/html/PaginaPrincipal.php');
-    
-    // Módulos
-    $router->add('/analise', 'FrontEnd/html/analise.php');
+
+    // =====================================================
+    // MÓDULOS
+    // =====================================================
     $router->add('/recebimento', 'FrontEnd/html/recebimento.php');
+    $router->add('/analise', 'FrontEnd/html/analise.php');
     $router->add('/reparo', 'FrontEnd/html/reparo.php');
     $router->add('/qualidade', 'FrontEnd/html/qualidade.php');
     $router->add('/expedicao', 'FrontEnd/html/expedicao.php');
     $router->add('/consulta', 'FrontEnd/html/consulta.php');
     $router->add('/consulta/id', 'FrontEnd/html/consulta_id.php');
-    // Inventário Status
-    $router->add('/inventario-status.php', 'FrontEnd/inventario/inventario-status.php');
-    
-    // Cadastros
+
+    // =====================================================
+    // CADASTROS
+    // =====================================================
     $router->add('/cadastrar-cliente', 'FrontEnd/html/cadastrar_cliente.php');
     $router->add('/cadastro-entrada', 'FrontEnd/html/cadastro_excel_entrada.php');
     $router->add('/cadastro-pos-analise', 'FrontEnd/html/cadastro_excel_pos_analise.php');
-    
+    // Rota alternativa compatível com links/JS antigos
+    $router->add('/cadastro-excel-pos-analise', 'FrontEnd/html/cadastro_excel_pos_analise.php');
+    $router->add('/cadastro-realizado', 'FrontEnd/html/cadastro_realizado.php');
+
     // =====================================================
-    // ROTAS ANTIGAS (Redirecionamento)
+    // INVENTÁRIO FÍSICO (QR / ARMÁRIOS)
     // =====================================================
-    
-    $router->add('/FrontEnd/tela_login.php', function() {
-        header('Location: /login', true, 301);
+    $router->add('/armarios', 'FrontEnd/html/armarios.php');
+    $router->add('/armarios/cadastrar', 'BackEnd/Inventario/Armario.php');
+    $router->add('/atribuir-armario', 'FrontEnd/html/atribuir_armario.php');
+    $router->add('/inventario', 'inventario.php');
+    // Compatibilidade com links antigos que usavam inventario.php diretamente
+    $router->add('/inventario.php', 'inventario.php');
+    // Back-end endpoints used by AJAX/fetch — expor através do roteador público
+    $router->add('/BackEnd/Inventario/InventarioApi.php', 'BackEnd/Inventario/InventarioApi.php');
+    $router->add('/BackEnd/Inventario/Armario.php', 'BackEnd/Inventario/Armario.php');
+    $router->add('/BackEnd/Inventario/AtribuirArmario.php', 'BackEnd/Inventario/AtribuirArmario.php');
+    $router->add('/BackEnd/Inventario/Ciclos.php', function () {
+        require __DIR__ . '/BackEnd/Inventario/Ciclos.php';
+        $api = new CiclosApi();
+        $api->handle();
         exit;
     });
-    
-    $router->add('/FrontEnd/html/PaginaPrincipal.php', function() {
-        header('Location: /dashboard', true, 301);
+    $router->add('/BackEnd/Inventario/debug_login.php', 'BackEnd/Inventario/debug_login.php');
+    // Minimal test endpoint to verify router and PHP execution
+    $router->add('/BackEnd/Inventario/teste_minimo.php', 'BackEnd/Inventario/teste_minimo.php');
+    // Reparo - expor salvamento de apontamentos pós-análise
+    $router->add('/BackEnd/Reparo/salvar_dados_no_banco_2.php', 'BackEnd/Reparo/salvar_dados_no_banco_2.php');
+    // Alias público mais legível para JS
+    $router->add('/reparo/salvar-apontamentos-pos-analise', 'BackEnd/Reparo/salvar_dados_no_banco_2.php');
+    // Análise - expor salvamento de dados enviados pelo Excel
+    $router->add('/BackEnd/Analise/salvar_dados_no_banco.php', 'BackEnd/Analise/salvar_dados_no_banco.php');
+    // Alias público para JS
+    $router->add('/analise/salvar-dados', 'BackEnd/Analise/salvar_dados_no_banco.php');
+    // Clean public alias for JS/AJAX
+    $router->add('/inventario-api', 'BackEnd/Inventario/InventarioApi.php');
+    $router->add('/inventario/ciclos', 'FrontEnd/html/inventario_ciclos.php');
+    // API route returning JSON for frontend AJAX
+    $router->add('/inventario/ciclos-api', function () {
+        require __DIR__ . '/BackEnd/Inventario/Ciclos.php';
+        $api = new CiclosApi();
+        $api->handle();
         exit;
     });
-    
-    $router->add('/FrontEnd/html/analise.php', function() {
-        header('Location: /analise', true, 301);
-        exit;
-    });
-    
-    $router->add('/FrontEnd/html/recebimento.php', function() {
-        header('Location: /recebimento', true, 301);
-        exit;
-    });
-    
-    $router->add('/FrontEnd/html/reparo.php', function() {
-        header('Location: /reparo', true, 301);
-        exit;
-    });
-    
-    $router->add('/FrontEnd/html/qualidade.php', function() {
-        header('Location: /qualidade', true, 301);
-        exit;
-    });
-    
-    $router->add('/FrontEnd/html/expedicao.php', function() {
-        header('Location: /expedicao', true, 301);
-        exit;
-    });
-    
-    $router->add('/FrontEnd/html/consulta.php', function() {
-        header('Location: /consulta', true, 301);
-        exit;
-    });
-    
-    $router->add('/FrontEnd/CadastroUsuario.php', function() {
-        header('Location: /cadastro', true, 301);
-        exit;
-    });
-    
-    $router->add('/FrontEnd/RecuperarSenha.php', function() {
-        header('Location: /recuperar-senha', true, 301);
-        exit;
-    });
-    
+    $router->add('/inventario/atribuicoes', 'FrontEnd/html/inventario_atribuicoes.php');
+        $router->add('/inventario/conciliacao-api', function () {
+            require __DIR__ . '/BackEnd/Inventario/ConsolidacaoApi.php';
+            $api = new ConsolidacaoApi();
+            $api->handle();
+            exit;
+        });
+        $router->add('/inventario/relatorio-final-api', function () {
+            require __DIR__ . '/BackEnd/Inventario/RelatorioFinalApi.php';
+            $api = new RelatorioFinalApi();
+            $api->handle();
+            exit;
+        });
+
+    // Temporary diagnostic: reveal env paths (no secrets)
+    // Disabled: exposing environment/debug settings publicly is a security risk.
+    // To re-enable, protect with admin-only auth or remove secrets from output.
+    // $router->add('/reveal/env', 'BackEnd/reveal_env.php');
+
+    // Expose lightweight diagnostic endpoints (temporary)
+    $router->add('/BackEnd/db_config_check.php', 'BackEnd/db_config_check.php');
+    $router->add('/BackEnd/db_connection_test.php', 'BackEnd/db_connection_test.php');
+    // Friendly aliases
+    $router->add('/db_config_check', 'BackEnd/db_config_check.php');
+    $router->add('/db_connection_test', 'BackEnd/db_connection_test.php');
+
+    // Temporary DB diagnostic endpoint (safe, JSON)
+    $router->add('/diagnostico/db', 'BackEnd/diagnostico_db.php');
+
     // =====================================================
-    // PÁGINA 404
+    // REDIRECIONAMENTOS LEGADOS (com exit)
     // =====================================================
-    
-    $router->notFound(function() {
+    $router->add('/FrontEnd/html/analise.php', function () {
+        header('Location: /router_public.php?url=analise', true, 301);
+        exit;
+    });
+
+    $router->add('/FrontEnd/html/recebimento.php', function () {
+        header('Location: /router_public.php?url=recebimento', true, 301);
+        exit;
+    });
+
+    $router->add('/FrontEnd/html/reparo.php', function () {
+        header('Location: /router_public.php?url=reparo', true, 301);
+        exit;
+    });
+
+    $router->add('/FrontEnd/html/qualidade.php', function () {
+        header('Location: /router_public.php?url=qualidade', true, 301);
+        exit;
+    });
+
+    $router->add('/FrontEnd/html/expedicao.php', function () {
+        header('Location: /router_public.php?url=expedicao', true, 301);
+        exit;
+    });
+
+    $router->add('/FrontEnd/html/PaginaPrincipal.php', function () {
+        header('Location: /router_public.php?url=dashboard', true, 301);
+        exit;
+    });
+
+    // =====================================================
+    // PÁGINA 404 (ÚNICA DEFINIÇÃO)
+    // =====================================================
+    // Rota de debug mínima para verificar se o front controller está ativo
+    $router->add('/_debug', function () {
+        header('Content-Type: text/plain; charset=utf-8');
+        echo "ROUTER OK";
+        exit;
+    });
+
+    $router->notFound(function () {
         http_response_code(404);
-        ?>
-        <!DOCTYPE html>
-        <html lang="pt-BR">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>404 - Página não encontrada</title>
-            <style>
-                * { margin: 0; padding: 0; box-sizing: border-box; }
-                body {
-                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    height: 100vh;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: white;
-                }
-                .container {
-                    text-align: center;
-                    padding: 40px;
-                    background: rgba(255,255,255,0.1);
-                    border-radius: 20px;
-                    backdrop-filter: blur(10px);
-                    max-width: 500px;
-                }
-                h1 { font-size: 120px; margin-bottom: 20px; }
-                h2 { font-size: 28px; margin-bottom: 15px; }
-                p { font-size: 16px; margin-bottom: 30px; opacity: 0.9; }
-                a {
-                    display: inline-block;
-                    padding: 12px 30px;
-                    background: white;
-                    color: #667eea;
-                    text-decoration: none;
-                    border-radius: 30px;
-                    font-weight: bold;
-                    transition: transform 0.3s;
-                }
-                a:hover { transform: translateY(-2px); }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <h1>404</h1>
-                <h2>Página não encontrada</h2>
-                <p>A página que você está procurando não existe ou foi movida.</p>
-                <a href="/dashboard">Voltar ao Dashboard</a>
-            </div>
-        </body>
-        </html>
-        <?php
+        require __DIR__ . '/FrontEnd/html/404.php';
         exit;
     });
-    
+
     return $router;
 }

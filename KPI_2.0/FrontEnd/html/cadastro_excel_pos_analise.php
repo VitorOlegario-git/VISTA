@@ -126,7 +126,8 @@ $_SESSION['last_activity'] = time();
         $('#entrada_id').val('Consultando...');
 
         $.ajax({
-            url: 'consulta_id.php',
+            // Usar roteador público para evitar 404 em diferentes roots
+            url: '/router_public.php?url=consulta/id',
             method: 'POST',
             dataType: 'json',
             data: {

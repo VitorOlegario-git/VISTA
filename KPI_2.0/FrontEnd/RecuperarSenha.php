@@ -2,6 +2,8 @@
 require_once __DIR__ . '/../BackEnd/helpers.php';
 require_once __DIR__ . '/../BackEnd/Validator.php';
 require_once __DIR__ . '/../BackEnd/EmailService.php';
+// Garantir conexão com o banco (getDb / $conn)
+require_once __DIR__ . '/../BackEnd/conexao.php';
 
 $mensagem = '';
 $tipoMensagem = ''; // 'sucesso' ou 'erro'

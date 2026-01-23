@@ -9,16 +9,16 @@ header("Pragma: no-cache");
 $tempo_limite = 1200; // 20 minutos
 
 // Verifica inatividade
-if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $tempo_limite) {
+    if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $tempo_limite) {
     session_unset();
     session_destroy();
-    header("Location: https://kpi.stbextrema.com.br/FrontEnd/tela_login.php");
+    header("Location: /router_public.php?url=login");
     exit();
 }
 
 // Verifica se a sessão está ativa
 if (!isset($_SESSION['username'])) {
-    header("Location: https://kpi.stbextrema.com.br/FrontEnd/tela_login.php");
+    header("Location: /router_public.php?url=login");
     exit();
 }
 
@@ -33,7 +33,7 @@ $_SESSION['last_activity'] = time();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro Recebimento</title>
     <link rel="stylesheet" href="../CSS/recebimento.css">
-    <link rel="icon" href="https://kpi.stbextrema.com.br/FrontEnd/CSS/imagens/VISTA.png">
+    <link rel="icon" href="/FrontEnd/CSS/imagens/VISTA.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="../JS/CnpjMask.js"></script>
@@ -44,7 +44,7 @@ $_SESSION['last_activity'] = time();
     <i class="fas fa-spinner fa-spin"></i> Carregando...
 </div>
     <div class="recebimento-container">
-        <form action="https://kpi.stbextrema.com.br/BackEnd/Recebimento/Recebimento.php" method="POST">
+        <form action="/BackEnd/Recebimento/Recebimento.php" method="POST">
 
             <div class="input-group1">
                 <label for="cod_rastreio">Código do rastreio</label>
@@ -192,7 +192,7 @@ $_SESSION['last_activity'] = time();
 </div>
 <script>
 function forcarRecarregamento() {
-    window.location.assign("https://kpi.stbextrema.com.br/router_public.php?url=dashboard&nocache=" + new Date().getTime());
+    window.location.assign("/router_public.php?url=dashboard&nocache=" + new Date().getTime());
 }
 
 function showSuccessModal(message) {
@@ -212,7 +212,7 @@ document.addEventListener("DOMContentLoaded", function () {
         cnpjInput.addEventListener("blur", function () {
             let cnpj = this.value.trim();
             if (cnpj.length === 18) {
-                fetch("https://kpi.stbextrema.com.br/BackEnd/buscar_cliente.php", {
+                fetch("/BackEnd/buscar_cliente.php", {
                     method: "POST",
                     headers: { "Content-Type": "application/x-www-form-urlencoded" },
                     body: "cnpj=" + encodeURIComponent(cnpj)
@@ -223,7 +223,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         document.getElementById("razao_social").value = data.razao_social;
                     } else {
                         alert("Cliente não cadastrado. Você será redirecionado para o cadastro.");
-                        window.location.href = "https://kpi.stbextrema.com.br/router_public.php?url=cadastrar-cliente&cnpj=" + encodeURIComponent(data.cnpj_usado);
+                        window.location.href = "/router_public.php?url=cadastrar-cliente&cnpj=" + encodeURIComponent(data.cnpj_usado);
                     }
                 })
                 .catch(error => console.error("Erro ao buscar cliente:", error));
@@ -232,7 +232,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Consulta de recebimentos
-    fetch("https://kpi.stbextrema.com.br/BackEnd/Recebimento/consulta_recebimento.php")
+    fetch("/BackEnd/Recebimento/consulta_recebimento.php")
         .then(response => response.json())
         .then(dados => {
             const tbody = document.querySelector('#tabela-info tbody');

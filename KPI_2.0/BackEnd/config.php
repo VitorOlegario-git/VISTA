@@ -7,7 +7,15 @@
 // Carrega variáveis do arquivo .env
 function loadEnv($path) {
     if (!file_exists($path)) {
-        die("Arquivo .env não encontrado. Copie .env.example para .env e configure.");
+        // Do not die here; many endpoints should be resilient when .env is absent.
+        // Log a warning and continue with defaults.
+        $logPath = __DIR__ . '/../logs/php_errors.log';
+        if (!file_exists(dirname($logPath))) {
+            @mkdir(dirname($logPath), 0755, true);
+        }
+        // Registrar aviso via error_log (evita warnings no output HTTP)
+        error_log('[config] WARNING: .env not found at ' . $path);
+        return false;
     }
     
     $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
@@ -38,15 +46,17 @@ function loadEnv($path) {
 
 // Carrega o arquivo .env
 loadEnv(__DIR__ . '/../.env');
-
 // Define constantes de configuração
-define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
+// Primeiro define ambiente e debug para usarmos no fallback de DB_HOST
+define('APP_ENV', getenv('APP_ENV') ?: 'production');
+define('APP_DEBUG', filter_var(getenv('APP_DEBUG'), FILTER_VALIDATE_BOOLEAN));
+
+// Em produção, usar 127.0.0.1 como fallback para forçar TCP (evita uso de socket 'localhost')
+$defaultDbHost = (APP_ENV === 'production') ? '127.0.0.1' : 'localhost';
+define('DB_HOST', getenv('DB_HOST') ?: $defaultDbHost);
 define('DB_USERNAME', getenv('DB_USERNAME') ?: 'root');
 define('DB_PASSWORD', getenv('DB_PASSWORD') ?: '');
 define('DB_NAME', getenv('DB_NAME') ?: 'vista');
-
-define('APP_ENV', getenv('APP_ENV') ?: 'production');
-define('APP_DEBUG', filter_var(getenv('APP_DEBUG'), FILTER_VALIDATE_BOOLEAN));
 define('APP_URL', getenv('APP_URL') ?: 'http://localhost');
 
 // Timeout de sessão em segundos
@@ -82,10 +92,10 @@ define('MAIL_PASSWORD', getenv('MAIL_PASSWORD'));
 define('MAIL_FROM_ADDRESS', getenv('MAIL_FROM_ADDRESS'));
 define('MAIL_FROM_NAME', getenv('MAIL_FROM_NAME') ?: 'Sistema VISTA');
 
-// Dados de conexão com o banco de dados (usando variáveis do .env)
-define('DB_DSN', 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8');
-define('DB_USER', DB_USERNAME);
-define('DB_PASS', DB_PASSWORD);
+// Dados de conexão com o banco de dados (ajuste conforme seu ambiente)
+define('DB_DSN', 'mysql:host=localhost;dbname=nome_do_banco;charset=utf8');
+define('DB_USER', 'usuario_do_banco');
+define('DB_PASS', 'senha_do_banco');
 
 /**
  * Função helper para gerar URLs

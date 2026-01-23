@@ -26,18 +26,29 @@ function verificarSessao($redirecionarSeInvalida = true) {
     }
     
     // Verifica inatividade
+    // Detect if request expects JSON / is an AJAX call
+    $isApiCall = (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
+        || (strpos($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') !== false)
+        || (isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false);
+
     if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > SESSION_TIMEOUT) {
         destruirSessao();
         if ($redirecionarSeInvalida) {
+            if ($isApiCall && function_exists('jsonUnauthorized')) {
+                jsonUnauthorized('Sessão expirada');
+            }
             header("Location: " . url('FrontEnd/tela_login.php'));
             exit();
         }
         return false;
     }
-    
+
     // Verifica se está autenticado
     if (!isset($_SESSION['username'])) {
         if ($redirecionarSeInvalida) {
+            if ($isApiCall && function_exists('jsonUnauthorized')) {
+                jsonUnauthorized('Usuário não autenticado');
+            }
             header("Location: " . url('FrontEnd/tela_login.php'));
             exit();
         }
@@ -162,6 +173,18 @@ function jsonResponse($data, $statusCode = 200) {
  */
 function jsonError($message, $statusCode = 400) {
     jsonResponse(['error' => $message], $statusCode);
+}
+
+/**
+ * Retorna resposta JSON 401 (não autorizado) e encerra execução
+ * Uso recomendado para APIs quando a sessão não existir ou expirar.
+ */
+function jsonUnauthorized($message = 'Usuário não autenticado') {
+    // Garantir headers de segurança/caching antes de responder
+    if (function_exists('definirHeadersSeguranca')) {
+        definirHeadersSeguranca();
+    }
+    jsonResponse(['error' => $message], 401);
 }
 
 /**

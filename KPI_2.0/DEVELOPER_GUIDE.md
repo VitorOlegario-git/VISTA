@@ -474,10 +474,10 @@ Requisição → .htaccess → router_public.php → router.php → Página Fina
 header("Location: FrontEnd/html/PaginaPrincipal.php");
 
 // ✅ Use o router
-header("Location: https://kpi.stbextrema.com.br/router_public.php?url=dashboard");
+header("Location: /router_public.php?url=dashboard");
 
 // ✅ Com parâmetros
-header("Location: https://kpi.stbextrema.com.br/router_public.php?url=dashboard&reload=" . time());
+header("Location: /router_public.php?url=dashboard&reload=" . time());
 ```
 
 **JavaScript:**
@@ -486,10 +486,10 @@ header("Location: https://kpi.stbextrema.com.br/router_public.php?url=dashboard&
 window.location.href = '/FrontEnd/html/PaginaPrincipal.php';
 
 // ✅ Use
-window.location.href = 'https://kpi.stbextrema.com.br/router_public.php?url=dashboard';
+window.location.href = '/router_public.php?url=dashboard';
 
 // ✅ Com cache busting
-window.location.href = `https://kpi.stbextrema.com.br/router_public.php?url=dashboard&reload=${Date.now()}`;
+window.location.href = `/router_public.php?url=dashboard&reload=${Date.now()}`;
 ```
 
 **Imagens e Assets:**
@@ -565,7 +565,7 @@ echo file_exists($fullPath) ? 'Existe' : 'Não existe';
 ```php
 // Certifique-se de usar URL completa
 ❌ header("Location: /dashboard");
-✅ header("Location: https://kpi.stbextrema.com.br/router_public.php?url=dashboard");
+✅ header("Location: /router_public.php?url=dashboard");
 ```
 
 **Documentação Completa:** Consulte [URL_SIMPLES.md](URL_SIMPLES.md)
@@ -590,7 +590,7 @@ echo file_exists($fullPath) ? 'Existe' : 'Não existe';
 **Solução:** Use helper `asset()` ao invés de caminhos relativos
 
 ### Erro: Redirecionamento não funciona após login
-**Solução:** Use URL completa com router: `https://kpi.stbextrema.com.br/router_public.php?url=dashboard`
+**Solução:** Use URL completa com router: `/router_public.php?url=dashboard`
 
 ---
 

@@ -129,7 +129,7 @@ $_SESSION['last_activity'] = time();
         <div id="loading" style="display: none;">Carregando...</div>
         <div id="mensagemErro"></div>
 
-        <form id="form-analise" action="https://kpi.stbextrema.com.br/BackEnd/Analise/Analise.php" method="POST">
+        <form id="form-analise" action="/BackEnd/Analise/Analise.php" method="POST">
 
             <!-- Bloco: Cliente -->
             <div class="form-section">
@@ -417,9 +417,27 @@ document.addEventListener('keydown', function(e) {
 // FUNÇÕES ORIGINAIS (PRESERVADAS)
 // ==========================================
 
+const BASE_ROUTER_URL = '/router_public.php?url=';
+
+function redirectTo(route, params = "") {
+    window.top.location.href = BASE_ROUTER_URL + route + params;
+}
+
+function navigateTo(destination) {
+    if (!destination) return;
+    // Se for URL absoluta, vai direto
+    if (destination.startsWith('http') || destination.includes('router_public.php')) {
+        window.top.location.href = destination;
+        return;
+    }
+    // Caso seja rota (com ou sem /), remover barra inicial e usar roteador público
+    const route = destination.replace(/^\/+/, '');
+    redirectTo(route);
+}
+
 function voltarComReload() {
-    // Redireciona e força o recarregamento
-    window.top.location.href = "https://kpi.stbextrema.com.br/router_public.php?url=dashboard&reload=" + new Date().getTime();
+    // Redireciona e força o recarregamento via roteador público
+    redirectTo('dashboard', '&reload=' + new Date().getTime());
 }
 
 let dadosAguardando = [];
@@ -558,7 +576,7 @@ simNaoSelect.addEventListener("change", function() {
     if (mensagemErro) mensagemErro.innerHTML = ""; // Limpa mensagens antigas
 
     try {
-        const res = await fetch("https://kpi.stbextrema.com.br/BackEnd/Analise/Analise.php", {
+        const res = await fetch("/BackEnd/Analise/Analise.php", {
             method: "POST",
             body: formData
         });
@@ -573,24 +591,32 @@ simNaoSelect.addEventListener("change", function() {
         }
 
         if (data.success) {
-            alert(data.success);
+    alert(data.success);
 
-            // Pequeno atraso para evitar conflitos com redirecionamentos
-           setTimeout(() => {
-              if (data.acao === "inicio") {
-                const cnpj = encodeURIComponent(formData.get("cnpj"));
-                const nf = encodeURIComponent(formData.get("nota_fiscal"));
-                window.top.location.href = `https://kpi.stbextrema.com.br/router_public.php?url=cadastro-entrada&cnpj=${cnpj}&nf_entrada=${nf}`;
-              } else if (data.acao === "fim") {
-                window.top.location.href = "https://kpi.stbextrema.com.br/BackEnd/cadastro_realizado.php";
-              }
-           }, 200);
+    setTimeout(() => {
+        if (data.redirect) {
+            navigateTo(data.redirect);
 
-        } else if (data.error) {
-            if (mensagemErro) mensagemErro.innerHTML = `<p style='color:red;'>${data.error}</p>`;
-        } else {
-            throw new Error("Resposta inesperada do servidor.");
+        } else if (data.acao === "inicio") {
+            const cnpj = encodeURIComponent(formData.get("cnpj"));
+            const nf = encodeURIComponent(formData.get("nota_fiscal"));
+
+            // Usar roteador público relativo
+            window.top.location.href = `${BASE_ROUTER_URL}cadastro-entrada&cnpj=${cnpj}&nf_entrada=${nf}`;
+
+        } else if (data.acao === "fim") {
+            redirectTo('dashboard');
         }
+    }, 200);
+
+} else if (data.error) {
+    if (mensagemErro) {
+        mensagemErro.innerHTML = `<p style='color:red;'>${data.error}</p>`;
+    }
+} else {
+    throw new Error("Resposta inesperada do servidor.");
+}
+
 
     } catch (error) {
         console.error("Erro na submissão:", error);
@@ -709,11 +735,11 @@ simNaoSelect.addEventListener("change", function() {
 
     btnAguardando.addEventListener('click', () => {
         destacarBotao(btnAguardando);
-        fetch("https://kpi.stbextrema.com.br/BackEnd/Analise/consulta_analise.php")
+        fetch("/BackEnd/Analise/consulta_analise.php")
             .then(res => res.json())
             .then(analise => {
                 dadosEmAnalise = analise;
-                fetch("https://kpi.stbextrema.com.br/BackEnd/Analise/consulta_aguardando_analise.php")
+                fetch("/BackEnd/Analise/consulta_aguardando_analise.php")
                     .then(res => res.json())
                     .then(aguardando => {
                         dadosAguardando = aguardando;
@@ -725,7 +751,7 @@ simNaoSelect.addEventListener("change", function() {
 
     btnEmAnalise.addEventListener('click', () => {
         destacarBotao(btnEmAnalise);
-        fetch("https://kpi.stbextrema.com.br/BackEnd/Analise/consulta_analise.php")
+        fetch("/BackEnd/Analise/consulta_analise.php")
             .then(res => res.json())
             .then(dados => {
                 dadosEmAnalise = dados;
