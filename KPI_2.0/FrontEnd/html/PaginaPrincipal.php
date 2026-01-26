@@ -238,6 +238,22 @@ document.addEventListener("DOMContentLoaded", () => {
     // Botão de logout no header
     document.getElementById("logoutBtn").onclick = () =>
         location.href = "https://kpi.stbextrema.com.br/FrontEnd/tela_login.php?reload=" + Date.now();
+    
+    // Client-side fallback: show monthly alert if server time differs and user's local date is last day
+    try{
+        const allowedUsers = <?php echo json_encode(usuariosAlertaInventario()); ?>;
+        function clientIsLastDay(){
+            const d = new Date();
+            const today = d.getDate();
+            const days = new Date(d.getFullYear(), d.getMonth()+1, 0).getDate();
+            return today === days;
+        }
+        if(clientIsLastDay() && allowedUsers.includes(userName) && !document.getElementById('monthlyInventoryAlert')){
+            const html = `<div class="monthly-alert" id="monthlyInventoryAlert"><div class="msg">Alerta mensal: Hoje é o último dia do mês. Lembre-se de executar o Inventário de Remessas.</div><button class="close" onclick="this.parentElement.style.display='none'">✕</button></div>`;
+            const headerEl = document.getElementById('logoHeader');
+            if(headerEl) headerEl.insertAdjacentHTML('afterend', html);
+        }
+    }catch(e){ console.warn('monthly alert fallback error', e); }
 });
 </script>
 
