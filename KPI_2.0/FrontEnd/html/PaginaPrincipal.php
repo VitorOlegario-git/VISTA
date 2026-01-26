@@ -52,7 +52,7 @@ definirHeadersSeguranca();
             
             <div class="cards-grid">
                 <!-- CARD EXCLUSIVO: INVENTÁRIO DE STATUS DE REMESSAS -->
-                <?php if(isset($_SESSION['username']) && $_SESSION['username'] === 'Vitor Olegario'): ?>
+                <?php if(isset($_SESSION['username']) && in_array($_SESSION['username'], ['Vitor Olegario','Luan Oliveira','ronyrodrigues','Ederson Santos','Matheus Ferreira'])): ?>
                 <div class="module-card" id="inventario-status-remessas">
                     <div class="card-content">
                         <div class="card-header">
