@@ -45,6 +45,14 @@ definirHeadersSeguranca();
         .small-muted{font-size:13px;color:rgba(255,255,255,0.65)}
         .locker-badge{display:inline-block;background:rgba(99,102,241,0.12);color:var(--accent);padding:6px 8px;border-radius:999px;font-weight:700;font-size:13px}
         .locker-select{padding:6px;border-radius:6px;border:1px solid rgba(11,23,36,0.06);background:#fff;color:#0b1724}
+        /* Drawer (side panel) for add form */
+        .drawer-overlay{position:fixed;inset:0;background:rgba(2,6,23,0.6);display:none;z-index:1200}
+        .drawer-overlay.open{display:block}
+        .drawer{position:fixed;right:0;top:0;height:100%;width:420px;background:linear-gradient(180deg,#071827,#081627);box-shadow:-8px 0 30px rgba(2,6,23,0.6);z-index:1300;transform:translateX(100%);transition:transform .28s ease}
+        .drawer.open{transform:translateX(0)}
+        .drawer .content{padding:20px;color:#e6eef8;overflow:auto;height:100%}
+        .drawer .close-btn{background:transparent;border:0;color:#9aa4b2;font-size:18px;cursor:pointer}
+        @media(max-width:720px){ .drawer{width:100%} }
 
         .loading-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.6);backdrop-filter:blur(2px)}
         .spinner{width:36px;height:36px;border-radius:50%;border:4px solid rgba(0,0,0,0.06);border-top-color:var(--accent);animation:spin 1s linear infinite}
@@ -111,40 +119,53 @@ definirHeadersSeguranca();
         <div id="emptyState" class="empty-state" style="display:none">Nenhuma remessa encontrada para o filtro atual.</div>
     </div>
 
-    <div id="addForm" style="display:none;margin-top:12px;background:rgba(255,255,255,0.02);padding:12px;border-radius:8px">
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <input id="add_razao" placeholder="Razão Social" style="padding:8px;border-radius:8px;border:0;min-width:220px" />
-            <input id="add_nf" placeholder="Nota Fiscal" style="padding:8px;border-radius:8px;border:0;min-width:140px" />
-            <input id="add_cnpj" placeholder="CNPJ" style="padding:8px;border-radius:8px;border:0;min-width:160px" />
-            <input id="add_qtd" type="number" min="1" value="1" style="padding:8px;border-radius:8px;border:0;width:80px" />
-            <select id="add_status" style="padding:8px;border-radius:8px;border:0">
-                <option value="aguardando_pg">Aguardando PG</option>
-                <option value="envio_cliente">Enviado p/ Cliente</option>
-                <option value="estocado">Estocado</option>
-                <option value="envio_expedicao">Expedição</option>
-            </select>
-            <input id="add_data_ultimo_registro" placeholder="Data último registro (YYYY-MM-DD HH:MM)" style="padding:8px;border-radius:8px;border:0;min-width:200px" />
-            <input id="add_codigo_rastreio_entrada" placeholder="Código rastreio entrada" style="padding:8px;border-radius:8px;border:0;min-width:200px" />
-            <input id="add_codigo_rastreio_envio" placeholder="Código rastreio envio" style="padding:8px;border-radius:8px;border:0;min-width:200px" />
-            <input id="add_nota_fiscal_retorno" placeholder="Nota fiscal retorno" style="padding:8px;border-radius:8px;border:0;min-width:140px" />
-            <input id="add_numero_orcamento" placeholder="Número orçamento" style="padding:8px;border-radius:8px;border:0;min-width:140px" />
-            <input id="add_valor_orcamento" placeholder="Valor orçamento" style="padding:8px;border-radius:8px;border:0;min-width:120px" />
-            <input id="add_setor" placeholder="Setor" style="padding:8px;border-radius:8px;border:0;min-width:120px" />
-            <select id="add_locker" style="padding:8px;border-radius:8px;border:0">
-                <option value="">Armário (nenhum)</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-            </select>
+    <!-- Drawer + overlay for Add Remessa -->
+    <div id="drawerOverlay" class="drawer-overlay" onclick="closeAddDrawer()"></div>
+    <aside id="addDrawer" class="drawer" aria-hidden="true">
+        <div class="content">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px">
+                <div>
+                    <h2 style="margin:0">Cadastrar Remessa</h2>
+                    <div class="small-muted">Preencha os dados da remessa</div>
+                </div>
+                <button class="close-btn" onclick="closeAddDrawer()">✕</button>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+                <input id="add_razao" placeholder="Razão Social" style="padding:10px;border-radius:8px;border:0" />
+                <input id="add_nf" placeholder="Nota Fiscal" style="padding:10px;border-radius:8px;border:0" />
+                <input id="add_cnpj" placeholder="CNPJ" style="padding:10px;border-radius:8px;border:0" />
+                <div style="display:flex;gap:8px">
+                    <input id="add_qtd" type="number" min="1" value="1" style="padding:10px;border-radius:8px;border:0;width:120px" />
+                    <select id="add_status" style="padding:10px;border-radius:8px;border:0;flex:1">
+                        <option value="aguardando_pg">Aguardando PG</option>
+                        <option value="envio_cliente">Enviado p/ Cliente</option>
+                        <option value="estocado">Estocado</option>
+                        <option value="envio_expedicao">Expedição</option>
+                    </select>
+                </div>
+                <input id="add_data_ultimo_registro" placeholder="Data último registro (YYYY-MM-DD HH:MM)" style="padding:10px;border-radius:8px;border:0" />
+                <input id="add_codigo_rastreio_entrada" placeholder="Código rastreio entrada" style="padding:10px;border-radius:8px;border:0" />
+                <input id="add_codigo_rastreio_envio" placeholder="Código rastreio envio" style="padding:10px;border-radius:8px;border:0" />
+                <input id="add_nota_fiscal_retorno" placeholder="Nota fiscal retorno" style="padding:10px;border-radius:8px;border:0" />
+                <input id="add_numero_orcamento" placeholder="Número orçamento" style="padding:10px;border-radius:8px;border:0" />
+                <input id="add_valor_orcamento" placeholder="Valor orçamento" style="padding:10px;border-radius:8px;border:0" />
+                <input id="add_setor" placeholder="Setor" style="padding:10px;border-radius:8px;border:0" />
+                <select id="add_locker" style="padding:10px;border-radius:8px;border:0">
+                    <option value="">Armário (nenhum)</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+                <label style="display:flex;align-items:center;gap:8px"><input id="add_confirmado" type="checkbox"> Confirmado</label>
+                <div style="display:flex;gap:8px;margin-top:6px">
+                    <button id="submitAdd" class="confirm-btn">Adicionar remessa</button>
+                    <button id="cancelAdd" class="btn-back">Cancelar</button>
+                </div>
+            </div>
         </div>
-        <div style="margin-top:8px">
-            <label style="display:inline-flex;align-items:center;gap:8px"><input id="add_confirmado" type="checkbox"> Confirmado</label>
-            <button id="submitAdd" class="confirm-btn" style="margin-left:12px">Adicionar remessa</button>
-            <button id="cancelAdd" class="btn-back" style="margin-left:8px">Cancelar</button>
-        </div>
-    </div>
+    </aside>
 
     <div style="margin-top:12px" class="small-muted">Filtro atual: <span id="currentFilter">Todos</span></div>
 
@@ -331,9 +352,12 @@ async function assignLocker(resumoId, locker, selectEl){
     } catch(e){ console.error('Erro ao atribuir armário', e); }
 }
 
-// Add remessa UI
-document.getElementById('addBtn').addEventListener('click', ()=>{ document.getElementById('addForm').style.display = 'block'; });
-document.getElementById('cancelAdd').addEventListener('click', ()=>{ document.getElementById('addForm').style.display = 'none'; });
+// Drawer controls for Add remessa
+function openAddDrawer(){ document.getElementById('drawerOverlay').classList.add('open'); document.getElementById('addDrawer').classList.add('open'); document.getElementById('addDrawer').setAttribute('aria-hidden','false'); }
+function closeAddDrawer(){ document.getElementById('drawerOverlay').classList.remove('open'); document.getElementById('addDrawer').classList.remove('open'); document.getElementById('addDrawer').setAttribute('aria-hidden','true'); }
+
+document.getElementById('addBtn').addEventListener('click', (e)=>{ e.preventDefault(); openAddDrawer(); });
+document.getElementById('cancelAdd').addEventListener('click', (e)=>{ e.preventDefault(); closeAddDrawer(); });
 document.getElementById('submitAdd').addEventListener('click', async ()=>{
     const razao = document.getElementById('add_razao').value.trim();
     const nf = document.getElementById('add_nf').value.trim();
@@ -368,7 +392,7 @@ document.getElementById('submitAdd').addEventListener('click', async ()=>{
         fd.append('confirmado', confirmado);
         const res = await fetch('/router_public.php?url=inventario-api&action=create_manual', {method:'POST', body:fd, credentials:'include'});
         const j = await res.json();
-        if(j && j.success && j.item){ allItems.unshift(j.item); counts[j.item.status] = (counts[j.item.status]||0)+1; renderFilters(counts); renderTable(); document.getElementById('addForm').style.display='none'; }
+        if(j && j.success && j.item){ allItems.unshift(j.item); counts[j.item.status] = (counts[j.item.status]||0)+1; renderFilters(counts); renderTable(); closeAddDrawer(); }
         else alert('Erro ao criar remessa');
     }catch(e){ console.error(e); alert('Erro ao criar remessa'); }
 });
