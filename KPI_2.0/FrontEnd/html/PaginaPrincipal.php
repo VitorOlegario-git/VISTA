@@ -62,8 +62,8 @@ definirHeadersSeguranca();
                             </svg>
                             <h3 class="card-title">Inventário de Status de Remessas</h3>
                         </div>
-                        <p class="card-description">Ferramenta restrita para validação e correção manual de status operacionais.</p>
-                        <button class="card-action-btn" onclick="window.location.href='/router_public.php?url=inventario/ciclos'">Acessar Inventário</button>
+                        <p class="card-description">Acessar o inventário geral (por status e armários). Ferramenta restrita para validação e correção manual de status operacionais.</p>
+                        <button class="card-action-btn" onclick="window.location.href='/router_public.php?url=inventario'">Acessar Inventário</button>
                     </div>
                 </div>
                 <?php endif; ?>
@@ -210,12 +210,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    document.getElementById("analise").onclick = () => openPage("https://kpi.stbextrema.com.br/FrontEnd/html/analise.php");
-    document.getElementById("reparo").onclick = () => openPage("https://kpi.stbextrema.com.br/FrontEnd/html/reparo.php");
-    document.getElementById("qualidade").onclick = () => openPage("https://kpi.stbextrema.com.br/FrontEnd/html/qualidade.php");
-    document.getElementById("expedicao").onclick = () => openPage("https://kpi.stbextrema.com.br/FrontEnd/html/expedicao.php");
-    document.getElementById("consulta").onclick = () => openPage("https://kpi.stbextrema.com.br/FrontEnd/html/consulta.php");
-    document.getElementById("recebimento").onclick = () => openPage("https://kpi.stbextrema.com.br/FrontEnd/html/recebimento.php");
+    document.getElementById("analise").onclick = () => openPage("/router_public.php?url=analise");
+    document.getElementById("reparo").onclick = () => openPage("/router_public.php?url=reparo");
+    document.getElementById("qualidade").onclick = () => openPage("/router_public.php?url=qualidade");
+    document.getElementById("expedicao").onclick = () => openPage("/router_public.php?url=expedicao");
+    document.getElementById("consulta").onclick = () => openPage("/router_public.php?url=consulta");
+    document.getElementById("recebimento").onclick = () => openPage("/router_public.php?url=recebimento");
 
     const btnRel = document.getElementById('relatorio');
     if(btnRel){

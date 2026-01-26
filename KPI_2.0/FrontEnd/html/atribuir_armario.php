@@ -8,7 +8,7 @@ definirHeadersSeguranca();
 $db = getDb();
 
 // Busca remessas aguardando_pg e sem armario
-$remessas = $db->fetchAll("SELECT id, codigo_remessa, cliente_nome FROM resumo_geral WHERE status = 'aguardando_pg' AND (armario_id IS NULL OR armario_id = '') ORDER BY id DESC LIMIT 500");
+$remessas = $db->fetchAll("SELECT id, codigo_remessa, cliente_nome FROM resumo_geral WHERE status = 'aguardando_pg' AND (armario_id IS NULL OR armario_id = '') AND cnpj IS NOT NULL AND nota_fiscal IS NOT NULL AND TRIM(nota_fiscal) <> '' ORDER BY id DESC LIMIT 500");
 $armarios = $db->fetchAll('SELECT id, codigo, descricao FROM armarios WHERE ativo = 1 ORDER BY codigo ASC');
 
 ?>

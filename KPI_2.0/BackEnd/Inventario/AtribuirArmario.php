@@ -29,10 +29,22 @@ try {
     $types = str_repeat('i', count($remessas));
     $params = array_map('intval', $remessas);
 
-    // Atualiza campo armario_id na tabela resumo_geral
-    $sql = "UPDATE resumo_geral SET armario_id = ? WHERE id IN ($placeholders)";
-    $stmtParams = array_merge([$armario_id], $params);
-    $stmtTypes = 'i' . $types;
+    // Determine eligible IDs: armario_id IS NULL AND nota_fiscal/cnpj present
+    $eligibleSql = "SELECT id FROM resumo_geral WHERE id IN ($placeholders) AND (armario_id IS NULL OR armario_id = '') AND cnpj IS NOT NULL AND nota_fiscal IS NOT NULL AND TRIM(nota_fiscal) <> ''";
+    $eligibleRows = $db->fetchAll($eligibleSql, $params, $types);
+    $eligibleIds = array_map(function($r){ return (int)$r['id']; }, $eligibleRows ?: []);
+
+    if (count($eligibleIds) === 0) {
+        $db->commit();
+        jsonSuccess([], 'Nenhuma remessa elegível para atribuição (filtro nota_fiscal aplicado)');
+        return;
+    }
+
+    // Atualiza campo armario_id apenas para os elegíveis
+    $placeholdersElig = implode(',', array_fill(0, count($eligibleIds), '?'));
+    $sql = "UPDATE resumo_geral SET armario_id = ? WHERE id IN ($placeholdersElig)";
+    $stmtParams = array_merge([$armario_id], $eligibleIds);
+    $stmtTypes = 'i' . str_repeat('i', count($eligibleIds));
 
     // Usa execute helper
     $db->execute($sql, $stmtParams, $stmtTypes);

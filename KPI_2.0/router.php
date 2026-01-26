@@ -174,27 +174,10 @@ function createRouter(): Router
     $router->add('/cadastro-realizado', 'FrontEnd/html/cadastro_realizado.php');
 
     // =====================================================
-    // INVENTÁRIO FÍSICO (QR / ARMÁRIOS)
+    // INVENTÁRIO FÍSICO (REMOVIDO)
+    // Rotas e endpoints do módulo Inventário foram removidos.
+    // Para reimplementar, restaure a pasta BackEnd/Inventario e as views em FrontEnd/html.
     // =====================================================
-    $router->add('/armarios', 'FrontEnd/html/armarios.php');
-    $router->add('/armarios/cadastrar', 'BackEnd/Inventario/Armario.php');
-    $router->add('/atribuir-armario', 'FrontEnd/html/atribuir_armario.php');
-    $router->add('/inventario', 'inventario.php');
-    // Compatibilidade com links antigos que usavam inventario.php diretamente
-    $router->add('/inventario.php', 'inventario.php');
-    // Back-end endpoints used by AJAX/fetch — expor através do roteador público
-    $router->add('/BackEnd/Inventario/InventarioApi.php', 'BackEnd/Inventario/InventarioApi.php');
-    $router->add('/BackEnd/Inventario/Armario.php', 'BackEnd/Inventario/Armario.php');
-    $router->add('/BackEnd/Inventario/AtribuirArmario.php', 'BackEnd/Inventario/AtribuirArmario.php');
-    $router->add('/BackEnd/Inventario/Ciclos.php', function () {
-        require __DIR__ . '/BackEnd/Inventario/Ciclos.php';
-        $api = new CiclosApi();
-        $api->handle();
-        exit;
-    });
-    $router->add('/BackEnd/Inventario/debug_login.php', 'BackEnd/Inventario/debug_login.php');
-    // Minimal test endpoint to verify router and PHP execution
-    $router->add('/BackEnd/Inventario/teste_minimo.php', 'BackEnd/Inventario/teste_minimo.php');
     // Reparo - expor salvamento de apontamentos pós-análise
     $router->add('/BackEnd/Reparo/salvar_dados_no_banco_2.php', 'BackEnd/Reparo/salvar_dados_no_banco_2.php');
     // Alias público mais legível para JS
@@ -203,29 +186,6 @@ function createRouter(): Router
     $router->add('/BackEnd/Analise/salvar_dados_no_banco.php', 'BackEnd/Analise/salvar_dados_no_banco.php');
     // Alias público para JS
     $router->add('/analise/salvar-dados', 'BackEnd/Analise/salvar_dados_no_banco.php');
-    // Clean public alias for JS/AJAX
-    $router->add('/inventario-api', 'BackEnd/Inventario/InventarioApi.php');
-    $router->add('/inventario/ciclos', 'FrontEnd/html/inventario_ciclos.php');
-    // API route returning JSON for frontend AJAX
-    $router->add('/inventario/ciclos-api', function () {
-        require __DIR__ . '/BackEnd/Inventario/Ciclos.php';
-        $api = new CiclosApi();
-        $api->handle();
-        exit;
-    });
-    $router->add('/inventario/atribuicoes', 'FrontEnd/html/inventario_atribuicoes.php');
-        $router->add('/inventario/conciliacao-api', function () {
-            require __DIR__ . '/BackEnd/Inventario/ConsolidacaoApi.php';
-            $api = new ConsolidacaoApi();
-            $api->handle();
-            exit;
-        });
-        $router->add('/inventario/relatorio-final-api', function () {
-            require __DIR__ . '/BackEnd/Inventario/RelatorioFinalApi.php';
-            $api = new RelatorioFinalApi();
-            $api->handle();
-            exit;
-        });
 
     // Temporary diagnostic: reveal env paths (no secrets)
     // Disabled: exposing environment/debug settings publicly is a security risk.

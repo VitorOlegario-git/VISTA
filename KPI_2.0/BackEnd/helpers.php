@@ -32,12 +32,15 @@ function verificarSessao($redirecionarSeInvalida = true) {
         || (isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false);
 
     if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > SESSION_TIMEOUT) {
+        // Session expired: destroy session and, when appropriate, redirect to login
         destruirSessao();
         if ($redirecionarSeInvalida) {
             if ($isApiCall && function_exists('jsonUnauthorized')) {
                 jsonUnauthorized('Sessão expirada');
             }
-            header("Location: " . url('FrontEnd/tela_login.php'));
+            // Preserve original requested URI so user can be returned after login
+            $returnTo = $_SERVER['REQUEST_URI'] ?? '/';
+            header("Location: " . url('FrontEnd/tela_login.php') . '?return=' . urlencode($returnTo));
             exit();
         }
         return false;
@@ -49,7 +52,9 @@ function verificarSessao($redirecionarSeInvalida = true) {
             if ($isApiCall && function_exists('jsonUnauthorized')) {
                 jsonUnauthorized('Usuário não autenticado');
             }
-            header("Location: " . url('FrontEnd/tela_login.php'));
+            // Preserve original requested URI so user can be returned after login
+            $returnTo = $_SERVER['REQUEST_URI'] ?? '/';
+            header("Location: " . url('FrontEnd/tela_login.php') . '?return=' . urlencode($returnTo));
             exit();
         }
         return false;

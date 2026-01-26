@@ -2,6 +2,14 @@
 require_once __DIR__ . '/../BackEnd/helpers.php';
 require_once __DIR__ . '/../BackEnd/conexao.php';
 
+// Preserve return URL so users are redirected back after login (validated below)
+$requestedReturn = '';
+if (isset($_GET['return'])) {
+    $requestedReturn = $_GET['return'];
+} elseif (isset($_POST['return'])) {
+    $requestedReturn = $_POST['return'];
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username'], $_POST['senha'])) {
     $username = trim($_POST['username']);
     $senha = $_POST['senha'];
@@ -18,11 +26,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username'], $_POST['s
         $usuario = $resultado->fetch_assoc();
 
         if (password_verify($senha, $usuario['senha'])) {
-            // Usa função helper para autenticação segura
-            autenticarUsuario($usuario['id'], $usuario['nome']);
-            header("Location: /router_public.php?url=dashboard");
-            exit();
-        } else {
+                // Usa função helper para autenticação segura
+                autenticarUsuario($usuario['id'], $usuario['nome']);
+                // If a return URL was provided and is local, redirect there. Otherwise use dashboard.
+                $safeReturn = '';
+                if (!empty($requestedReturn)) {
+                    $p = parse_url($requestedReturn);
+                    // Only allow local paths (no scheme/host) to avoid open redirects
+                    if (empty($p['scheme']) && empty($p['host'])) {
+                        $safeReturn = $requestedReturn;
+                    }
+                }
+                if (!empty($safeReturn)) {
+                    header('Location: ' . $safeReturn);
+                } else {
+                    header("Location: /router_public.php?url=dashboard");
+                }
+                exit();
+            } else {
             $erro = "Usuário ou senha inválidos.";
         }
     }
@@ -67,6 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username'], $_POST['s
             <?php endif; ?>
 
             <form method="POST" id="loginForm">
+                <input type="hidden" name="return" value="<?php echo htmlspecialchars($requestedReturn); ?>">
                 <div class="input-group">
                     <label for="username">Usuário:</label>
                     <input type="text" id="username" name="username" autocomplete="username" required>

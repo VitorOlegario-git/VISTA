@@ -1,0 +1,31 @@
+# Ativa o módulo de reescrita
+RewriteEngine On
+
+# Define o diretório base (raiz do servidor)
+RewriteBase /
+
+# Redireciona URLs antigas com /FrontEnd/ para rotas limpas
+RewriteRule ^FrontEnd/tela_login\.php$ /login [R=301,L]
+RewriteRule ^FrontEnd/html/PaginaPrincipal\.php$ /principal [R=301,L]
+RewriteRule ^FrontEnd/html/recebimento\.php$ /recebimento [R=301,L]
+RewriteRule ^FrontEnd/html/analise\.php$ /analise [R=301,L]
+RewriteRule ^FrontEnd/html/reparo\.php$ /reparo [R=301,L]
+RewriteRule ^FrontEnd/html/qualidade\.php$ /qualidade [R=301,L]
+RewriteRule ^FrontEnd/html/expedicao\.php$ /expedicao [R=301,L]
+RewriteRule ^FrontEnd/html/consulta\.php$ /consulta [R=301,L]
+
+# Se o arquivo ou diretório existe, serve diretamente
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Caso contrário, redireciona para index.php
+RewriteRule ^(.*)$ index.php [QSA,L]
+
+# Configurações de segurança
+<FilesMatch "\.(env|sql|md|lock|json|log)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Configurações de charset
+AddDefaultCharset UTF-8

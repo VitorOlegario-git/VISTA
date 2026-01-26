@@ -1,0 +1,28 @@
+# Arquivo de configuração com senhas
+.env
+
+# Logs
+*.log
+
+# Arquivos temporários
+*.tmp
+*.temp
+*.cache
+
+# Uploads
+uploads/*
+!uploads/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Docker volumes
+db_data/
