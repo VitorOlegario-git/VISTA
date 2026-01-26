@@ -180,7 +180,7 @@ function createRouter(): Router
     // Compatibilidade com links antigos que usavam inventario.php diretamente
     $router->add('/inventario.php', 'FrontEnd/html/inventario.php');
     // Rota móvel amigável (redirigida por router_public quando UA móvel)
-    $router->add('/inventario_mobile', 'FrontEnd/html/inventario.php');
+    $router->add('/inventario_mobile', 'FrontEnd/html/inventario_mobile.php');
     // Backend API mínimo para suportar listagem (frontend)
     $router->add('/inventario-api', 'BackEnd/Inventario/InventarioApi.php');
     // Para reimplementar o módulo completo (backend) restaure BackEnd/Inventario.
