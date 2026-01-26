@@ -16,6 +16,12 @@ definirHeadersSeguranca();
     <link rel="icon" href="<?php echo asset('FrontEnd/CSS/imagens/VISTA.png'); ?>">
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+    <style>
+        .monthly-alert{background:#fef3c7;border-left:4px solid #f59e0b;color:#92400e;padding:12px 16px;border-radius:6px;margin:12px 24px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+        .monthly-alert .msg{font-weight:600}
+        .monthly-alert .close{background:transparent;border:0;font-size:18px;cursor:pointer;color:#92400e}
+        @media(max-width:720px){ .monthly-alert{margin:12px} }
+    </style>
 </head>
 
 <body>
@@ -46,6 +52,13 @@ definirHeadersSeguranca();
             </div>
         </div>
     </header>
+
+    <?php if (function_exists('deveMostrarAlertaInventario') && deveMostrarAlertaInventario()): ?>
+        <div class="monthly-alert" id="monthlyInventoryAlert">
+            <div class="msg">Alerta mensal: Hoje é o último dia do mês. Lembre-se de executar o Inventário de Remessas.</div>
+            <button class="close" onclick="document.getElementById('monthlyInventoryAlert').style.display='none'">✕</button>
+        </div>
+    <?php endif; ?>
 
     <main class="main-container" id="menuPrincipal">
         <div class="content-wrapper">
