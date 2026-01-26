@@ -72,6 +72,16 @@ definirHeadersSeguranca();
             table.inv-table td:before{content:attr(data-label);font-weight:600;display:block;margin-bottom:6px}
         }
     </style>
+    <style>
+        /* Small-screen override: ensure side-panel covers viewport and slides from edge */
+        @media (max-width: 720px){
+            .side-panel{min-width:0!important;width:100%!important;right:0;left:0;border-radius:0;}
+            .side-panel.open{transform:translateX(0)!important}
+            .panel-overlay{z-index:1200}
+            .side-panel{z-index:1201}
+            .main-content{margin-right:0!important}
+        }
+    </style>
 </head>
 <body>
 <div class="inv-container">
