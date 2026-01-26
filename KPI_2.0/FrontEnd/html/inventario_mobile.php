@@ -14,6 +14,7 @@ definirHeadersSeguranca();
 <title>Inventário (Mobile) - VISTA</title>
 <link rel="icon" href="<?php echo asset('FrontEnd/CSS/imagens/VISTA.png'); ?>">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="<?php echo asset('FrontEnd/CSS/recebimento.css'); ?>">
 <style>
     :root{--accent:#6366f1;--bg:#071029;--card:#0f172a;--text:#e6eef8;--muted:rgba(230,238,248,0.7);--success:#10b981}
     body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:linear-gradient(180deg,var(--bg),#071827);color:var(--text);-webkit-font-smoothing:antialiased}
@@ -64,34 +65,49 @@ definirHeadersSeguranca();
 
     <div class="list" id="list"></div>
     <div id="empty" class="empty" style="display:none">Nenhuma remessa encontrada.</div>
-    <div id="mobileAddForm" style="display:none;margin-top:12px;background:transparent;padding:10px;border-radius:8px">
-        <input id="m_razao" placeholder="Razão Social" style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
-        <input id="m_nf" placeholder="Nota Fiscal" style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
-        <input id="m_cnpj" placeholder="CNPJ" style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
-        <div style="display:flex;gap:8px;margin-bottom:8px">
-            <input id="m_qtd" type="number" value="1" min="1" style="flex:1;padding:10px;border-radius:8px;border:0">
-            <select id="m_status" style="flex:1;padding:10px;border-radius:8px;border:0">
-                <option value="aguardando_pg">Aguardando PG</option>
-                <option value="envio_cliente">Enviado p/ Cliente</option>
-                <option value="estocado">Estocado</option>
-            </select>
+    <!-- Panel overlay + side-panel (mobile) -->
+    <div id="panel-overlay" class="panel-overlay"></div>
+    <div id="side-panel" class="side-panel" aria-hidden="true">
+        <div class="panel-header">
+            <div class="panel-title-group">
+                <i class="fas fa-plus-circle" id="panel-icon"></i>
+                <h2 id="panel-title">Cadastrar Remessa</h2>
+            </div>
+            <button type="button" class="btn-close-panel" id="btn-close-panel"><i class="fas fa-times"></i></button>
         </div>
-        <input id="m_codigo_rastreio_entrada" placeholder="Código rastreio entrada" style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
-        <input id="m_codigo_rastreio_envio" placeholder="Código rastreio envio" style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
-        <input id="m_nota_fiscal_retorno" placeholder="Nota fiscal retorno" style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
-        <input id="m_numero_orcamento" placeholder="Número orçamento" style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
-        <input id="m_valor_orcamento" placeholder="Valor orçamento" style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
-        <input id="m_setor" placeholder="Setor" style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
-        <div style="display:flex;gap:8px"><select id="m_locker" style="padding:8px;border-radius:8px;border:0">
-            <option value="">Armário (nenhum)</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-        </select>
-        <button id="m_submit" class="confirm" style="margin-left:auto">Adicionar</button>
-        <button id="m_cancel" class="btn-back" style="margin-left:6px;background:transparent;border:0;color:var(--muted)">Cancelar</button></div>
+        <div class="panel-body">
+            <form id="form-mobile" onsubmit="return false;">
+                <div class="form-section">
+                    <input id="m_razao" placeholder="Razão Social" style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
+                    <input id="m_nf" placeholder="Nota Fiscal" style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
+                    <input id="m_cnpj" placeholder="CNPJ" style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
+                    <div style="display:flex;gap:8px;margin-bottom:8px">
+                        <input id="m_qtd" type="number" value="1" min="1" style="flex:1;padding:10px;border-radius:8px;border:0">
+                        <select id="m_status" style="flex:1;padding:10px;border-radius:8px;border:0">
+                            <option value="aguardando_pg">Aguardando PG</option>
+                            <option value="envio_cliente">Enviado p/ Cliente</option>
+                            <option value="estocado">Estocado</option>
+                        </select>
+                    </div>
+                    <input id="m_codigo_rastreio_entrada" placeholder="Código rastreio entrada" style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
+                    <input id="m_codigo_rastreio_envio" placeholder="Código rastreio envio" style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
+                    <input id="m_nota_fiscal_retorno" placeholder="Nota fiscal retorno" style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
+                    <input id="m_numero_orcamento" placeholder="Número orçamento" style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
+                    <input id="m_valor_orcamento" placeholder="Valor orçamento" style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
+                    <input id="m_setor" placeholder="Setor" style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
+                    <div style="display:flex;gap:8px"><select id="m_locker" style="padding:8px;border-radius:8px;border:0">
+                        <option value="">Armário (nenhum)</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                    <button id="m_submit" class="confirm" style="margin-left:auto">Adicionar</button>
+                    <button id="m_cancel" class="btn-back" style="margin-left:6px;background:transparent;border:0;color:var(--muted)">Cancelar</button></div>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -165,8 +181,24 @@ async function assignLocker(resumoId, locker, selectEl){
 }
 
 // mobile add handlers
-document.getElementById('mobileAdd').addEventListener('click', ()=>{ document.getElementById('mobileAddForm').style.display='block'; });
-document.getElementById('m_cancel').addEventListener('click', ()=>{ document.getElementById('mobileAddForm').style.display='none'; });
+// side-panel handlers (mobile)
+function openPanelNew(){
+    document.getElementById('side-panel').classList.add('open');
+    document.getElementById('panel-overlay').classList.add('active');
+    document.getElementById('side-panel').setAttribute('aria-hidden','false');
+}
+function closePanel(){
+    document.getElementById('side-panel').classList.remove('open');
+    document.getElementById('panel-overlay').classList.remove('active');
+    document.getElementById('side-panel').setAttribute('aria-hidden','true');
+}
+
+document.getElementById('mobileAdd').addEventListener('click', ()=>{ openPanelNew(); });
+document.getElementById('btn-close-panel').addEventListener('click', ()=>{ closePanel(); });
+document.getElementById('panel-overlay').addEventListener('click', ()=>{ closePanel(); });
+document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closePanel(); });
+
+document.getElementById('m_cancel').addEventListener('click', ()=>{ closePanel(); });
 document.getElementById('m_submit').addEventListener('click', async ()=>{
     const razao = document.getElementById('m_razao').value.trim(); const nf = document.getElementById('m_nf').value.trim(); const cnpj = document.getElementById('m_cnpj').value.trim(); const qtd = document.getElementById('m_qtd').value || 1; const status = document.getElementById('m_status').value; const codigo_rastreio_entrada = document.getElementById('m_codigo_rastreio_entrada').value.trim(); const codigo_rastreio_envio = document.getElementById('m_codigo_rastreio_envio').value.trim(); const nota_fiscal_retorno = document.getElementById('m_nota_fiscal_retorno').value.trim(); const numero_orcamento = document.getElementById('m_numero_orcamento').value.trim(); const valor_orcamento = document.getElementById('m_valor_orcamento').value.trim(); const setor = document.getElementById('m_setor').value.trim(); const locker = document.getElementById('m_locker').value;
     if(!razao || !nf){ alert('Razão social e nota fiscal são obrigatórios'); return; }
