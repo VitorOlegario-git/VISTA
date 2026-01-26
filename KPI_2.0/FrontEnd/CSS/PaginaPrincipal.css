@@ -18,6 +18,13 @@
     box-shadow: 0 4px 16px rgba(56,139,253,0.15);
 }
 
+/* Ensure cards have equal heights and actions stick to bottom */
+.cards-grid { align-items: stretch; }
+.module-card { display:flex; flex-direction:column; align-items:stretch; text-align:left; }
+.card-content { display:flex; flex-direction:column; flex:1 1 auto; }
+.card-action-btn { margin-top:auto; }
+.module-card { min-height:220px; }
+
 * {
     margin: 0;
     padding: 0;

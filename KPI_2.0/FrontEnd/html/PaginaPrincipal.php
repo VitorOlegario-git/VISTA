@@ -17,10 +17,12 @@ definirHeadersSeguranca();
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
     <style>
-        .monthly-alert{background:#fef3c7;border-left:4px solid #f59e0b;color:#92400e;padding:12px 16px;border-radius:6px;margin:12px 24px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+        /* Fixed banner below header so it's always visible regardless of layout */
+        .monthly-alert{position:fixed;top:64px;left:0;right:0;z-index:1002;display:flex;justify-content:center}
+        .monthly-alert .inner{background:#fef3c7;border-left:4px solid #f59e0b;color:#92400e;padding:12px 16px;border-radius:6px;margin:0 24px;display:flex;justify-content:space-between;align-items:center;gap:12px;max-width:1200px;width:calc(100% - 48px)}
         .monthly-alert .msg{font-weight:600}
         .monthly-alert .close{background:transparent;border:0;font-size:18px;cursor:pointer;color:#92400e}
-        @media(max-width:720px){ .monthly-alert{margin:12px} }
+        @media(max-width:720px){ .monthly-alert .inner{margin:0 12px;width:calc(100% - 24px)} }
     </style>
 </head>
 
@@ -54,10 +56,7 @@ definirHeadersSeguranca();
     </header>
 
     <?php if (function_exists('deveMostrarAlertaInventario') && deveMostrarAlertaInventario()): ?>
-        <div class="monthly-alert" id="monthlyInventoryAlert">
-            <div class="msg">Alerta mensal: Hoje é o último dia do mês. Lembre-se de executar o Inventário de Remessas.</div>
-            <button class="close" onclick="document.getElementById('monthlyInventoryAlert').style.display='none'">✕</button>
-        </div>
+        <div class="monthly-alert" id="monthlyInventoryAlert"><div class="inner"><div class="msg">Alerta mensal: Hoje é o último dia do mês. Lembre-se de executar o Inventário de Remessas.</div><button class="close" onclick="(function(){document.getElementById('monthlyInventoryAlert').style.display='none'; try{ localStorage.setItem('monthlyInventoryAlertDismissed_'+(new Date()).toISOString().slice(0,7),'1'); }catch(e){} })()">✕</button></div></div>
     <?php endif; ?>
 
     <main class="main-container" id="menuPrincipal">
@@ -240,20 +239,24 @@ document.addEventListener("DOMContentLoaded", () => {
         location.href = "https://kpi.stbextrema.com.br/FrontEnd/tela_login.php?reload=" + Date.now();
     
     // Client-side fallback: show monthly alert if server time differs and user's local date is last day
-    try{
-        const allowedUsers = <?php echo json_encode(usuariosAlertaInventario()); ?>;
-        function clientIsLastDay(){
-            const d = new Date();
-            const today = d.getDate();
-            const days = new Date(d.getFullYear(), d.getMonth()+1, 0).getDate();
-            return today === days;
-        }
-        if(clientIsLastDay() && allowedUsers.includes(userName) && !document.getElementById('monthlyInventoryAlert')){
-            const html = `<div class="monthly-alert" id="monthlyInventoryAlert"><div class="msg">Alerta mensal: Hoje é o último dia do mês. Lembre-se de executar o Inventário de Remessas.</div><button class="close" onclick="this.parentElement.style.display='none'">✕</button></div>`;
-            const headerEl = document.getElementById('logoHeader');
-            if(headerEl) headerEl.insertAdjacentHTML('afterend', html);
-        }
-    }catch(e){ console.warn('monthly alert fallback error', e); }
+        try{
+            const allowedUsers = <?php echo json_encode(usuariosAlertaInventario()); ?>;
+            function clientIsLastDay(){
+                const d = new Date();
+                const today = d.getDate();
+                const days = new Date(d.getFullYear(), d.getMonth()+1, 0).getDate();
+                return today === days;
+            }
+            const dismissedKey = 'monthlyInventoryAlertDismissed_'+(new Date()).toISOString().slice(0,7);
+            const dismissed = (function(){ try{ return localStorage.getItem(dismissedKey) === '1'; }catch(e){ return false; } })();
+            if(clientIsLastDay() && allowedUsers.includes(userName) && !document.getElementById('monthlyInventoryAlert') && !dismissed){
+                const html = `<div class="monthly-alert" id="monthlyInventoryAlert"><div class="inner"><div class="msg">Alerta mensal: Hoje é o último dia do mês. Lembre-se de executar o Inventário de Remessas.</div><button class="close" id="monthlyAlertClose">✕</button></div></div>`;
+                const headerEl = document.getElementById('logoHeader');
+                if(headerEl) headerEl.insertAdjacentHTML('afterend', html);
+                const btn = document.getElementById('monthlyAlertClose');
+                if(btn) btn.addEventListener('click', ()=>{ document.getElementById('monthlyInventoryAlert').style.display='none'; try{ localStorage.setItem(dismissedKey,'1'); }catch(e){} });
+            }
+        }catch(e){ console.warn('monthly alert fallback error', e); }
 });
 </script>
 
