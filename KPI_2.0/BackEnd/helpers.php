@@ -268,4 +268,30 @@ function metaCSRF() {
 function exampleHelper() {
     return "Helper function loaded.";
 }
+
+/**
+ * Retorna true se a data atual (ou timestamp fornecido) for o último dia do mês
+ */
+function isLastDayOfMonth($timestamp = null) {
+    $ts = $timestamp ?: time();
+    return intval(date('j', $ts)) === intval(date('t', $ts));
+}
+
+/**
+ * Lista de usuários que devem receber o alerta mensal do inventário
+ */
+function usuariosAlertaInventario() {
+    return ['Vitor Olegario','Luan Oliveira','ronyrodrigues','Ederson Santos','Matheus Ferreira'];
+}
+
+/**
+ * Verifica se o alerta mensal deve ser mostrado para o usuário atual
+ */
+function deveMostrarAlertaInventario() {
+    if (!estaAutenticado()) return false;
+    $u = getUsuarioLogado();
+    if (!$u) return false;
+    if (!isLastDayOfMonth()) return false;
+    return in_array($u, usuariosAlertaInventario(), true);
+}
 ?>
