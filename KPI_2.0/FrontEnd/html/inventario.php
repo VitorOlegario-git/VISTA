@@ -18,28 +18,46 @@ definirHeadersSeguranca();
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
     <style>
         /* Inventário — ajustes responsivos e visual moderno */
-        .inv-container{padding:16px;max-width:1100px;margin:0 auto}
-        .inv-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
-        .inv-title{display:flex;align-items:center;gap:10px}
-        .inv-title h1{font-size:20px;margin:0}
-        .status-filters{display:flex;flex-wrap:wrap;gap:8px}
-        .status-btn{background:linear-gradient(135deg,#0f172a,#0b2540);color:#fff;padding:8px 12px;border-radius:10px;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;min-width:120px}
+        :root{--bg:#071029;--card:#071827;--muted:#9aa4b2;--accent:#6366f1;--success:#10b981}
+        body{background:linear-gradient(180deg,#071029 0%,#071827 60%);color:#e6eef8;font-family:Inter,Segoe UI,Arial,sans-serif}
+        .inv-container{padding:20px;max-width:1200px;margin:0 auto}
+        .inv-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+        .inv-title{display:flex;align-items:center;gap:12px}
+        .inv-logo{height:40px;border-radius:6px}
+        .inv-title h1{font-size:20px;margin:0;color:#f8fafc}
+        .inv-actions{display:flex;align-items:center;gap:8px}
+        #searchInput{padding:8px 12px;border-radius:8px;border:0;min-width:220px}
+        .btn-back{background:transparent;border:1px solid rgba(255,255,255,0.08);color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer}
+
+        .status-filters{display:flex;flex-wrap:nowrap;gap:10px;overflow-x:auto;padding-bottom:6px}
+        .status-btn{background:rgba(255,255,255,0.04);color:#fff;padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;min-width:140px}
         .status-btn .label{font-size:12px;opacity:0.9}
         .status-btn .count{font-weight:700;font-size:18px}
-        .status-btn.active{outline:3px solid rgba(99,102,241,0.18)}
-        .table-wrapper{margin-top:16px;background:#fff;border-radius:10px;box-shadow:0 6px 18px rgba(2,6,23,0.08);overflow:hidden}
+        .status-btn.active{box-shadow:0 6px 18px rgba(99,102,241,0.14);border-color:var(--accent);transform:translateY(-3px)}
+
+        .table-wrapper{position:relative;margin-top:16px;background:linear-gradient(180deg,#ffffff 0%, #ffffff 0%);border-radius:12px;overflow:hidden;color:#0b1724}
         table.inv-table{width:100%;border-collapse:collapse}
-        table.inv-table thead{background:linear-gradient(90deg,#eef2ff,#ffffff)}
-        table.inv-table th, table.inv-table td{padding:10px 12px;text-align:left;border-bottom:1px solid #f1f5f9}
-        .confirm-btn{background:#10b981;color:#fff;border:none;padding:6px 10px;border-radius:8px;cursor:pointer}
-        .small-muted{font-size:12px;color:#6b7280}
+        table.inv-table thead{background:transparent}
+        table.inv-table th, table.inv-table td{padding:12px 16px;text-align:left;border-bottom:1px solid #eef2f6}
+        table.inv-table tbody tr:hover{background:#f8fafc}
+        .confirm-btn{background:var(--success);color:#fff;border:none;padding:6px 12px;border-radius:8px;cursor:pointer}
+        .confirm-btn[disabled]{opacity:0.7;cursor:not-allowed}
+        .small-muted{font-size:13px;color:rgba(255,255,255,0.65)}
+
+        .loading-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.6);backdrop-filter:blur(2px)}
+        .spinner{width:36px;height:36px;border-radius:50%;border:4px solid rgba(0,0,0,0.06);border-top-color:var(--accent);animation:spin 1s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+
+        .empty-state{padding:20px;text-align:center;color:#475569}
 
         @media(max-width:720px){
-            .status-btn{min-width:48%;font-size:13px}
+            #searchInput{min-width:120px}
+            .status-filters{gap:8px}
+            .status-btn{min-width:46%}
             table.inv-table thead{display:none}
             table.inv-table, table.inv-table tbody, table.inv-table tr, table.inv-table td{display:block;width:100%}
             table.inv-table tr{margin-bottom:12px}
-            table.inv-table td{padding:8px;background:transparent;border-bottom:0}
+            table.inv-table td{padding:10px 12px;background:transparent;border-bottom:0}
             table.inv-table td:before{content:attr(data-label);font-weight:600;display:block;margin-bottom:6px}
         }
     </style>
@@ -48,11 +66,15 @@ definirHeadersSeguranca();
 <div class="inv-container">
     <div class="inv-header">
         <div class="inv-title">
-            <img src="<?php echo asset('FrontEnd/CSS/imagens/VISTA.png'); ?>" alt="logo" style="height:36px">
-            <h1>Inventário — Status de Remessas</h1>
+            <img src="<?php echo asset('FrontEnd/CSS/imagens/VISTA.png'); ?>" alt="logo" class="inv-logo">
+            <div>
+                <h1>Inventário — Status de Remessas</h1>
+                <div class="small-muted">Visualize e confirme remessas por status</div>
+            </div>
         </div>
-        <div>
-            <button onclick="location.href='/router_public.php?url=dashboard'" class="status-btn" style="min-width:90px">Voltar</button>
+        <div class="inv-actions">
+            <input id="searchInput" type="search" placeholder="Pesquisar por razão social ou nota fiscal..." aria-label="Pesquisar" />
+            <button onclick="location.href='/router_public.php?url=dashboard'" class="btn-back">Voltar</button>
         </div>
     </div>
 
@@ -61,6 +83,7 @@ definirHeadersSeguranca();
     </div>
 
     <div class="table-wrapper">
+        <div id="loadingOverlay" class="loading-overlay" aria-hidden="true"><div class="spinner"></div></div>
         <table class="inv-table" id="invTable">
             <thead>
                 <tr>
@@ -73,6 +96,7 @@ definirHeadersSeguranca();
             </thead>
             <tbody></tbody>
         </table>
+        <div id="emptyState" class="empty-state" style="display:none">Nenhuma remessa encontrada para o filtro atual.</div>
     </div>
 
     <div style="margin-top:12px" class="small-muted">Filtro atual: <span id="currentFilter">Todos</span></div>
@@ -100,6 +124,8 @@ const STATUS_LABELS = {
 
 let allItems = [];
 let activeFilter = null;
+let counts = {};
+let isLoading = false;
 
 function renderFilters(counts){
     const container = document.getElementById('statusFilters');
@@ -133,6 +159,9 @@ function renderTable(){
     const tbody = document.querySelector('#invTable tbody');
     tbody.innerHTML = '';
     const filtered = activeFilter? allItems.filter(i=>i.status===activeFilter) : allItems;
+    const empty = filtered.length === 0;
+    const emptyEl = document.getElementById('emptyState');
+    if(emptyEl) emptyEl.style.display = empty ? 'block' : 'none';
     filtered.forEach(row=>{
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -149,6 +178,7 @@ function renderTable(){
 function escapeHtml(s){ return String(s).replace(/[&<>\\\"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
 async function loadData(){
+    isLoading = true; toggleLoading(true);
     try{
         const res = await fetch('/router_public.php?url=inventario-api&action=list');
         if(!res.ok) throw new Error('API não disponível');
@@ -161,7 +191,7 @@ async function loadData(){
             quantidade: r.quantidade || r.qtd || 1,
             status: r.status || ''
         }));
-        const counts = {};
+        counts = {};
         allItems.forEach(i=>counts[i.status] = (counts[i.status]||0)+1);
         renderFilters(counts);
         renderTable();
@@ -174,32 +204,73 @@ async function loadData(){
             {id:3,razao_social:'SOLUCOES SA',nota_fiscal:'NF-1003',quantidade:2,status:'estocado'},
             {id:4,razao_social:'IND-EX',nota_fiscal:'NF-1004',quantidade:5,status:'envio_expedicao'}
         ];
-        const counts = {};
+        counts = {};
         allItems.forEach(i=>counts[i.status] = (counts[i.status]||0)+1);
         renderFilters(counts);
         renderTable();
+    } finally {
+        isLoading = false; toggleLoading(false);
     }
 }
 
 async function confirmItem(resumoId, btn){
-    btn.disabled = true; btn.textContent='...';
+    const original = btn.innerHTML;
+    btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
     try{
         const fd = new FormData(); fd.append('resumo_id', resumoId); fd.append('action','confirm');
         const res = await fetch('/router_public.php?url=inventario-api', {method:'POST', body:fd});
         const j = await res.json();
         if(j && j.success){
-            btn.textContent='OK';
+            btn.innerHTML = '<i class="fas fa-check"></i>';
             btn.style.background='#4ade80';
+            // optimistic update: remove item from list and update counts
+            const idx = allItems.findIndex(x => x.id === resumoId);
+            if(idx !== -1){
+                const st = allItems[idx].status;
+                allItems.splice(idx,1);
+                counts[st] = Math.max(0, (counts[st]||1) - 1);
+                renderFilters(counts);
+                renderTable();
+            }
         } else {
-            btn.textContent='Erro'; btn.style.background='#f43f5e';
+            btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+            btn.style.background='#f43f5e';
         }
     }catch(e){
-        btn.textContent='Erro'; btn.style.background='#f43f5e';
+        btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+        btn.style.background='#f43f5e';
     }
-    setTimeout(()=>{ btn.disabled=false; btn.textContent='Confirmar'; btn.style.background=''; },1500);
+    setTimeout(()=>{ btn.disabled=false; btn.innerHTML = original; btn.style.background=''; },1500);
 }
 
-document.addEventListener('DOMContentLoaded', ()=>{ loadData(); });
+function toggleLoading(show){
+    const overlay = document.getElementById('loadingOverlay');
+    if(!overlay) return;
+    overlay.style.display = show ? 'flex' : 'none';
+    overlay.setAttribute('aria-hidden', show ? 'false' : 'true');
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+    const search = document.getElementById('searchInput');
+    if(search){
+        let timer = null;
+        search.addEventListener('input', (e)=>{
+            clearTimeout(timer);
+            timer = setTimeout(()=>{
+                const q = e.target.value.trim().toLowerCase();
+                if(q === ''){ renderFilters(counts); renderTable(); return; }
+                const filtered = allItems.filter(i=> (i.razao_social||'').toLowerCase().includes(q) || (i.nota_fiscal||'').toLowerCase().includes(q));
+                const tbody = document.querySelector('#invTable tbody'); tbody.innerHTML='';
+                filtered.forEach(row=>{
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `\n            <td data-label="Razão Social">${escapeHtml(row.razao_social||'—')}</td>\n            <td data-label="Nota Fiscal">${escapeHtml(row.nota_fiscal||'—')}</td>\n            <td data-label="Quantidade">${row.quantidade ?? row.qtd ?? '—'}</td>\n            <td data-label="Status">${STATUS_LABELS[row.status]||row.status}</td>\n            <td data-label="Confirmar"><button class="confirm-btn" onclick="confirmItem(${row.id || 0}, this)">Confirmar</button></td>\n        `;
+                    tbody.appendChild(tr);
+                });
+            }, 250);
+        });
+    }
+    loadData();
+});
 </script>
 
 </body>
