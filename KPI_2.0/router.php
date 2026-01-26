@@ -174,9 +174,16 @@ function createRouter(): Router
     $router->add('/cadastro-realizado', 'FrontEnd/html/cadastro_realizado.php');
 
     // =====================================================
-    // INVENTÁRIO FÍSICO (REMOVIDO)
-    // Rotas e endpoints do módulo Inventário foram removidos.
-    // Para reimplementar, restaure a pasta BackEnd/Inventario e as views em FrontEnd/html.
+    // INVENTÁRIO FÍSICO
+    // Rota pública para a nova view do inventário (frontend somente).
+    $router->add('/inventario', 'FrontEnd/html/inventario.php');
+    // Compatibilidade com links antigos que usavam inventario.php diretamente
+    $router->add('/inventario.php', 'FrontEnd/html/inventario.php');
+    // Rota móvel amigável (redirigida por router_public quando UA móvel)
+    $router->add('/inventario_mobile', 'FrontEnd/html/inventario.php');
+    // Backend API mínimo para suportar listagem (frontend)
+    $router->add('/inventario-api', 'BackEnd/Inventario/InventarioApi.php');
+    // Para reimplementar o módulo completo (backend) restaure BackEnd/Inventario.
     // =====================================================
     // Reparo - expor salvamento de apontamentos pós-análise
     $router->add('/BackEnd/Reparo/salvar_dados_no_banco_2.php', 'BackEnd/Reparo/salvar_dados_no_banco_2.php');
