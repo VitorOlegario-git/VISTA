@@ -7,9 +7,6 @@
 // Carrega o sistema de roteamento
 require_once __DIR__ . '/router.php';
 
-// Cria e executa o roteador
-$router = createRouter();
-$router->dispatch();
 // --- Mobile redirect logic for inventory view ---------------------------------
 // Rules:
 // - If request is GET and ?url=inventario, perform UA-based redirect to inventario_mobile
@@ -20,7 +17,7 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
 	$requested = isset($_GET['url']) ? trim($_GET['url']) : '';
 	$requestedLower = strtolower($requested);
 
-	// Skip if already explicitly requesting mobile/desktop specific view
+	// Only evaluate when requesting the desktop inventory view
 	if ($requestedLower === 'inventario') {
 		$force = isset($_GET['force_view']) ? strtolower(trim($_GET['force_view'])) : null;
 
@@ -50,3 +47,7 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
 		}
 	}
 }
+
+// Cria e executa o roteador
+$router = createRouter();
+$router->dispatch();

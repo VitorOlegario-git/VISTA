@@ -25,16 +25,18 @@ definirHeadersSeguranca();
     .search input{width:100%;padding:10px;border-radius:10px;border:0}
 
     .filters{display:flex;gap:10px;overflow-x:auto;padding-bottom:8px}
-    .filter-btn{min-width:110px;background:linear-gradient(135deg,#0b172a,#102338);border-radius:10px;padding:10px;border:1px solid rgba(255,255,255,0.03);cursor:pointer}
+    .filter-btn{min-width:100px;background:transparent;border-radius:10px;padding:10px;border:1px solid rgba(255,255,255,0.04);cursor:pointer;display:flex;flex-direction:column;align-items:flex-start}
     .filter-btn .label{font-size:12px;color:var(--muted)}
     .filter-btn .count{font-weight:700;margin-top:6px}
-    .filter-btn.active{outline:3px solid rgba(99,102,241,0.12);transform:translateY(-2px)}
+    .filter-btn.active{box-shadow:0 6px 16px rgba(99,102,241,0.12);border-color:rgba(99,102,241,0.24);transform:none}
 
-    .list{margin-top:12px;display:flex;flex-direction:column;gap:10px}
-    .card{background:linear-gradient(180deg,#fff,#fff);color:#0b1724;border-radius:12px;padding:12px;box-shadow:0 6px 18px rgba(2,6,23,0.06)}
-    .card .row{display:flex;justify-content:space-between;align-items:center}
-    .card .meta{font-size:13px;color:#475569}
-    .confirm{background:var(--success);color:#fff;border:0;padding:8px 12px;border-radius:8px;cursor:pointer}
+    .list{margin-top:12px;display:flex;flex-direction:column;gap:12px}
+    .card{background:linear-gradient(180deg,var(--card),#0b2030);color:var(--text);border-radius:12px;padding:12px;box-shadow:0 6px 18px rgba(2,6,23,0.12);display:flex;flex-direction:column;gap:8px}
+    .card .row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+    .card .meta{font-size:13px;color:var(--muted);margin-top:6px}
+    .locker-pill{display:inline-block;background:rgba(99,102,241,0.12);color:var(--accent);padding:6px 8px;border-radius:999px;font-weight:700;font-size:12px;margin-top:6px}
+    .locker-s{padding:8px;border-radius:8px;border:0;background:#fff;color:#0b1724}
+    .confirm{background:var(--success);color:#fff;border:0;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:600}
 
     .empty{padding:20px;text-align:center;color:#94a3b8}
 
@@ -50,7 +52,10 @@ definirHeadersSeguranca();
             <h1>Inventário (Mobile)</h1>
             <div class="meta">Toque em um filtro ou pesquise para encontrar remessas</div>
         </div>
-        <button onclick="location.href='/router_public.php?url=dashboard'" style="background:transparent;border:0;color:var(--muted)">Voltar</button>
+        <div style="display:flex;gap:8px">
+            <button id="mobileAdd" style="background:transparent;border:0;color:var(--muted)">Adicionar</button>
+            <button onclick="location.href='/router_public.php?url=dashboard'" style="background:transparent;border:0;color:var(--muted)">Voltar</button>
+        </div>
     </div>
 
     <div class="search"><input id="q" placeholder="Pesquisar por razão social ou nota fiscal"></div>
@@ -59,6 +64,35 @@ definirHeadersSeguranca();
 
     <div class="list" id="list"></div>
     <div id="empty" class="empty" style="display:none">Nenhuma remessa encontrada.</div>
+    <div id="mobileAddForm" style="display:none;margin-top:12px;background:transparent;padding:10px;border-radius:8px">
+        <input id="m_razao" placeholder="Razão Social" style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
+        <input id="m_nf" placeholder="Nota Fiscal" style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
+        <input id="m_cnpj" placeholder="CNPJ" style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
+        <div style="display:flex;gap:8px;margin-bottom:8px">
+            <input id="m_qtd" type="number" value="1" min="1" style="flex:1;padding:10px;border-radius:8px;border:0">
+            <select id="m_status" style="flex:1;padding:10px;border-radius:8px;border:0">
+                <option value="aguardando_pg">Aguardando PG</option>
+                <option value="envio_cliente">Enviado p/ Cliente</option>
+                <option value="estocado">Estocado</option>
+            </select>
+        </div>
+        <input id="m_codigo_rastreio_entrada" placeholder="Código rastreio entrada" style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
+        <input id="m_codigo_rastreio_envio" placeholder="Código rastreio envio" style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
+        <input id="m_nota_fiscal_retorno" placeholder="Nota fiscal retorno" style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
+        <input id="m_numero_orcamento" placeholder="Número orçamento" style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
+        <input id="m_valor_orcamento" placeholder="Valor orçamento" style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
+        <input id="m_setor" placeholder="Setor" style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
+        <div style="display:flex;gap:8px"><select id="m_locker" style="padding:8px;border-radius:8px;border:0">
+            <option value="">Armário (nenhum)</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+        </select>
+        <button id="m_submit" class="confirm" style="margin-left:auto">Adicionar</button>
+        <button id="m_cancel" class="btn-back" style="margin-left:6px;background:transparent;border:0;color:var(--muted)">Cancelar</button></div>
+    </div>
 </div>
 
 <script>
@@ -67,6 +101,7 @@ const STATUS_LABELS = { 'aguardando_nf':'Aguardando NF','aguardando_nf_retorno':
 let items = [];
 let counts = {};
 let active = null;
+let activeLocker = null;
 
 function renderFilters(){
     const c = document.getElementById('filters'); c.innerHTML='';
@@ -74,6 +109,7 @@ function renderFilters(){
     STATUS_ORDER.forEach(code=>{
         const el = document.createElement('div'); el.className='filter-btn'+(active===code?' active':''); el.dataset.status = code; el.innerHTML = `<div class="label">${STATUS_LABELS[code]||code}</div><div class="count">${counts[code]||0}</div>`; el.onclick = ()=>{ active = code; renderList(); updateFilters(); }; c.appendChild(el);
     });
+    updateMobileLockerVisibility();
 }
 
 function updateFilters(){ document.querySelectorAll('.filter-btn').forEach(b=>{ b.classList.toggle('active', b.dataset.status === active || (active===null && b.innerText.includes('Total'))); }); }
@@ -85,31 +121,75 @@ function renderList(){
     if(visible.length===0){ document.getElementById('empty').style.display='block'; return; } else document.getElementById('empty').style.display='none';
     visible.forEach(r=>{
         const d = document.createElement('div'); d.className='card';
-        d.innerHTML = `<div class="row"><div><div style="font-weight:700">${escape(r.razao_social)}</div><div class="meta">NF: ${escape(r.nota_fiscal)} • Qt: ${r.quantidade||1}</div></div><div><button class="confirm" onclick="confirmIt(${r.id}, this)">Confirmar</button></div></div>`;
+        d.innerHTML = `<div class="row"><div style="flex:1"><div style="font-weight:700">${escape(r.razao_social)}</div><div class="meta">NF: ${escape(r.nota_fiscal)} • Qt: ${r.quantidade||1}</div>${r.locker?'<div class="locker-pill">Armário ' + escape(r.locker) + '</div>':''}</div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px"><select class="locker-s" data-id="${r.id}" style="padding:8px;border-radius:8px;border:0;margin-bottom:6px"><option value="">—</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select><button class="confirm small" onclick="confirmIt(${r.id}, this)">Confirmar</button></div></div>`;
         container.appendChild(d);
     });
+    // set locker selects and handlers
+    document.querySelectorAll('.locker-s').forEach(s=>{ const id = s.dataset.id; const it = items.find(x=>String(x.id)===String(id)); if(it) s.value = it.locker || ''; s.style.display = (active==='aguardando_pg' ? 'block' : 'none'); s.addEventListener('change', (e)=>{ assignLocker(id, e.target.value, s); }); });
+}
+
+function updateMobileLockerVisibility(){
+    const addForm = document.getElementById('mobileAddForm');
+    const show = active === 'aguardando_pg';
+    if(addForm) addForm.style.display = (show ? (addForm.style.display==='block'?'block':'none') : 'none');
 }
 
 function escape(s){ return String(s || '').replace(/[&<>\"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
 async function load(){
     try{
-        const res = await fetch('/router_public.php?url=inventario-api&action=list');
+        const res = await fetch('/router_public.php?url=inventario-api&action=list', { method: 'GET', credentials: 'include', cache: 'no-cache', headers: { 'Accept': 'application/json' } });
         if(!res.ok) throw new Error('API');
         const j = await res.json();
         items = (j.items||[]).map(r=>({ id: r.id||0, razao_social: r.razao_social||r.cliente_nome||'', nota_fiscal: r.nota_fiscal||'', quantidade: r.quantidade||1, status: r.status||'' }));
     }catch(e){
-        console.warn('API indisponível, usando mock');
-        items = [ {id:1,razao_social:'ACME',nota_fiscal:'NF-1001',quantidade:1,status:'aguardando_pg'} ];
+        console.error('Inventario API não respondeu (mobile):', e.message);
+        items = [];
     }
     counts = {}; items.forEach(x=>counts[x.status] = (counts[x.status]||0)+1);
     renderFilters(); renderList();
 }
 
-async function confirmIt(id, btn){ btn.disabled=true; const orig = btn.innerHTML; btn.innerHTML='...'; try{ const fd = new FormData(); fd.append('resumo_id', id); fd.append('action','confirm'); const r = await fetch('/router_public.php?url=inventario-api',{method:'POST',body:fd}); const j = await r.json(); if(j && j.success){ btn.innerHTML='OK'; // remove
+async function confirmIt(id, btn){ btn.disabled=true; const orig = btn.innerHTML; btn.innerHTML='...'; try{ const fd = new FormData(); fd.append('resumo_id', id); fd.append('action','confirm'); const r = await fetch('/router_public.php?url=inventario-api',{method:'POST',body:fd, credentials: 'include'}); const j = await r.json(); if(j && j.success){ btn.innerHTML='OK'; // remove
         const idx = items.findIndex(x=>x.id===id); if(idx!==-1){ counts[items[idx].status] = Math.max(0,(counts[items[idx].status]||1)-1); items.splice(idx,1); renderFilters(); renderList(); }
     } else { btn.innerHTML='Erro'; }
  }catch(e){ btn.innerHTML='Erro'; } setTimeout(()=>{ btn.disabled=false; btn.innerHTML=orig; },1200); }
+
+async function assignLocker(resumoId, locker, selectEl){
+    try{
+        const fd = new FormData(); fd.append('resumo_id', resumoId); fd.append('locker', locker);
+        const res = await fetch('/router_public.php?url=inventario-api&action=assign_locker', {method:'POST', body:fd, credentials:'include'});
+        const j = await res.json();
+        if(j && j.success){ const it = items.find(x=>String(x.id)===String(resumoId)); if(it) it.locker = locker || null; renderFilters(); renderList(); }
+    }catch(e){ console.error('Erro ao atribuir armário', e); }
+}
+
+// mobile add handlers
+document.getElementById('mobileAdd').addEventListener('click', ()=>{ document.getElementById('mobileAddForm').style.display='block'; });
+document.getElementById('m_cancel').addEventListener('click', ()=>{ document.getElementById('mobileAddForm').style.display='none'; });
+document.getElementById('m_submit').addEventListener('click', async ()=>{
+    const razao = document.getElementById('m_razao').value.trim(); const nf = document.getElementById('m_nf').value.trim(); const cnpj = document.getElementById('m_cnpj').value.trim(); const qtd = document.getElementById('m_qtd').value || 1; const status = document.getElementById('m_status').value; const codigo_rastreio_entrada = document.getElementById('m_codigo_rastreio_entrada').value.trim(); const codigo_rastreio_envio = document.getElementById('m_codigo_rastreio_envio').value.trim(); const nota_fiscal_retorno = document.getElementById('m_nota_fiscal_retorno').value.trim(); const numero_orcamento = document.getElementById('m_numero_orcamento').value.trim(); const valor_orcamento = document.getElementById('m_valor_orcamento').value.trim(); const setor = document.getElementById('m_setor').value.trim(); const locker = document.getElementById('m_locker').value;
+    if(!razao || !nf){ alert('Razão social e nota fiscal são obrigatórios'); return; }
+    try{
+        const fd = new FormData();
+        fd.append('razao_social', razao);
+        fd.append('nota_fiscal', nf);
+        fd.append('cnpj', cnpj);
+        fd.append('quantidade', qtd);
+        fd.append('status', status);
+        fd.append('codigo_rastreio_entrada', codigo_rastreio_entrada);
+        fd.append('codigo_rastreio_envio', codigo_rastreio_envio);
+        fd.append('nota_fiscal_retorno', nota_fiscal_retorno);
+        fd.append('numero_orcamento', numero_orcamento);
+        fd.append('valor_orcamento', valor_orcamento);
+        fd.append('setor', setor);
+        fd.append('armario_id', locker);
+        const res = await fetch('/router_public.php?url=inventario-api&action=create_manual', {method:'POST', body:fd, credentials:'include'});
+        const j = await res.json(); if(j && j.success && j.item){ items.unshift(j.item); counts[j.item.status] = (counts[j.item.status]||0)+1; renderFilters(); renderList(); document.getElementById('mobileAddForm').style.display='none'; }
+    }catch(e){ console.error(e); alert('Erro ao criar remessa'); }
+});
+// ensure locker visibility initial
+updateMobileLockerVisibility();
 
 document.getElementById('q').addEventListener('input', ()=>renderList());
 window.addEventListener('load', ()=>load());

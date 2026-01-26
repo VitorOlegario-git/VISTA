@@ -43,6 +43,8 @@ definirHeadersSeguranca();
         .confirm-btn{background:var(--success);color:#fff;border:none;padding:6px 12px;border-radius:8px;cursor:pointer}
         .confirm-btn[disabled]{opacity:0.7;cursor:not-allowed}
         .small-muted{font-size:13px;color:rgba(255,255,255,0.65)}
+        .locker-badge{display:inline-block;background:rgba(99,102,241,0.12);color:var(--accent);padding:6px 8px;border-radius:999px;font-weight:700;font-size:13px}
+        .locker-select{padding:6px;border-radius:6px;border:1px solid rgba(11,23,36,0.06);background:#fff;color:#0b1724}
 
         .loading-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.6);backdrop-filter:blur(2px)}
         .spinner{width:36px;height:36px;border-radius:50%;border:4px solid rgba(0,0,0,0.06);border-top-color:var(--accent);animation:spin 1s linear infinite}
@@ -74,6 +76,15 @@ definirHeadersSeguranca();
         </div>
         <div class="inv-actions">
             <input id="searchInput" type="search" placeholder="Pesquisar por razão social ou nota fiscal..." aria-label="Pesquisar" />
+            <select id="lockerFilter" style="padding:8px 10px;border-radius:8px;border:0;background:rgba(255,255,255,0.03);color:#fff;margin-left:8px">
+                <option value="">Armário (Todos)</option>
+                <option value="1">Armário 1</option>
+                <option value="2">Armário 2</option>
+                <option value="3">Armário 3</option>
+                <option value="4">Armário 4</option>
+                <option value="5">Armário 5</option>
+            </select>
+            <button id="addBtn" class="btn-back" style="margin-left:8px">Adicionar</button>
             <button onclick="location.href='/router_public.php?url=dashboard'" class="btn-back">Voltar</button>
         </div>
     </div>
@@ -90,6 +101,7 @@ definirHeadersSeguranca();
                     <th>Razão Social</th>
                     <th>Nota Fiscal</th>
                     <th>Quantidade</th>
+                            <th>Armário</th>
                     <th>Status</th>
                     <th>Confirmar</th>
                 </tr>
@@ -97,6 +109,41 @@ definirHeadersSeguranca();
             <tbody></tbody>
         </table>
         <div id="emptyState" class="empty-state" style="display:none">Nenhuma remessa encontrada para o filtro atual.</div>
+    </div>
+
+    <div id="addForm" style="display:none;margin-top:12px;background:rgba(255,255,255,0.02);padding:12px;border-radius:8px">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input id="add_razao" placeholder="Razão Social" style="padding:8px;border-radius:8px;border:0;min-width:220px" />
+            <input id="add_nf" placeholder="Nota Fiscal" style="padding:8px;border-radius:8px;border:0;min-width:140px" />
+            <input id="add_cnpj" placeholder="CNPJ" style="padding:8px;border-radius:8px;border:0;min-width:160px" />
+            <input id="add_qtd" type="number" min="1" value="1" style="padding:8px;border-radius:8px;border:0;width:80px" />
+            <select id="add_status" style="padding:8px;border-radius:8px;border:0">
+                <option value="aguardando_pg">Aguardando PG</option>
+                <option value="envio_cliente">Enviado p/ Cliente</option>
+                <option value="estocado">Estocado</option>
+                <option value="envio_expedicao">Expedição</option>
+            </select>
+            <input id="add_data_ultimo_registro" placeholder="Data último registro (YYYY-MM-DD HH:MM)" style="padding:8px;border-radius:8px;border:0;min-width:200px" />
+            <input id="add_codigo_rastreio_entrada" placeholder="Código rastreio entrada" style="padding:8px;border-radius:8px;border:0;min-width:200px" />
+            <input id="add_codigo_rastreio_envio" placeholder="Código rastreio envio" style="padding:8px;border-radius:8px;border:0;min-width:200px" />
+            <input id="add_nota_fiscal_retorno" placeholder="Nota fiscal retorno" style="padding:8px;border-radius:8px;border:0;min-width:140px" />
+            <input id="add_numero_orcamento" placeholder="Número orçamento" style="padding:8px;border-radius:8px;border:0;min-width:140px" />
+            <input id="add_valor_orcamento" placeholder="Valor orçamento" style="padding:8px;border-radius:8px;border:0;min-width:120px" />
+            <input id="add_setor" placeholder="Setor" style="padding:8px;border-radius:8px;border:0;min-width:120px" />
+            <select id="add_locker" style="padding:8px;border-radius:8px;border:0">
+                <option value="">Armário (nenhum)</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+        </div>
+        <div style="margin-top:8px">
+            <label style="display:inline-flex;align-items:center;gap:8px"><input id="add_confirmado" type="checkbox"> Confirmado</label>
+            <button id="submitAdd" class="confirm-btn" style="margin-left:12px">Adicionar remessa</button>
+            <button id="cancelAdd" class="btn-back" style="margin-left:8px">Cancelar</button>
+        </div>
     </div>
 
     <div style="margin-top:12px" class="small-muted">Filtro atual: <span id="currentFilter">Todos</span></div>
@@ -124,6 +171,7 @@ const STATUS_LABELS = {
 
 let allItems = [];
 let activeFilter = null;
+let activeLocker = null;
 let counts = {};
 let isLoading = false;
 
@@ -147,6 +195,7 @@ function renderFilters(counts){
         b.onclick = ()=>{ activeFilter = code; document.getElementById('currentFilter').textContent = STATUS_LABELS[code]||code; renderTable(); updateActiveBtn(); };
         container.appendChild(b);
     });
+    updateLockerVisibility();
 }
 
 function updateActiveBtn(){
@@ -155,10 +204,22 @@ function updateActiveBtn(){
     });
 }
 
+function updateLockerVisibility(){
+    const lf = document.getElementById('lockerFilter');
+    const addLocker = document.getElementById('add_locker');
+    const show = activeFilter === 'aguardando_pg';
+    if(lf) lf.style.display = show ? 'inline-block' : 'none';
+    if(addLocker) addLocker.style.display = show ? 'inline-block' : 'none';
+}
+
 function renderTable(){
     const tbody = document.querySelector('#invTable tbody');
     tbody.innerHTML = '';
-    const filtered = activeFilter? allItems.filter(i=>i.status===activeFilter) : allItems;
+    const filtered = allItems.filter(i=>{
+        if(activeFilter && i.status !== activeFilter) return false;
+        if(activeLocker && String(i.locker || '') !== String(activeLocker)) return false;
+        return true;
+    });
     const empty = filtered.length === 0;
     const emptyEl = document.getElementById('emptyState');
     if(emptyEl) emptyEl.style.display = empty ? 'block' : 'none';
@@ -168,10 +229,25 @@ function renderTable(){
             <td data-label="Razão Social">${escapeHtml(row.razao_social||'—')}</td>
             <td data-label="Nota Fiscal">${escapeHtml(row.nota_fiscal||'—')}</td>
             <td data-label="Quantidade">${row.quantidade ?? row.qtd ?? '—'}</td>
+            <td data-label="Armário">${row.locker ? `<span class="locker-badge">${escapeHtml(row.locker)}</span>` : '—'}</td>
             <td data-label="Status">${STATUS_LABELS[row.status]||row.status}</td>
-            <td data-label="Confirmar"><button class="confirm-btn" onclick="confirmItem(${row.id || 0}, this)">Confirmar</button></td>
+            <td data-label="Confirmar"><div style="display:flex;gap:8px;align-items:center">${activeFilter==='aguardando_pg'?`<select data-id="${row.id}" class="locker-select" style="min-width:84px">
+                <option value="">—</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>`: ''}<button class="confirm-btn" onclick="confirmItem(${row.id || 0}, this)">Confirmar</button></div></td>
         `;
         tbody.appendChild(tr);
+    });
+    // set locker selects values and change handlers
+    document.querySelectorAll('.locker-select').forEach(s=>{
+        const id = s.dataset.id;
+        const item = allItems.find(x=>String(x.id) === String(id));
+        if(item) s.value = item.locker || '';
+        s.addEventListener('change', (e)=>{ assignLocker(id, e.target.value, s); });
     });
 }
 
@@ -180,7 +256,12 @@ function escapeHtml(s){ return String(s).replace(/[&<>\\\"]/g, c=>({'&':'&amp;',
 async function loadData(){
     isLoading = true; toggleLoading(true);
     try{
-        const res = await fetch('/router_public.php?url=inventario-api&action=list');
+        const res = await fetch('/router_public.php?url=inventario-api&action=list', {
+            method: 'GET',
+            credentials: 'include',
+            cache: 'no-cache',
+            headers: { 'Accept': 'application/json' }
+        });
         if(!res.ok) throw new Error('API não disponível');
         const json = await res.json();
         // Expecting json.items with fields: cliente_nome (or razao_social), nota_fiscal, quantidade, status, id
@@ -196,16 +277,10 @@ async function loadData(){
         renderFilters(counts);
         renderTable();
     }catch(e){
-        // fallback mock data to allow frontend work while backend is reimplentado
-        console.warn('Inventario API não respondeu, usando mock data:', e.message);
-        allItems = [
-            {id:1,razao_social:'ACME LTDA',nota_fiscal:'NF-1001',quantidade:3,status:'aguardando_pg'},
-            {id:2,razao_social:'COMERCIO XYZ',nota_fiscal:'NF-1002',quantidade:1,status:'envio_cliente'},
-            {id:3,razao_social:'SOLUCOES SA',nota_fiscal:'NF-1003',quantidade:2,status:'estocado'},
-            {id:4,razao_social:'IND-EX',nota_fiscal:'NF-1004',quantidade:5,status:'envio_expedicao'}
-        ];
+        // If API fails, show empty state and log error (do not inject mock data)
+        console.error('Inventario API não respondeu:', e.message);
+        allItems = [];
         counts = {};
-        allItems.forEach(i=>counts[i.status] = (counts[i.status]||0)+1);
         renderFilters(counts);
         renderTable();
     } finally {
@@ -218,7 +293,7 @@ async function confirmItem(resumoId, btn){
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
     try{
         const fd = new FormData(); fd.append('resumo_id', resumoId); fd.append('action','confirm');
-        const res = await fetch('/router_public.php?url=inventario-api', {method:'POST', body:fd});
+        const res = await fetch('/router_public.php?url=inventario-api', {method:'POST', body:fd, credentials: 'include'});
         const j = await res.json();
         if(j && j.success){
             btn.innerHTML = '<i class="fas fa-check"></i>';
@@ -242,6 +317,66 @@ async function confirmItem(resumoId, btn){
     }
     setTimeout(()=>{ btn.disabled=false; btn.innerHTML = original; btn.style.background=''; },1500);
 }
+
+async function assignLocker(resumoId, locker, selectEl){
+    try{
+        const fd = new FormData(); fd.append('resumo_id', resumoId); fd.append('locker', locker);
+        const res = await fetch('/router_public.php?url=inventario-api&action=assign_locker', {method:'POST', body:fd, credentials:'include'});
+        const j = await res.json();
+        if(j && j.success){
+            const it = allItems.find(x=>String(x.id) === String(resumoId)); if(it) it.locker = locker || null; renderFilters(counts); renderTable();
+        } else {
+            console.error('Falha ao atribuir armário');
+        }
+    } catch(e){ console.error('Erro ao atribuir armário', e); }
+}
+
+// Add remessa UI
+document.getElementById('addBtn').addEventListener('click', ()=>{ document.getElementById('addForm').style.display = 'block'; });
+document.getElementById('cancelAdd').addEventListener('click', ()=>{ document.getElementById('addForm').style.display = 'none'; });
+document.getElementById('submitAdd').addEventListener('click', async ()=>{
+    const razao = document.getElementById('add_razao').value.trim();
+    const nf = document.getElementById('add_nf').value.trim();
+    const cnpj = document.getElementById('add_cnpj').value.trim();
+    const qtd = document.getElementById('add_qtd').value || 1;
+    const status = document.getElementById('add_status').value;
+    const data_ultimo_registro = document.getElementById('add_data_ultimo_registro').value.trim();
+    const codigo_rastreio_entrada = document.getElementById('add_codigo_rastreio_entrada').value.trim();
+    const codigo_rastreio_envio = document.getElementById('add_codigo_rastreio_envio').value.trim();
+    const nota_fiscal_retorno = document.getElementById('add_nota_fiscal_retorno').value.trim();
+    const numero_orcamento = document.getElementById('add_numero_orcamento').value.trim();
+    const valor_orcamento = document.getElementById('add_valor_orcamento').value.trim();
+    const setor = document.getElementById('add_setor').value.trim();
+    const locker = document.getElementById('add_locker').value;
+    const confirmado = document.getElementById('add_confirmado').checked ? 1 : 0;
+    if(!razao || !nf){ alert('Razão social e nota fiscal são obrigatórios'); return; }
+    try{
+        const fd = new FormData();
+        fd.append('razao_social', razao);
+        fd.append('nota_fiscal', nf);
+        fd.append('cnpj', cnpj);
+        fd.append('quantidade', qtd);
+        fd.append('status', status);
+        fd.append('data_ultimo_registro', data_ultimo_registro);
+        fd.append('codigo_rastreio_entrada', codigo_rastreio_entrada);
+        fd.append('codigo_rastreio_envio', codigo_rastreio_envio);
+        fd.append('nota_fiscal_retorno', nota_fiscal_retorno);
+        fd.append('numero_orcamento', numero_orcamento);
+        fd.append('valor_orcamento', valor_orcamento);
+        fd.append('setor', setor);
+        fd.append('armario_id', locker);
+        fd.append('confirmado', confirmado);
+        const res = await fetch('/router_public.php?url=inventario-api&action=create_manual', {method:'POST', body:fd, credentials:'include'});
+        const j = await res.json();
+        if(j && j.success && j.item){ allItems.unshift(j.item); counts[j.item.status] = (counts[j.item.status]||0)+1; renderFilters(counts); renderTable(); document.getElementById('addForm').style.display='none'; }
+        else alert('Erro ao criar remessa');
+    }catch(e){ console.error(e); alert('Erro ao criar remessa'); }
+});
+
+// locker filter
+document.getElementById('lockerFilter').addEventListener('change', (e)=>{ activeLocker = e.target.value || null; renderTable(); });
+// Ensure locker visibility is correct on load
+updateLockerVisibility();
 
 function toggleLoading(show){
     const overlay = document.getElementById('loadingOverlay');
