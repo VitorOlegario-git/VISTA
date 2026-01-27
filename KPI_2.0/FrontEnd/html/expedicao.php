@@ -26,7 +26,7 @@ $_SESSION['last_activity'] = time();
     <link rel="icon" href="/FrontEnd/CSS/imagens/VISTA.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="../JS/CnpjMask.js"></script>
+    <script src="/FrontEnd/JS/CnpjMask.js"></script>
 </head>
 <body>
 

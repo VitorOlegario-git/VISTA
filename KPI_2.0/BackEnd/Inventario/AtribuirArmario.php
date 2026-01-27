@@ -21,6 +21,17 @@ if ($armario_id <= 0 || !is_array($remessas) || count($remessas) === 0) {
     jsonError('Dados inválidos');
 }
 
+// Ensure remessas are provided as resumo_id integers.
+// This endpoint operates exclusively on `resumo_geral.id` values (resumo_id).
+// Do NOT attempt to infer or modify any `status` here — armário é apenas
+// um atributo do lote e deve ser atualizado sem alterar o estado.
+// The canonical inventory status (incl. NO_ARMARIO) is derived by
+// `vw_resumo_estado_real` and must not be computed or corrected here.
+foreach ($remessas as $k => $v) {
+    $remessas[$k] = intval($v);
+    if ($remessas[$k] <= 0) jsonError('remessas deve conter resumo_id válidos');
+}
+
 try {
     $db = getDb();
     $db->beginTransaction();

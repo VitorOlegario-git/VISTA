@@ -25,6 +25,9 @@ class ConsolidacaoApi extends ApiController
             case 'compare_armario':
                 verificarCSRF();
 
+                // Consolidação compara estado real derivado, não status salvo
+                // Fonte do status: vw_resumo_estado_real.status_real
+
                 $ciclo_id   = (int)($_POST['ciclo_id'] ?? 0);
                 $armario_id = trim((string)($_POST['armario_id'] ?? ''));
                 $raw        = $_POST['remessas'] ?? [];
@@ -53,22 +56,25 @@ class ConsolidacaoApi extends ApiController
 
                     try {
                         // Checa colunas alternativas de remessa (remessa ou codigo_remessa)
+                        // Use vw_resumo_estado_real.status_real as authoritative status
                         $row = $db->fetchOne(
-                            "SELECT status FROM resumo_geral WHERE (remessa = ? OR codigo_remessa = ?) AND cnpj IS NOT NULL AND nota_fiscal IS NOT NULL AND TRIM(nota_fiscal) <> '' LIMIT 1",
+                            "SELECT v.status_real AS status_real
+                             FROM vw_resumo_estado_real v
+                             JOIN resumo_geral r ON r.id = v.resumo_id
+                             WHERE (r.remessa = ? OR r.codigo_remessa = ?)
+                               AND r.cnpj IS NOT NULL AND r.nota_fiscal IS NOT NULL AND TRIM(r.nota_fiscal) <> ''
+                             LIMIT 1",
                             [$rem, $rem]
                         );
 
                         if ($row) {
-                            // Found a resumo_geral entry: use exact business rule for inventory
-                            // Decision: consider 'aguardando_pg' as the canonical OK-for-inventory status.
-                            $status_banco = $row['status'] ?? 'desconhecido';
+                            // Found a derived state: use business rules against status_real
+                            $status_banco = $row['status_real'] ?? 'desconhecido';
                             if ($status_banco === 'aguardando_pg') {
                                 $resultado = 'OK';
                             } elseif (stripos($status_banco, 'inventari') !== false || stripos($status_banco, 'confirm') !== false) {
-                                // If status indicates it was already inventoried/confirmed, mark explicitly
                                 $resultado = 'JA_INVENTARIADA';
                             } else {
-                                // Any other status is considered a divergence that needs operator attention
                                 $resultado = 'DIVERGENTE';
                             }
                         } else {
