@@ -440,6 +440,13 @@ document.addEventListener("keydown", e => {
     if (e.key === "Escape" && isPanelOpen) closePanel();
 });
 
+    // Prevent browser zoom from Ctrl + wheel inside this page
+    window.addEventListener('wheel', function(e){
+        if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+
 // =====================================================
 // INICIALIZAÇÃO
 // =====================================================

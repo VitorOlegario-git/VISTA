@@ -418,6 +418,14 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
+    // Prevent browser zoom from Ctrl + wheel inside this page (improves UX for mouse scroll)
+    // We only block the default when Ctrl (or Meta) is pressed to keep normal scrolling intact.
+    window.addEventListener('wheel', function(e){
+        if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+
 // ==========================================
 // FUNÇÕES ORIGINAIS (PRESERVADAS)
 // ==========================================
