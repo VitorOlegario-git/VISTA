@@ -31,6 +31,11 @@ $_SESSION['last_activity'] = time();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://kpi.stbextrema.com.br/FrontEnd/JS/CnpjMask.js"></script>
+    <style>
+        /* Ocultação condicional que preserva o espaço (não quebra layout) */
+        .conditional-hidden { transition: opacity .15s ease; }
+        .conditional-hidden.hidden { visibility: hidden; opacity: 0; pointer-events: none; }
+    </style>
 </head>
 <body>
 
@@ -225,7 +230,7 @@ $_SESSION['last_activity'] = time();
                         <input type="number" id="quantidade" name="quantidade" required placeholder="Quantidade total" readonly>
                     </div>
 
-                    <div class="form-group">
+                    <div id="wrap-sim-nao" class="form-group conditional-hidden">
                         <label for="sim_nao">
                             <i class="fas fa-question-circle"></i>
                             Reparo Parcial?
@@ -501,6 +506,19 @@ document.addEventListener("DOMContentLoaded", () => {
     setor.onchange = atualizarDestino;
     opOrigem.onchange = atualizarDestino;
 
+    // Controla visibilidade do campo 'Reparo Parcial?' sem quebrar o layout
+    const wrapSimNao = document.getElementById('wrap-sim-nao');
+    function controlarVisibilidadeReparoParcial(){
+        if(!wrapSimNao || !opOrigem) return;
+        if(opOrigem.value === 'em_reparo'){
+            wrapSimNao.classList.add('hidden');
+        } else {
+            wrapSimNao.classList.remove('hidden');
+        }
+    }
+    controlarVisibilidadeReparoParcial();
+    opOrigem.addEventListener('change', controlarVisibilidadeReparoParcial);
+
     // ---------------------------
     // SUBMIT
     // ---------------------------
@@ -562,6 +580,7 @@ document.addEventListener("DOMContentLoaded", () => {
         form.quantidade.value    = item.quantidade_total;
         form.quantidade_parcial.value = item.quantidade_parcial || "";
         form.operacao_origem.value = item.status;
+        if (typeof controlarVisibilidadeReparoParcial === 'function') controlarVisibilidadeReparoParcial();
         form.numero_orcamento.value = item.numero_orcamento || "";
         form.valor_orcamento.value  = item.valor_orcamento || "";
 
