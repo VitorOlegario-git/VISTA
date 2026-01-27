@@ -26,7 +26,7 @@ $_SESSION['last_activity'] = time();
     <link rel="icon" href="https://kpi.stbextrema.com.br/FrontEnd/CSS/imagens/VISTA.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="../JS/CnpjMask.js"></script>
+    <script src="/FrontEnd/JS/CnpjMask.js"></script>
 </head>
 <body>
 
@@ -429,6 +429,41 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.key === 'Escape') closePanel();
     });
 
+    // Auto-fill dates based on operacao_origem for Qualidade
+    function isoToday() {
+        const d = new Date();
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function autoFillDatesBasedOnOrigem() {
+        const origemEl = document.getElementById('operacao_origem');
+        if (!origemEl) return;
+        const origem = origemEl.value;
+        const dataInicio = document.getElementById('data_inicio_qualidade');
+        const dataEnvio = document.getElementById('data_envio_expedicao');
+        if (!dataInicio || !dataEnvio) return;
+
+        // reset readonly
+        dataInicio.readOnly = false;
+        dataEnvio.readOnly = false;
+
+        if (origem === 'aguardando_NF_retorno') {
+            dataInicio.value = isoToday();
+            dataInicio.readOnly = true;
+            dataEnvio.value = '';
+        } else if (origem === 'inspecao_qualidade') {
+            dataEnvio.value = isoToday();
+            dataEnvio.readOnly = true;
+        }
+    }
+
+    // Wire change event so user changing origin also triggers auto-fill
+    const origemSelect = document.getElementById('operacao_origem');
+    if (origemSelect) origemSelect.addEventListener('change', autoFillDatesBasedOnOrigem);
+
     // =====================================================
     // SUBMIT (PRECHECK + SAVE)
     // =====================================================
@@ -582,6 +617,11 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('quantidade').value = item.quantidade || '';
         document.getElementById('quantidade_parcial').value = item.quantidade_parcial || '';
 
+        // Set operation origin consistently from returned item (status / origem)
+        const origemVal = item.operacao_origem || item.status || item.operacao_destino || '';
+        const origemEl = document.getElementById('operacao_origem');
+        if (origemEl) origemEl.value = origemVal;
+
         if (tipo === "qualidade") {
             document.getElementById('data_inicio_qualidade').value = item.data_inicio_qualidade || '';
             document.getElementById('nota_fiscal_retorno').value = item.nota_fiscal_retorno || '';
@@ -593,6 +633,8 @@ document.addEventListener("DOMContentLoaded", () => {
         // Log para debug: identifica remessa clicada
         try { console.log('qualidade: preencherInputs item=', item, 'tipo=', tipo); } catch(e) {}
 
+        // also run auto-fill based on origem (keeps dates consistent)
+        try { if (typeof autoFillDatesBasedOnOrigem === 'function') autoFillDatesBasedOnOrigem(); } catch(e){}
         openPanelEdit();
     }
 
