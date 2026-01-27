@@ -31,6 +31,11 @@ $_SESSION['last_activity'] = time();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://kpi.stbextrema.com.br/FrontEnd/JS/CnpjMask.js"></script>
+    <style>
+        /* Ocultação condicional que preserva o espaço (não quebra layout) */
+        .conditional-hidden { transition: opacity .15s ease; }
+        .conditional-hidden.hidden { visibility: hidden; opacity: 0; pointer-events: none; }
+    </style>
 </head>
 <body>
 
@@ -221,7 +226,7 @@ $_SESSION['last_activity'] = time();
                         <input type="number" id="quantidade" name="quantidade" required placeholder="Quantidade total" readonly>
                     </div>
 
-                    <div class="form-group">
+                    <div id="wrap-sim-nao" class="form-group conditional-hidden">
                         <label for="sim_nao">
                             <i class="fas fa-question-circle"></i>
                             Análise Parcial?
@@ -526,6 +531,20 @@ document.addEventListener("DOMContentLoaded", function () {
 acaoSelect.addEventListener("change", atualizarOperacaoDestino);
 operacaoOrigem.addEventListener("change", atualizarOperacaoDestino);
 
+    // Controla visibilidade do campo 'Análise Parcial?' sem quebrar o layout
+    const wrapSimNao = document.getElementById('wrap-sim-nao');
+    function controlarVisibilidadeAnaliseParcial(){
+        if(!wrapSimNao || !operacaoOrigem) return;
+        if(operacaoOrigem.value === 'em_analise'){
+            wrapSimNao.classList.add('hidden');
+        } else {
+            wrapSimNao.classList.remove('hidden');
+        }
+    }
+    // inicializa visibilidade e vincula ao evento change
+    controlarVisibilidadeAnaliseParcial();
+    operacaoOrigem.addEventListener('change', controlarVisibilidadeAnaliseParcial);
+
 // Validação preventiva de análise parcial
 const simNaoSelect = document.getElementById("sim_nao");
 const quantidadeParcialInput = document.getElementById("quantidade_parcial");
@@ -659,6 +678,7 @@ simNaoSelect.addEventListener("change", function() {
         if (tipo === "aguardando") {
             document.querySelector('#quantidade').value = item.quantidade_total || '';
             document.querySelector('#operacao_origem').value = item.status || '';
+            if (typeof controlarVisibilidadeAnaliseParcial === 'function') controlarVisibilidadeAnaliseParcial();
         } else if (tipo === "analise") {
             const campoDataInicio = document.querySelector('#data_inicio_analise');
             campoDataInicio.value = item.data_inicio_analise ? item.data_inicio_analise.split(" ")[0] : '';
@@ -675,6 +695,7 @@ simNaoSelect.addEventListener("change", function() {
             }
 
             document.querySelector('#operacao_origem').value = item.status || '';
+            if (typeof controlarVisibilidadeAnaliseParcial === 'function') controlarVisibilidadeAnaliseParcial();
         }
         
         openPanelEdit();
