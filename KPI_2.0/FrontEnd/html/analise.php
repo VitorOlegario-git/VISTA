@@ -502,6 +502,42 @@ document.addEventListener("DOMContentLoaded", function () {
     // inicializa e vincula
     atualizarAcaoPorOrigem();
     operacaoOrigem.addEventListener('change', atualizarAcaoPorOrigem);
+    // Auto-fill dates based on operacao_origem
+    function isoToday() {
+        const d = new Date();
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function autoFillDatesBasedOnOrigem() {
+        const origem = operacaoOrigem.value;
+        const dataInicio = document.getElementById('data_inicio_analise');
+        const dataEncerramento = document.getElementById('data_envio_orcamento');
+
+        if (!dataInicio || !dataEncerramento) return;
+
+        // reset readonly so user can edit for other flows
+        dataInicio.readOnly = false;
+        dataEncerramento.readOnly = false;
+
+        if (origem === 'envio_analise' || origem === 'aguardando_analise') {
+            // waiting for analysis -> set start date automatically
+            dataInicio.value = isoToday();
+            dataInicio.readOnly = true;
+            // ensure end date is cleared
+            dataEncerramento.value = '';
+        } else if (origem === 'em_analise') {
+            // currently in analysis -> set end/encerramento automatically
+            dataEncerramento.value = isoToday();
+            dataEncerramento.readOnly = true;
+        } else {
+            // other cases: leave editable
+        }
+    }
+    // wire
+    operacaoOrigem.addEventListener('change', autoFillDatesBasedOnOrigem);
 
     acaoSelect.addEventListener("change", function () {
         const isFim = this.value === "fim";
@@ -706,6 +742,7 @@ simNaoSelect.addEventListener("change", function() {
             document.querySelector('#operacao_origem').value = item.status || '';
                 if (typeof controlarVisibilidadeAnaliseParcial === 'function') controlarVisibilidadeAnaliseParcial();
                 if (typeof atualizarAcaoPorOrigem === 'function') atualizarAcaoPorOrigem();
+                if (typeof autoFillDatesBasedOnOrigem === 'function') autoFillDatesBasedOnOrigem();
         } else if (tipo === "analise") {
             const campoDataInicio = document.querySelector('#data_inicio_analise');
             campoDataInicio.value = item.data_inicio_analise ? item.data_inicio_analise.split(" ")[0] : '';
@@ -724,6 +761,7 @@ simNaoSelect.addEventListener("change", function() {
             document.querySelector('#operacao_origem').value = item.status || '';
             if (typeof controlarVisibilidadeAnaliseParcial === 'function') controlarVisibilidadeAnaliseParcial();
             if (typeof atualizarAcaoPorOrigem === 'function') atualizarAcaoPorOrigem();
+            if (typeof autoFillDatesBasedOnOrigem === 'function') autoFillDatesBasedOnOrigem();
         }
         
         openPanelEdit();
