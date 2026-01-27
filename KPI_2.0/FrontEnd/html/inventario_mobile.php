@@ -78,9 +78,9 @@ definirHeadersSeguranca();
         <div class="panel-body">
             <form id="form-mobile" onsubmit="return false;">
                 <div class="form-section">
+                    <input id="m_cnpj" placeholder="CNPJ" maxlength="18" style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
                     <input id="m_razao" placeholder="Razão Social" style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
                     <input id="m_nf" placeholder="Nota Fiscal" style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
-                    <input id="m_cnpj" placeholder="CNPJ" style="width:100%;padding:10px;border-radius:8px;border:0;margin-bottom:8px">
                     <div style="display:flex;gap:8px;margin-bottom:8px">
                         <input id="m_qtd" type="number" value="1" min="1" style="flex:1;padding:10px;border-radius:8px;border:0">
                         <select id="m_status" style="flex:1;padding:10px;border-radius:8px;border:0">
@@ -111,6 +111,7 @@ definirHeadersSeguranca();
     </div>
 </div>
 
+<script src="/FrontEnd/JS/CnpjMask.js"></script>
 <script>
 const STATUS_ORDER = ['aguardando_nf_retorno','aguardando_nf','aguardando_pg','descarte','em_analise','em_reparo','envio_analise','envio_cliente','envio_expedicao','estocado','inspecao_qualidade'];
 const STATUS_LABELS = { 'aguardando_nf':'Aguardando NF','aguardando_nf_retorno':'Aguardando NF (retorno)','aguardando_pg':'Aguardando PG','descarte':'Descarte','em_analise':'Em Análise','em_reparo':'Em Reparo','envio_analise':'Enviado p/ Análise','envio_cliente':'Enviado p/ Cliente','envio_expedicao':'Expedição','estocado':'Estocado','inspecao_qualidade':'Inspeção Qualidade' };
@@ -220,6 +221,25 @@ document.getElementById('m_submit').addEventListener('click', async ()=>{
         const j = await res.json(); if(j && j.success && j.item){ items.unshift(j.item); counts[j.item.status] = (counts[j.item.status]||0)+1; renderFilters(); renderList(); document.getElementById('mobileAddForm').style.display='none'; }
     }catch(e){ console.error(e); alert('Erro ao criar remessa'); }
 });
+// Inicializa máscara e busca automática de razão social por CNPJ (mobile)
+const mCnpj = document.getElementById('m_cnpj');
+if(mCnpj){
+    mCnpj.addEventListener('input', function(){ applyCNPJMask(this); });
+    mCnpj.addEventListener('blur', async ()=>{
+        const cnpjVal = mCnpj.value.trim();
+        if(cnpjVal.length !== 18) return;
+        try{
+            const res = await fetch('/BackEnd/buscar_cliente.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'cnpj=' + encodeURIComponent(cnpjVal)
+            });
+            const json = await res.json();
+            if(json && json.encontrado) document.getElementById('m_razao').value = json.razao_social || '';
+        }catch(e){ console.error('Erro ao buscar cliente (mobile):', e); }
+    });
+}
+
 // ensure locker visibility initial
 updateMobileLockerVisibility();
 

@@ -143,9 +143,9 @@ definirHeadersSeguranca();
         <div class="panel-body">
             <form id="form-inventario" onsubmit="return false;">
                 <div style="display:flex;flex-direction:column;gap:10px">
+                    <input id="add_cnpj" placeholder="CNPJ" maxlength="18" style="padding:10px;border-radius:8px;border:0" />
                     <input id="add_razao" placeholder="Razão Social" style="padding:10px;border-radius:8px;border:0" />
                     <input id="add_nf" placeholder="Nota Fiscal" style="padding:10px;border-radius:8px;border:0" />
-                    <input id="add_cnpj" placeholder="CNPJ" style="padding:10px;border-radius:8px;border:0" />
                     <div style="display:flex;gap:8px">
                         <input id="add_qtd" type="number" min="1" value="1" style="padding:10px;border-radius:8px;border:0;width:120px" />
                         <select id="add_status" style="padding:10px;border-radius:8px;border:0;flex:1">
@@ -184,6 +184,7 @@ definirHeadersSeguranca();
 
 </div>
 
+<script src="/FrontEnd/JS/CnpjMask.js"></script>
 <script>
 const STATUS_ORDER = [
     'aguardando_nf_retorno','aguardando_nf','aguardando_pg','descarte','em_analise','em_reparo','envio_analise','envio_cliente','envio_expedicao','estocado','inspecao_qualidade'
@@ -460,6 +461,32 @@ document.addEventListener('DOMContentLoaded', ()=>{
             }, 250);
         });
     }
+
+    // Inicializa máscara e busca automática de razão social por CNPJ
+    const addCnpj = document.getElementById('add_cnpj');
+    if(addCnpj){
+        // Aplicar máscara enquanto digita
+        addCnpj.addEventListener('input', function(){ applyCNPJMask(this); });
+
+        // Ao perder foco, se CNPJ estiver completo, procurar cliente
+        addCnpj.addEventListener('blur', async ()=>{
+            const cnpjVal = addCnpj.value.trim();
+            if(cnpjVal.length !== 18) return; // CNPJ formatado tem 18 caracteres
+            try{
+                const res = await fetch('/BackEnd/buscar_cliente.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'cnpj=' + encodeURIComponent(cnpjVal)
+                });
+                const json = await res.json();
+                if(json && json.encontrado){
+                    const razaoEl = document.getElementById('add_razao');
+                    if(razaoEl) razaoEl.value = json.razao_social || '';
+                }
+            }catch(err){ console.error('Erro ao buscar cliente por CNPJ:', err); }
+        });
+    }
+
     loadData();
 });
 </script>
