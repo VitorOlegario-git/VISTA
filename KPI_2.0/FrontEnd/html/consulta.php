@@ -335,6 +335,9 @@ document.getElementById("consultar-status").addEventListener("click", function (
                     section.style.display = 'flex';
                     section.style.flexDirection = 'column';
                     section.style.alignItems = 'stretch';
+                    // prevent unlimited growth: set a sensible max height
+                    section.style.maxHeight = '420px';
+                    section.style.overflow = 'hidden';
 
                     // Título
                     const title = document.createElement("h3");
@@ -346,6 +349,9 @@ document.getElementById("consultar-status").addEventListener("click", function (
                     ul.style.listStyle = 'none';
                     ul.style.padding = '0';
                     ul.style.margin = '0 0 8px 0';
+                    // limit list height to avoid pushing the chart down
+                    ul.style.maxHeight = '96px';
+                    ul.style.overflow = 'auto';
 
                     const labels = [];
                     const valores = [];
@@ -367,8 +373,9 @@ document.getElementById("consultar-status").addEventListener("click", function (
                     const safeId = `grafico-${String(setor).replace(/[^a-z0-9\-]/gi,'_')}`;
                     canvas.id = safeId;
                     canvas.style.width = '100%';
-                    canvas.style.height = '300px';
-                    canvas.height = 300;
+                    // fix canvas display height to avoid canvas growing with content
+                    canvas.style.height = '240px';
+                    canvas.height = 240;
                     section.appendChild(canvas);
 
                     container.appendChild(section);
