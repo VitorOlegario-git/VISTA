@@ -477,6 +477,24 @@ document.addEventListener("DOMContentLoaded", function () {
         parcialSelect.required = isInicio;
     });
 
+    // Ajusta opções de 'acao' dependendo da operacao_origem
+    function atualizarAcaoPorOrigem(){
+        if(!acaoSelect || !operacaoOrigem) return;
+        const origem = operacaoOrigem.value;
+        acaoSelect.innerHTML = '<option value="">Selecione</option>';
+        if(origem === 'envio_analise' || origem === 'aguardando_pg'){
+            acaoSelect.innerHTML += '<option value="inicio">Início de Análise</option>';
+        } else if(origem === 'em_analise'){
+            acaoSelect.innerHTML += '<option value="fim">Fim de Análise</option>';
+        } else {
+            acaoSelect.innerHTML += '<option value="inicio">Início de Análise</option>';
+            acaoSelect.innerHTML += '<option value="fim">Fim de Análise</option>';
+        }
+    }
+    // inicializa e vincula
+    atualizarAcaoPorOrigem();
+    operacaoOrigem.addEventListener('change', atualizarAcaoPorOrigem);
+
     acaoSelect.addEventListener("change", function () {
         const isFim = this.value === "fim";
         inputNumero.required = isFim;
@@ -678,7 +696,8 @@ simNaoSelect.addEventListener("change", function() {
         if (tipo === "aguardando") {
             document.querySelector('#quantidade').value = item.quantidade_total || '';
             document.querySelector('#operacao_origem').value = item.status || '';
-            if (typeof controlarVisibilidadeAnaliseParcial === 'function') controlarVisibilidadeAnaliseParcial();
+                if (typeof controlarVisibilidadeAnaliseParcial === 'function') controlarVisibilidadeAnaliseParcial();
+                if (typeof atualizarAcaoPorOrigem === 'function') atualizarAcaoPorOrigem();
         } else if (tipo === "analise") {
             const campoDataInicio = document.querySelector('#data_inicio_analise');
             campoDataInicio.value = item.data_inicio_analise ? item.data_inicio_analise.split(" ")[0] : '';
@@ -696,6 +715,7 @@ simNaoSelect.addEventListener("change", function() {
 
             document.querySelector('#operacao_origem').value = item.status || '';
             if (typeof controlarVisibilidadeAnaliseParcial === 'function') controlarVisibilidadeAnaliseParcial();
+            if (typeof atualizarAcaoPorOrigem === 'function') atualizarAcaoPorOrigem();
         }
         
         openPanelEdit();

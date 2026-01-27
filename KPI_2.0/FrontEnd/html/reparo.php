@@ -518,6 +518,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     controlarVisibilidadeReparoParcial();
     opOrigem.addEventListener('change', controlarVisibilidadeReparoParcial);
+    // Ajusta opções de 'acao' dependendo da operacao_origem (reparo)
+    function atualizarAcaoPorOrigem(){
+        if(!acao || !opOrigem) return;
+        const origem = opOrigem.value;
+        acao.innerHTML = '<option value="">Selecione</option>';
+        if(origem === 'aguardando_pg'){
+            acao.innerHTML += '<option value="inicio">Início do Reparo</option>';
+        } else if(origem === 'em_reparo'){
+            acao.innerHTML += '<option value="fim">Fim do Reparo</option>';
+        } else {
+            acao.innerHTML += '<option value="inicio">Início do Reparo</option>';
+            acao.innerHTML += '<option value="fim">Fim do Reparo</option>';
+        }
+    }
+    atualizarAcaoPorOrigem();
+    opOrigem.addEventListener('change', atualizarAcaoPorOrigem);
 
     // ---------------------------
     // SUBMIT
@@ -581,6 +597,7 @@ document.addEventListener("DOMContentLoaded", () => {
         form.quantidade_parcial.value = item.quantidade_parcial || "";
         form.operacao_origem.value = item.status;
         if (typeof controlarVisibilidadeReparoParcial === 'function') controlarVisibilidadeReparoParcial();
+        if (typeof atualizarAcaoPorOrigem === 'function') atualizarAcaoPorOrigem();
         form.numero_orcamento.value = item.numero_orcamento || "";
         form.valor_orcamento.value  = item.valor_orcamento || "";
 
