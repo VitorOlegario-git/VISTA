@@ -451,6 +451,14 @@ let dadosEmAnalise = [];
 document.addEventListener("DOMContentLoaded", function () {
     // Inicializar máscara de CNPJ
     initializeCNPJMask();
+        // Formata data ISO (YYYY-MM-DD[ HH:MM:SS]) para DD/MM/YYYY
+        function formatDateToBR(iso){
+            if(!iso) return '';
+            const datePart = String(iso).split(' ')[0];
+            const p = datePart.split('-');
+            if(p.length !== 3) return datePart;
+            return `${p[2]}/${p[1]}/${p[0]}`;
+        }
     const acaoSelect = document.getElementById("acao");
     const parcialSelect = document.getElementById("sim_nao");
     const inputNumero = document.querySelector("input[name='numero_orcamento']");
@@ -749,7 +757,7 @@ simNaoSelect.addEventListener("change", function() {
                 <td>${item.cnpj || ''}</td>
                 <td>${item.razao_social || ''}</td>
                 <td>${item.nota_fiscal || ''}</td>
-                <td>${item.data_inicio_analise ? item.data_inicio_analise.split(" ")[0] : ''}</td>
+                <td>${formatDateToBR(item.data_inicio_analise)}</td>
                 <td>${item.quantidade_total || ''}</td>
                 <td>${item.quantidade_parcial || ''}</td>
                 <td>${item.status || ''}</td>
