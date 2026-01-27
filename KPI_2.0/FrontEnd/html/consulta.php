@@ -8,7 +8,7 @@
     <link rel="icon" href="https://kpi.stbextrema.com.br/FrontEnd/CSS/imagens/VISTA.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="../JS/CnpjMask.js"></script>
+    <script src="/FrontEnd/JS/CnpjMask.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://unpkg.com/html-docx-js/dist/html-docx.js"></script>
@@ -314,12 +314,27 @@ document.getElementById("consultar-status").addEventListener("click", function (
             const container = document.getElementById("status-geral");
             container.innerHTML = "";
 
+            // Improve chart area layout: responsive grid
+            container.style.display = 'grid';
+            container.style.gridTemplateColumns = 'repeat(auto-fit, minmax(320px, 1fr))';
+            container.style.gap = '20px';
+            container.style.alignItems = 'start';
+
             if (data.success && data.dados) {
                 Object.keys(data.dados).forEach(setor => {
                     const statusList = data.dados[setor];
 
                     const section = document.createElement("div");
-                    section.style.marginBottom = "40px";
+                    section.className = 'chart-card';
+                    section.style.marginBottom = "0";
+                    section.style.padding = '12px';
+                    section.style.background = '#fff';
+                    section.style.border = '1px solid rgba(0,0,0,0.06)';
+                    section.style.borderRadius = '8px';
+                    section.style.boxShadow = '0 1px 4px rgba(0,0,0,0.04)';
+                    section.style.display = 'flex';
+                    section.style.flexDirection = 'column';
+                    section.style.alignItems = 'stretch';
 
                     // Título
                     const title = document.createElement("h3");
@@ -328,6 +343,10 @@ document.getElementById("consultar-status").addEventListener("click", function (
 
                     // Lista de status
                     const ul = document.createElement("ul");
+                    ul.style.listStyle = 'none';
+                    ul.style.padding = '0';
+                    ul.style.margin = '0 0 8px 0';
+
                     const labels = [];
                     const valores = [];
 
@@ -344,14 +363,17 @@ document.getElementById("consultar-status").addEventListener("click", function (
 
                     // Canvas do gráfico
                     const canvas = document.createElement("canvas");
-                    canvas.id = `grafico-${setor}`;
-                    canvas.height = "300px";
-                    canvas.style.maxWidth = "600px";
+                    // sanitize id
+                    const safeId = `grafico-${String(setor).replace(/[^a-z0-9\-]/gi,'_')}`;
+                    canvas.id = safeId;
+                    canvas.style.width = '100%';
+                    canvas.style.height = '300px';
+                    canvas.height = 300;
                     section.appendChild(canvas);
 
                     container.appendChild(section);
 
-                    // Gráfico de barras
+                    // Gráfico de barras com opções responsivas e legíveis
                     const ctx = canvas.getContext('2d');
                     new Chart(ctx, {
                         type: 'bar',
@@ -360,38 +382,38 @@ document.getElementById("consultar-status").addEventListener("click", function (
                             datasets: [{
                                 label: 'Quantidade',
                                 data: valores,
-                                backgroundColor: [
-                                    'rgba(75, 192, 192, 0.6)',
-                                    'rgba(255, 99, 132, 0.6)',
-                                    'rgba(255, 205, 86, 0.6)',
-                                    'rgba(54, 162, 235, 0.6)',
-                                    'rgba(153, 102, 255, 0.6)',
-                                    'rgba(201, 203, 207, 0.6)',
-                                    'rgba(255, 159, 64, 0.6)',
-                                    'rgba(100, 100, 255, 0.6)',
-                                    'rgba(0, 200, 150, 0.6)',
-                                    'rgba(200, 50, 150, 0.6)'
-                                ]
+                                backgroundColor: labels.map((_,i) => {
+                                    const palette = [
+                                        'rgba(75, 192, 192, 0.8)',
+                                        'rgba(255, 99, 132, 0.8)',
+                                        'rgba(255, 205, 86, 0.8)',
+                                        'rgba(54, 162, 235, 0.8)',
+                                        'rgba(153, 102, 255, 0.8)',
+                                        'rgba(201, 203, 207, 0.8)',
+                                        'rgba(255, 159, 64, 0.8)'
+                                    ];
+                                    return palette[i % palette.length];
+                                })
                             }]
                         },
                         options: {
                             responsive: true,
-                            plugins: {
-                                legend: {
-                                    position: 'bottom'
+                            maintainAspectRatio: false,
+                            layout: { padding: 8 },
+                            scales: {
+                                x: {
+                                    ticks: { autoSkip: true, maxRotation: 45, minRotation: 0 },
+                                    grid: { display: false }
                                 },
-                                title: {
-                                    display: true,
-                                    text: `Distribuição de Remessas - ${setor}`
-                                },
-                                datalabels: {
-                                    color: '#000',
-                                    font: {
-                                        weight: 'bold',
-                                        size: 14
-                                    },
-                                    formatter: (value) => value
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: { precision: 0 }
                                 }
+                            },
+                            plugins: {
+                                legend: { display: false },
+                                title: { display: true, text: `Distribuição de Remessas - ${setor}`, font: { size: 14 } },
+                                datalabels: { color: '#000', anchor: 'end', align: 'end', formatter: v => v }
                             }
                         },
                         plugins: [ChartDataLabels]
