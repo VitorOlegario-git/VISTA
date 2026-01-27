@@ -615,12 +615,14 @@ document.addEventListener("DOMContentLoaded", () => {
         dados.forEach(item => {
             const tr = document.createElement("tr");
             tr.innerHTML = `
-                <td>${item.setor}</td>
-                <td>${item.cnpj}</td>
-                <td>${item.razao_social}</td>
-                <td>${item.nota_fiscal}</td>
-                <td>${item.quantidade_total}</td>
-                <td>${item.status}</td>
+                <td>${item.setor || ''}</td>
+                <td>${item.cnpj || ''}</td>
+                <td>${item.razao_social || ''}</td>
+                <td>${item.nota_fiscal || ''}</td>
+                <td>${item.data_inicio_reparo ? item.data_inicio_reparo.split(" ")[0] : ''}</td>
+                <td>${item.quantidade_total || ''}</td>
+                <td>${item.quantidade_parcial || ''}</td>
+                <td>${item.status || ''}</td>
                 <td>${item.numero_orcamento || ""}</td>
                 <td>${item.valor_orcamento || ""}</td>`;
             tr.onclick = () => preencher(item, tipo, tr);
