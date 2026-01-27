@@ -543,6 +543,37 @@ document.addEventListener("DOMContentLoaded", () => {
     atualizarAcaoPorOrigem();
     opOrigem.addEventListener('change', atualizarAcaoPorOrigem);
 
+    // Auto-fill dates based on operacao_origem (start when aguardando, end when em_reparo)
+    function isoToday() {
+        const d = new Date();
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function autoFillDatesBasedOnOrigem() {
+        const origem = opOrigem.value;
+        const dataInicio = document.getElementById('data_inicio_reparo');
+        const dataEncerramento = document.getElementById('data_solicitacao_nf');
+        if (!dataInicio || !dataEncerramento) return;
+
+        dataInicio.readOnly = false;
+        dataEncerramento.readOnly = false;
+
+        if (origem === 'aguardando_pg') {
+            // waiting for repair -> set start date
+            dataInicio.value = isoToday();
+            dataInicio.readOnly = true;
+            dataEncerramento.value = '';
+        } else if (origem === 'em_reparo') {
+            // in repair -> set end date automatically
+            dataEncerramento.value = isoToday();
+            dataEncerramento.readOnly = true;
+        }
+    }
+    opOrigem.addEventListener('change', autoFillDatesBasedOnOrigem);
+
     // ---------------------------
     // SUBMIT
     // ---------------------------
@@ -606,6 +637,7 @@ document.addEventListener("DOMContentLoaded", () => {
         form.operacao_origem.value = item.status;
         if (typeof controlarVisibilidadeReparoParcial === 'function') controlarVisibilidadeReparoParcial();
         if (typeof atualizarAcaoPorOrigem === 'function') atualizarAcaoPorOrigem();
+        if (typeof autoFillDatesBasedOnOrigem === 'function') autoFillDatesBasedOnOrigem();
         form.numero_orcamento.value = item.numero_orcamento || "";
         form.valor_orcamento.value  = item.valor_orcamento || "";
 
