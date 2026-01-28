@@ -146,15 +146,8 @@ async function confirmItem(resumoId, btn){
         if(j && j.success){
             btn.innerHTML = '<i class="fas fa-check"></i>';
             btn.style.background='#4ade80';
-            // optimistic update: remove item from list and update counts
-            const idx = allItems.findIndex(x => x.id === resumoId);
-            if(idx !== -1){
-                const st = allItems[idx].status;
-                allItems.splice(idx,1);
-                counts[st] = Math.max(0, (counts[st]||1) - 1);
-                renderFilters(counts);
-                renderTable();
-            }
+            // Refresh authoritative data from API to avoid UI/DB mismatch
+            try{ await loadData(); }catch(e){ /* best-effort refresh */ }
         } else {
             btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
             btn.style.background='#f43f5e';

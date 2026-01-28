@@ -74,7 +74,6 @@ definirHeadersSeguranca();
                             </svg>
                             <h3 class="card-title">Inventário de Status de Remessas</h3>
                         </div>
-                        <p class="card-description">Acessar o inventário geral (por status e armários). Ferramenta restrita para validação e correção manual de status operacionais.</p>
                         <button class="card-action-btn" onclick="window.location.href='/router_public.php?url=inventario'">Acessar Inventário</button>
                     </div>
                 </div>
@@ -184,9 +183,9 @@ definirHeadersSeguranca();
 
     <iframe id="conteudo-frame"></iframe>
 
-    <footer>
+    <!--<footer>
         <p>© 2025 Suntech do Brasil. Todos os direitos reservados.</p>
-    </footer>
+    </footer>-->
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {

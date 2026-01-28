@@ -285,6 +285,19 @@ try {
 
         // Normalize to the frontend expected shape (preserve keys used by inventory UI)
         $items = array_map(function($r){
+            // Normalize status and armario types at the API boundary so frontend
+            // can rely on a deterministic, lowercase snake_case status code and
+            // consistent armario types (int|null) / locker (string|null).
+            $status_raw = $r['status_real'] ?? '';
+            $status_norm = '';
+            if ($status_raw !== null && trim((string)$status_raw) !== '') {
+                $status_norm = strtolower(preg_replace('/[^a-z0-9_]+/', '_', trim((string)$status_raw)));
+                $status_norm = trim($status_norm, '_');
+            }
+
+            $arm_raw = $r['armario_id'] ?? null;
+            $armario = ( $arm_raw !== '' && $arm_raw !== null ) ? (int)$arm_raw : null;
+
             return [
                 // frontend expects `id` as the key for resumo identifier
                 'id' => isset($r['resumo_id']) ? (int)$r['resumo_id'] : 0,
@@ -294,10 +307,11 @@ try {
                 'nota_fiscal' => $r['nota_fiscal'] ?? '',
                 // keep numeric quantity as integer
                 'quantidade' => isset($r['quantidade_real']) ? (int)$r['quantidade_real'] : 0,
-                'status' => $r['status_real'] ?? '',
-                // preserve locker/armario id for the frontend; may be null
-                'locker' => isset($r['armario_id']) && $r['armario_id'] !== '' ? $r['armario_id'] : null,
-                'armario_id' => isset($r['armario_id']) && $r['armario_id'] !== '' ? $r['armario_id'] : null,
+                // deliver normalized status code (lowercase snake_case)
+                'status' => $status_norm,
+                // preserve locker/armario id for the frontend; now normalized types
+                'locker' => $armario !== null ? (string)$armario : null,
+                'armario_id' => $armario,
                 'data_envio_expedicao' => $r['data_envio_expedicao'] ?? null,
                 'codigo_rastreio_envio' => $r['codigo_rastreio_envio'] ?? null,
                 'setor' => $r['setor'] ?? null

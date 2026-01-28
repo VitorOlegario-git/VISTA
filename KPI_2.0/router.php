@@ -202,6 +202,10 @@ function createRouter(): Router
     // Expose lightweight diagnostic endpoints (temporary)
     $router->add('/BackEnd/db_config_check.php', 'BackEnd/db_config_check.php');
     $router->add('/BackEnd/db_connection_test.php', 'BackEnd/db_connection_test.php');
+    // Expose inventory debug helpers for local development (do NOT enable in production)
+    // Debug routes disabled: remove or comment out to stop functional debug exposure.
+    // $router->add('/BackEnd/Inventario/debug_login.php', 'BackEnd/Inventario/debug_login.php');
+    // $router->add('/inventario/debug_login', 'BackEnd/Inventario/debug_login.php');
     // Friendly aliases
     $router->add('/db_config_check', 'BackEnd/db_config_check.php');
     $router->add('/db_connection_test', 'BackEnd/db_connection_test.php');
